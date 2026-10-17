@@ -1,0 +1,10 @@
+{
+    "uuid": "notchex@adityatakuli",
+    "name": "Notchex — Dynamic Island for GNOME",
+    "description": "A macOS-style desktop for GNOME 46+. A Dynamic Island replaces the top-bar clock: live media with album art and audio-reactive bars, transient events for track changes, volume, brightness, battery, Bluetooth, notifications and upcoming meetings, and an expandable hub with system monitor, Google Calendar & Tasks via GOA, weather, Pomodoro, notes, Claude Code usage and quick controls. Also ships a magnifying Dock, Spotlight search in the island, frosted-glass top bar and menus, a Control Center look for Quick Settings, auto-hiding top bar, three-finger zoom gestures and optional traffic-light window buttons.",
+    "shell-version": ["46", "47", "48", "49", "50"],
+    "url": "https://github.com/AdityaTakuli/Notchex",
+    "version-name": "2.0.0",
+    "settings-schema": "org.gnome.shell.extensions.notchex",
+    "gettext-domain": "notchex"
+}

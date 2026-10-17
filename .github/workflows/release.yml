@@ -1,0 +1,44 @@
+name: Release
+
+# Push a tag like v2.0.0 (matching "version-name" in metadata.json) to
+# build the extension zip and publish it as a GitHub Release.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check tag matches metadata.json
+        run: |
+          meta="v$(jq -r '."version-name"' metadata.json)"
+          if [ "$meta" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME doesn't match metadata.json version-name ($meta)"
+            exit 1
+          fi
+
+      - name: Check JavaScript syntax
+        run: |
+          for f in extension.js notch.js prefs.js modules/*.js; do
+            node --check --input-type=module < "$f" || { echo "::error file=$f::Syntax error"; exit 1; }
+          done
+
+      - name: Build zip
+        run: |
+          sudo apt-get install -y --no-install-recommends libglib2.0-bin
+          make dist
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            notchex@adityatakuli.shell-extension.zip install.sh \
+            --title "Notchex $GITHUB_REF_NAME" \
+            --generate-notes

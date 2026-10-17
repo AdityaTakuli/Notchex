@@ -1,0 +1,1143 @@
+/* ——— surface ———
+   The root actor (.notchex) paints nothing: the island is the single
+   rounded .notchex-bg surface, so no rectangle can show around it.
+   Background, radius, outline and shadow are applied at runtime from
+   gsettings (see notch.js _applyStyle). */
+
+.notchex { background-color: transparent; }
+
+.notchex-bg {
+    background-color: rgb(0, 0, 0);
+    border-radius: 24px;
+}
+
+.notchex-clip {
+    color: rgba(255, 255, 255, 0.96);
+    font-family: "SF Pro Text", "Inter", "Cantarell", sans-serif;
+}
+
+/* ——— collapsed pill ——— */
+
+.notchex-pill-row {
+    padding: 0 14px;
+    spacing: 10px;
+}
+
+.notchex-cluster { spacing: 8px; }
+
+.notchex-chip { spacing: 6px; }
+
+.notchex-clock {
+    font-family: "SF Pro Display", "Inter", "Cantarell", sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    font-feature-settings: "tnum";
+}
+
+.notchex-date-mini {
+    color: rgba(255, 255, 255, 0.56);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.notchex-sys-mini {
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 10.5px;
+    font-weight: 600;
+    font-feature-settings: "tnum";
+}
+
+.notchex-weather-chip { spacing: 4px; }
+.notchex-weather-chip-icon { color: rgba(255, 255, 255, 0.85); }
+
+.notchex-battery-icon { padding: 0 1px; }
+
+.notchex-subtitle {
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 0 16px 8px 16px;
+}
+
+/* pomodoro chip */
+.notchex-pomo-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 4px;
+    background-color: rgb(255, 99, 71);
+}
+.notchex-pomo-chip.break  .notchex-pomo-dot { background-color: rgb(120, 220, 150); }
+.notchex-pomo-chip.paused .notchex-pomo-dot { background-color: rgba(255, 200, 120, 0.7); }
+.notchex-pomo-mini {
+    color: rgba(255, 150, 120, 0.98);
+    font-size: 11.5px;
+    font-weight: 700;
+    font-feature-settings: "tnum";
+}
+.notchex-pomo-chip.break  .notchex-pomo-mini { color: rgba(140, 225, 160, 0.98); }
+.notchex-pomo-chip.paused .notchex-pomo-mini { color: rgba(255, 200, 120, 0.75); }
+
+/* media chip */
+.notchex-media-chip { spacing: 7px; }
+.notchex-music-title {
+    font-size: 11.5px;
+    font-weight: 600;
+    max-width: 170px;
+}
+
+/* now-playing equalizer (right side of the pill) */
+.notchex-eq { spacing: 2px; padding: 0 1px; }
+.notchex-eq-bar {
+    width: 3px;
+    height: 14px;
+    border-radius: 2px;
+    background-color: rgba(255, 255, 255, 0.92);
+}
+
+/* ——— album art ——— */
+.notchex-art {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+.notchex-art.has-art { background-color: transparent; }
+.notchex-art-fallback { color: rgba(255, 255, 255, 0.75); }
+
+/* ——— live activities (transient events) ——— */
+
+.notchex-act {
+    padding: 8px 16px;
+    spacing: 12px;
+}
+.notchex-act-text { spacing: 1px; }
+.notchex-act-caption {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+.notchex-act-title {
+    font-size: 13px;
+    font-weight: 600;
+}
+.notchex-act-subtitle {
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 11px;
+    font-weight: 500;
+}
+.notchex-act-icon { color: rgba(255, 255, 255, 0.92); }
+.notchex-act-value {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 12px;
+    font-weight: 600;
+    font-feature-settings: "tnum";
+}
+.notchex-act-value.strong { color: rgba(255, 255, 255, 0.95); }
+.notchex-act-app { color: rgba(255, 255, 255, 0.6); }
+
+.notchex-act-level { padding: 6px 18px; spacing: 14px; }
+.notchex-level-track {
+    width: 168px;
+    height: 6px;
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.16);
+}
+.notchex-level-fill {
+    height: 6px;
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.95);
+}
+.notchex-act-level.muted .notchex-act-icon { color: rgba(255, 255, 255, 0.5); }
+.notchex-act-level.muted .notchex-act-value { color: rgba(255, 255, 255, 0.5); }
+
+.notchex-act-battery.charging .notchex-act-icon,
+.notchex-act-battery.charging .notchex-act-value { color: rgb(90, 220, 120); }
+.notchex-act-battery.low .notchex-act-icon,
+.notchex-act-battery.low .notchex-act-value      { color: rgb(255, 170, 60); }
+.notchex-act-battery.critical .notchex-act-icon,
+.notchex-act-battery.critical .notchex-act-value { color: rgb(255, 85, 75); }
+
+.notchex-act-bt .notchex-act-icon.bt { color: rgba(255, 255, 255, 0.55); }
+.notchex-act-bt.connected .notchex-act-icon.bt { color: rgb(90, 160, 255); }
+.notchex-act-bt-battery { spacing: 4px; }
+.notchex-act-icon.low { color: rgb(255, 120, 90); }
+
+.notchex-act-cal .notchex-act-icon.cal { color: rgb(255, 95, 90); }
+.notchex-act-cal .notchex-act-caption  { color: rgb(255, 120, 110); }
+
+.notchex-act-notif { padding: 10px 12px 10px 14px; spacing: 12px; }
+
+/* system tab inline (compact) rows */
+.notchex-sys-body { spacing: 28px; padding-top: 4px; }
+.notchex-sys-bars { spacing: 7px; }
+.notchex-sys-bar-row { spacing: 12px; }
+.notchex-sys-bar-row .notchex-sys-inline-label { min-width: 56px; }
+.notchex-sys-headline-sub { color: rgba(255, 255, 255, 0.45); font-size: 10px; font-weight: 500; }
+.notchex-sys-left { spacing: 3px; }
+.notchex-sys-inline-row { spacing: 10px; padding: 2px 2px; }
+.notchex-sys-inline-label {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 11px; font-weight: 500;
+    min-width: 62px;
+}
+.notchex-sys-inline-value {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 11px; font-weight: 500;
+    font-feature-settings: "tnum";
+}
+
+/* ——— notes ——— */
+.notchex-notes { spacing: 8px; }
+.notchex-notes-header { spacing: 8px; padding-bottom: 2px; }
+.notchex-notes-heading { color: rgba(255, 255, 255, 0.7); font-size: 11px; font-weight: 700; letter-spacing: 0.4px; }
+.notchex-notes-new {
+    color: rgba(255, 255, 255, 0.85); font-size: 10px; font-weight: 700;
+    padding: 3px 12px; border-radius: 999px;
+    background-color: rgba(120, 170, 255, 0.22); border: 0;
+}
+.notchex-notes-new:hover { background-color: rgba(120, 170, 255, 0.35); color: white; }
+
+.notchex-notes-scroll { max-height: 300px; }
+.notchex-notes-list { spacing: 10px; }
+.notchex-notes-card {
+    spacing: 6px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+}
+.notchex-notes-title-entry {
+    background-color: transparent;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 2px 2px 6px 2px;
+    color: white;
+    font-family: "SF Pro Text", "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+}
+.notchex-notes-entry {
+    background-color: transparent;
+    border: 0;
+    padding: 6px 2px;
+    color: rgba(255, 255, 255, 0.92);
+    font-family: "SF Pro Text", "Inter", sans-serif;
+    font-size: 12px;
+    min-height: 90px;
+}
+.notchex-notes-footer { padding-top: 2px; spacing: 8px; }
+.notchex-notes-info   { color: rgba(255, 255, 255, 0.35); font-size: 9px; }
+.notchex-notes-clear  {
+    color: rgba(255, 255, 255, 0.7); font-size: 10px; padding: 3px 10px;
+    border-radius: 999px; background-color: rgba(255, 255, 255, 0.06); border: 0;
+}
+.notchex-notes-clear:hover { background-color: rgba(255, 120, 120, 0.2); color: white; }
+
+/* ——— weather ——— */
+.notchex-weather { spacing: 10px; }
+.notchex-weather-header { spacing: 14px; padding-bottom: 6px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+.notchex-weather-area {
+    color: white; font-family: "SF Pro Display", "Inter", sans-serif;
+    font-size: 15px; font-weight: 600;
+}
+.notchex-weather-desc { color: rgba(255, 255, 255, 0.6); font-size: 11px; }
+.notchex-weather-temp {
+    color: white; font-family: "SF Pro Display", "Inter", sans-serif;
+    font-size: 32px; font-weight: 500; letter-spacing: -0.8px;
+    font-feature-settings: "tnum";
+}
+.notchex-weather-meta { spacing: 10px; padding: 4px 0 6px 0; }
+.notchex-weather-meta-cell { spacing: 1px; x-align: center; }
+.notchex-weather-meta-label { color: rgba(255, 255, 255, 0.45); font-size: 9px; font-weight: 600; letter-spacing: 0.4px; }
+.notchex-weather-meta-value { color: rgba(255, 255, 255, 0.92); font-size: 12px; font-weight: 500; }
+.notchex-weather-forecast { spacing: 8px; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.06); }
+.notchex-weather-day { spacing: 2px; padding: 6px 4px; border-radius: 8px; background-color: rgba(255, 255, 255, 0.04); }
+.notchex-weather-day-label { color: rgba(255, 255, 255, 0.72); font-size: 10px; font-weight: 700; letter-spacing: 0.3px; }
+.notchex-weather-day-temp  { color: white; font-size: 12px; font-weight: 500; font-feature-settings: "tnum"; }
+.notchex-weather-day-desc  { color: rgba(255, 255, 255, 0.5); font-size: 9px; }
+
+/* ——— pomodoro ——— */
+.notchex-pomo { spacing: 6px; padding: 8px 0; }
+.notchex-pomo-big {
+    color: white; font-family: "SF Pro Display", "Inter", sans-serif;
+    font-size: 26px; font-weight: 600; letter-spacing: -0.5px;
+    font-feature-settings: "tnum";
+}
+.notchex-pomo-state { color: rgba(140, 220, 140, 0.85); font-size: 11px; font-weight: 600; letter-spacing: 0.4px; }
+.notchex-pomo-cycles { color: rgba(255, 255, 255, 0.4); font-size: 10px; font-weight: 500; }
+.notchex-pomo-btns { spacing: 8px; padding-top: 4px; }
+.notchex-pomo-btn {
+    color: rgba(255, 255, 255, 0.85); font-size: 11px; font-weight: 600;
+    padding: 6px 18px; border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.08); border: 0;
+}
+.notchex-pomo-btn:hover { background-color: rgba(255, 255, 255, 0.16); color: white; }
+.notchex-pomo-btn.primary {
+    background-color: rgba(140, 220, 140, 0.28); color: white;
+}
+.notchex-pomo-btn.primary:hover { background-color: rgba(140, 220, 140, 0.45); }
+
+.notchex-pomo-presets { spacing: 6px; padding-bottom: 4px; }
+.notchex-pomo-preset {
+    color: rgba(255, 255, 255, 0.62); font-size: 10px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.05); border: 0;
+}
+.notchex-pomo-preset:hover  { background-color: rgba(255, 255, 255, 0.12); color: white; }
+.notchex-pomo-preset.active {
+    background-color: rgba(140, 220, 140, 0.22);
+    color: white;
+}
+
+/* weather location switcher */
+.notchex-weather-switcher { spacing: 4px; padding-bottom: 6px; }
+.notchex-weather-tab {
+    color: rgba(255, 255, 255, 0.6); font-size: 10px; font-weight: 700;
+    padding: 3px 10px; border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.05); border: 0;
+    letter-spacing: 0.3px;
+}
+.notchex-weather-tab:hover  { background-color: rgba(255, 255, 255, 0.12); color: white; }
+.notchex-weather-tab.active { background-color: rgba(120, 170, 255, 0.22); color: white; }
+
+/* task list segmented tabs */
+.notchex-task-lists {
+    spacing: 2px; padding: 3px;
+    background-color: rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    margin-bottom: 6px;
+}
+.notchex-task-list-tab {
+    color: rgba(255, 255, 255, 0.55); font-size: 10px; font-weight: 600;
+    padding: 4px 8px; border-radius: 6px;
+    background-color: transparent; border: 0;
+}
+.notchex-task-list-tab:hover  { color: rgba(255, 255, 255, 0.85); }
+.notchex-task-list-tab.active {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: white;
+}
+
+/* ——— quick hub ——— */
+.notchex-quick { spacing: 8px; }
+.notchex-quick-row { spacing: 8px; padding: 2px 0; }
+.notchex-quick-pill {
+    spacing: 5px; padding: 4px 10px; border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.notchex-quick-pill.active {
+    background-color: rgba(255, 90, 70, 0.2);
+    border: 1px solid rgba(255, 90, 70, 0.35);
+}
+.notchex-quick-pill-label { color: rgba(255, 255, 255, 0.5); font-size: 10px; font-weight: 600; letter-spacing: 0.4px; }
+.notchex-quick-pill-value { color: white; font-size: 11px; font-weight: 600; font-feature-settings: "tnum"; }
+
+.notchex-quick-section { color: rgba(255, 255, 255, 0.45); font-size: 10px; font-weight: 700; letter-spacing: 0.5px; padding-top: 4px; }
+.notchex-quick-bt-row { padding: 2px 0; spacing: 8px; }
+.notchex-quick-bt-name { color: rgba(255, 255, 255, 0.9); font-size: 11px; }
+.notchex-quick-bt-pct  { color: rgba(140, 220, 140, 0.95); font-size: 10px; font-weight: 700; font-feature-settings: "tnum"; }
+.notchex-quick-bt-pct.low { color: rgba(255, 110, 90, 0.95); }
+
+.notchex-quick-actions { spacing: 6px; padding-top: 4px; }
+.notchex-quick-action {
+    color: rgba(255, 255, 255, 0.9); font-size: 10px; font-weight: 600;
+    padding: 6px 10px; border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.06); border: 0;
+    transition-duration: 160ms;
+}
+.notchex-quick-action:hover { background-color: rgba(255, 255, 255, 0.14); color: white; }
+.notchex-quick-action.armed {
+    background-color: rgba(255, 100, 90, 0.35);
+    color: white;
+    font-weight: 700;
+}
+
+/* ——— expanded panel ——— */
+
+.notchex-expanded {
+    padding: 16px 20px 18px 20px;
+    spacing: 12px;
+}
+
+.notchex-header {
+    spacing: 12px;
+    padding: 0 2px;
+}
+
+.notchex-big-clock {
+    font-family: "SF Pro Display", "Inter", "Cantarell", sans-serif;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    font-feature-settings: "tnum";
+}
+
+.notchex-date {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.notchex-date-month {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* ——— tabs (iOS segmented control) ——— */
+
+.notchex-tabs {
+    spacing: 2px;
+    padding: 3px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+}
+
+.notchex-tab {
+    color: rgba(255, 255, 255, 0.58);
+    background-color: transparent;
+    border-radius: 9px;
+    padding: 4px 6px;
+    font-family: "SF Pro Text", "Inter", "Cantarell", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    border: 0;
+    transition-duration: 160ms;
+}
+.notchex-tab:focus {
+    border: 1px solid rgba(120, 170, 255, 0.7);
+    padding: 3px 5px;
+}
+.notchex-tab:hover { color: rgba(255, 255, 255, 0.9); }
+.notchex-tab:active,
+.notchex-tab:active:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.notchex-content { padding: 4px 2px 2px 2px; }
+
+/* ——— system tab ——— */
+
+.notchex-sys       { spacing: 10px; }
+.notchex-sys-grid  { padding: 2px; }
+
+.notchex-sys-headline {
+    spacing: 14px;
+    padding: 4px 2px 12px 2px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.notchex-sys-headline-cell { spacing: 2px; }
+.notchex-sys-headline-label {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.notchex-sys-headline-value {
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    font-feature-settings: "tnum";
+    letter-spacing: -0.3px;
+}
+.notchex-sys-headline-value.warn   { color: rgba(255, 190, 80, 0.95); }
+.notchex-sys-headline-value.danger { color: rgba(255, 100, 90, 0.95); }
+
+/* stats tab */
+.notchex-stats { spacing: 10px; }
+.notchex-stats-head { spacing: 14px; padding-bottom: 4px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+.notchex-stats-cell { spacing: 2px; }
+.notchex-stats-value {
+    color: white; font-size: 20px; font-weight: 600;
+    font-feature-settings: "tnum"; letter-spacing: -0.3px;
+}
+.notchex-stats-label {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 10px; font-weight: 700; letter-spacing: 0.4px;
+}
+.notchex-stats-chart-title {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 10px; font-weight: 600; letter-spacing: 0.3px;
+    padding-top: 4px;
+}
+.notchex-stats-chart {
+    spacing: 6px;
+    padding: 4px 0 0 0;
+    min-height: 108px;
+}
+.notchex-stats-col { spacing: 3px; y-align: end; }
+.notchex-stats-bar {
+    background-color: rgba(120, 170, 255, 0.65);
+    border-radius: 3px 3px 0 0;
+    min-width: 16px;
+}
+.notchex-stats-bar.today {
+    background-color: rgba(140, 220, 140, 0.85);
+}
+.notchex-stats-bar-value {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 9px; font-weight: 600;
+    font-feature-settings: "tnum";
+}
+.notchex-stats-bar-label {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 9px; font-weight: 600; letter-spacing: 0.3px;
+}
+.notchex-stats-totals {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 10px; font-weight: 500;
+    padding-top: 4px;
+}
+
+.notchex-sys-label {
+    color: rgba(255, 255, 255, 0.52);
+    font-family: "SF Pro Text", "Inter", sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    min-width: 78px;
+}
+.notchex-sys-value {
+    color: rgba(255, 255, 255, 0.96);
+    font-family: "SF Pro Text", "Inter", sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    font-feature-settings: "tnum";
+}
+
+.notchex-bar {
+    background-color: rgba(255, 255, 255, 0.09);
+    border-radius: 3px;
+    width: 160px;
+    height: 5px;
+}
+.notchex-bar-fill {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 3px;
+    height: 5px;
+}
+.notchex-bar-fill.warn   { background-color: rgba(255, 190, 80, 0.9); }
+.notchex-bar-fill.danger { background-color: rgba(255, 100, 80, 0.92); }
+
+/* ——— calendar / tasks ——— */
+
+.notchex-cal-layout { spacing: 16px; }
+
+.notchex-cal-month {
+    spacing: 3px;
+    padding: 2px;
+    width: 168px;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    padding-right: 14px;
+}
+.notchex-cal-month-header { spacing: 2px; }
+.notchex-cal-month-nav {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 0 6px;
+    border-radius: 999px;
+    background-color: transparent;
+    border: 0;
+}
+.notchex-cal-month-nav:hover { color: white; background-color: rgba(255, 255, 255, 0.1); }
+.notchex-cal-month-title {
+    color: rgba(255, 255, 255, 0.85);
+    font-family: "SF Pro Text", "Inter", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+}
+.notchex-cal-dow-cell {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 8px;
+    font-weight: 700;
+}
+.notchex-cal-week { spacing: 0; }
+.notchex-cal-day-cell {
+    font-size: 9px;
+    font-weight: 500;
+    padding: 3px 0;
+    border-radius: 999px;
+}
+.notchex-cal-day-cell.no-event  { color: rgba(255, 255, 255, 0.75); }
+.notchex-cal-day-cell.has-event { color: rgba(120, 170, 255, 0.98); font-weight: 700; }
+.notchex-cal-day-cell.today {
+    background-color: rgba(120, 170, 255, 0.28);
+    color: white;
+    font-weight: 700;
+}
+
+.notchex-cal-agenda { spacing: 0; }
+.notchex-cal-agenda-scroll { max-height: 260px; }
+
+.notchex-cal-row, .notchex-task-row {
+    padding: 4px 2px;
+    spacing: 10px;
+    border-radius: 6px;
+}
+.notchex-cal-row:hover, .notchex-task-row:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+.notchex-cal-when {
+    color: rgba(120, 170, 255, 0.88);
+    font-family: "SF Pro Text", "Inter", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 70px;
+    letter-spacing: 0.3px;
+}
+.notchex-cal-title {
+    color: rgba(255, 255, 255, 0.94);
+    font-family: "SF Pro Text", "Inter", sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.notchex-task-row.done .notchex-task-title { color: rgba(255, 255, 255, 0.4); text-decoration: line-through; }
+.notchex-task-check {
+    color: rgba(140, 220, 140, 0.9);
+    min-width: 18px;
+    font-size: 13px;
+    background-color: transparent;
+    border: 0;
+}
+.notchex-task-title {
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 11px;
+    font-weight: 500;
+}
+.notchex-task-list-tag {
+    color: rgba(255, 255, 255, 0.38);
+    font-size: 9px;
+    font-weight: 600;
+}
+.notchex-task-due {
+    color: rgba(255, 200, 120, 0.8);
+    font-size: 10px;
+    font-weight: 600;
+}
+.notchex-task-scroll { max-height: 260px; }
+
+.notchex-task-add-wrap { padding-bottom: 6px; }
+.notchex-task-add-btn {
+    color: rgba(120, 170, 255, 0.92);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background-color: rgba(120, 170, 255, 0.14);
+    border: 0;
+}
+.notchex-task-add-btn:hover { background-color: rgba(120, 170, 255, 0.24); }
+.notchex-task-add-btn.disabled { color: rgba(255, 255, 255, 0.25); background-color: rgba(255, 255, 255, 0.04); }
+
+.notchex-task-compose {
+    spacing: 6px;
+    padding: 8px;
+    margin-bottom: 6px;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+}
+.notchex-task-compose-title, .notchex-task-compose-notes {
+    background-color: transparent;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 4px 2px;
+    color: white;
+    font-size: 11px;
+}
+.notchex-task-compose-btns { spacing: 8px; x-align: end; }
+.notchex-task-compose-cancel, .notchex-task-compose-submit {
+    font-size: 10px; font-weight: 700; padding: 3px 12px; border-radius: 999px; border: 0;
+}
+.notchex-task-compose-cancel { color: rgba(255, 255, 255, 0.6); background-color: rgba(255, 255, 255, 0.06); }
+.notchex-task-compose-submit { color: white; background-color: rgba(120, 170, 255, 0.35); }
+.notchex-task-compose-submit:hover { background-color: rgba(120, 170, 255, 0.5); }
+
+.notchex-empty {
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 28px 10px;
+}
+
+/* ——— peek (dynamic notification) ——— */
+
+.notchex-peek-icon-bin {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 2px 2px 2px 4px;
+}
+.notchex-peek-icon {
+    color: rgba(255, 255, 255, 0.92);
+    icon-size: 28px;
+}
+
+.notchex-peek-text { spacing: 2px; }
+
+.notchex-peek-title {
+    font-family: "SF Pro Display", "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+}
+
+.notchex-peek-time {
+    color: rgba(255, 255, 255, 0.5);
+    font-family: "SF Pro Text", "Inter", sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    font-feature-settings: "tnum";
+    padding-left: 6px;
+}
+
+.notchex-peek-body {
+    color: rgba(255, 255, 255, 0.78);
+    font-family: "SF Pro Text", "Inter", sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+.notchex-peek-dismiss {
+    color: rgba(255, 255, 255, 0.55);
+    background-color: transparent;
+    border: 0;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+}
+.notchex-peek-dismiss:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* ——— claude usage ——— */
+
+.notchex-claude { spacing: 10px; padding: 8px 2px; }
+
+.notchex-claude-rings { spacing: 36px; }
+
+.notchex-claude-ringcol { spacing: 6px; }
+
+.notchex-claude-ring-pct {
+    color: rgba(255, 255, 255, 0.92);
+    font-family: "SF Pro Text", "Inter", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    font-feature-settings: "tnum";
+}
+.notchex-claude-ring-pct.warn   { color: rgba(255, 190, 80, 0.95); }
+.notchex-claude-ring-pct.danger { color: rgba(255, 100, 90, 0.95); }
+
+.notchex-claude-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-family: "SF Pro Text", "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.notchex-claude-reset {
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 10px;
+}
+
+.notchex-claude-refresh-row {
+    padding-top: 8px;
+    spacing: 8px;
+}
+.notchex-claude-refresh-label {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 9px;
+}
+.notchex-claude-refresh-btn {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 0;
+}
+.notchex-claude-refresh-btn:hover { background-color: rgba(255, 255, 255, 0.14); color: white; }
+
+
+/* ——— media tab ——— */
+
+.notchex-media { spacing: 18px; padding: 4px 2px; }
+.notchex-media-art { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45); }
+.notchex-media-col { spacing: 3px; }
+.notchex-media-source { spacing: 6px; padding-bottom: 4px; color: rgba(255, 255, 255, 0.5); }
+.notchex-media-source-label {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 9.5px;
+    font-weight: 700;
+}
+.notchex-media-title {
+    font-family: "SF Pro Display", "Inter", "Cantarell", sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+}
+.notchex-media-artist { color: rgba(255, 255, 255, 0.6); font-size: 12px; font-weight: 500; }
+.notchex-media-progress-row { spacing: 10px; padding-top: 10px; }
+.notchex-media-time {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 10px;
+    font-weight: 600;
+    font-feature-settings: "tnum";
+    min-width: 34px;
+}
+.notchex-media-track {
+    height: 5px;
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.16);
+}
+.notchex-media-track.seekable:hover { background-color: rgba(255, 255, 255, 0.24); }
+.notchex-media-fill {
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.92);
+}
+.notchex-media-ctrls { spacing: 22px; padding-top: 10px; }
+.notchex-media-btn {
+    color: rgba(255, 255, 255, 0.88);
+    background-color: transparent;
+    border: 0;
+    border-radius: 999px;
+    padding: 8px;
+}
+.notchex-media-btn:hover { background-color: rgba(255, 255, 255, 0.1); color: white; }
+.notchex-media-btn.primary { padding: 10px; background-color: rgba(255, 255, 255, 0.1); }
+.notchex-media-btn.primary:hover { background-color: rgba(255, 255, 255, 0.18); }
+.notchex-media-btn.disabled { color: rgba(255, 255, 255, 0.25); }
+.notchex-media-empty { spacing: 6px; padding: 26px 0; }
+.notchex-media-empty-icon { color: rgba(255, 255, 255, 0.35); }
+.notchex-empty-title { font-size: 13px; font-weight: 600; }
+
+/* ——— weather icons ——— */
+.notchex-weather-icon { color: rgba(255, 255, 255, 0.9); padding-right: 4px; }
+.notchex-weather-day-icon { color: rgba(255, 255, 255, 0.8); padding: 2px 0; }
+
+/* ——— quick controls ——— */
+
+.notchex-tiles { spacing: 8px; }
+.notchex-tile {
+    border-radius: 14px;
+    padding: 8px 10px;
+    background-color: rgba(255, 255, 255, 0.07);
+    border: 0;
+    color: rgba(255, 255, 255, 0.92);
+    transition-duration: 140ms;
+}
+.notchex-tile:hover { background-color: rgba(255, 255, 255, 0.12); }
+.notchex-tile.active { background-color: rgba(255, 255, 255, 0.9); color: black; }
+.notchex-tile.active:hover { background-color: white; }
+.notchex-tile.disabled { color: rgba(255, 255, 255, 0.35); }
+.notchex-tile-inner { spacing: 9px; }
+.notchex-tile-icon-bin {
+    border-radius: 999px;
+    padding: 6px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.notchex-tile.active .notchex-tile-icon-bin { background-color: rgba(0, 0, 0, 0.08); }
+.notchex-tile-label { font-size: 11px; font-weight: 700; }
+.notchex-tile-state { font-size: 10px; font-weight: 500; color: rgba(255, 255, 255, 0.55); max-width: 110px; }
+.notchex-tile.active .notchex-tile-state { color: rgba(0, 0, 0, 0.6); }
+
+.notchex-quick-slider-row { spacing: 10px; padding: 0 2px; }
+.notchex-quick-slider-icon {
+    color: rgba(255, 255, 255, 0.85);
+    background-color: transparent;
+    border: 0;
+    border-radius: 999px;
+    padding: 5px;
+}
+.notchex-quick-slider-icon:hover { background-color: rgba(255, 255, 255, 0.1); }
+.notchex-quick-slider-value {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 10.5px;
+    font-weight: 600;
+    font-feature-settings: "tnum";
+    min-width: 34px;
+}
+.notchex-quick-action-inner { spacing: 6px; }
+
+
+/* ——— dock ——— */
+
+.notchex-dock {
+    padding: 6px 8px;
+    spacing: 2px;
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35);
+}
+.notchex-dock.left, .notchex-dock.right { padding: 8px 6px; }
+.notchex-dock-item {
+    padding: 0 2px;
+    border: 0;
+    background-color: transparent;
+}
+.notchex-dock.left .notchex-dock-item, .notchex-dock.right .notchex-dock-item { padding: 2px 0; }
+.notchex-dock-item:focus .notchex-dock-icon { opacity: 0.85; }
+.notchex-dock-item-box { spacing: 3px; }
+.notchex-dock-dots { spacing: 3px; min-height: 4px; min-width: 4px; }
+.notchex-dock-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 2px;
+    background-color: rgba(255, 255, 255, 0.85);
+}
+.notchex-dock.light .notchex-dock-dot { background-color: rgba(0, 0, 0, 0.7); }
+.notchex-dock-separator.vertical {
+    width: 1px;
+    margin: 6px 5px 10px 5px;
+    background-color: rgba(255, 255, 255, 0.22);
+}
+.notchex-dock-separator.horizontal {
+    height: 1px;
+    margin: 5px 6px 5px 10px;
+    background-color: rgba(255, 255, 255, 0.22);
+}
+.notchex-dock.light .notchex-dock-separator { background-color: rgba(0, 0, 0, 0.18); }
+.notchex-dock-placeholder { background-color: transparent; }
+
+.notchex-dock-tooltip {
+    padding: 5px 11px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    background-color: rgba(28, 28, 30, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.notchex-dock-tooltip.light {
+    color: rgba(0, 0, 0, 0.85);
+    background-color: rgba(246, 246, 248, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.notchex-dock-previews {
+    padding: 10px;
+    spacing: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+.notchex-dock-preview {
+    padding: 6px;
+    border-radius: 12px;
+    border: 0;
+    background-color: transparent;
+}
+.notchex-dock-preview:hover { background-color: rgba(255, 255, 255, 0.12); }
+.notchex-dock-previews.light .notchex-dock-preview:hover { background-color: rgba(0, 0, 0, 0.08); }
+.notchex-dock-preview-col { spacing: 6px; }
+.notchex-dock-preview-frame { border-radius: 8px; }
+.notchex-dock-preview-title { font-size: 11px; font-weight: 600; color: rgba(255, 255, 255, 0.9); }
+.notchex-dock-previews.light .notchex-dock-preview-title { color: rgba(0, 0, 0, 0.8); }
+
+.notchex-dock-credit { font-size: 11px; color: rgba(128, 128, 128, 1); }
+
+/* ——— spotlight ——— */
+
+.notchex-search-view {
+    padding: 8px 10px 12px 10px;
+    spacing: 4px;
+}
+.notchex-spotlight-entry {
+    font-size: 18px;
+    font-weight: 400;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 0;
+    color: rgba(255, 255, 255, 0.96);
+    background-color: transparent;
+    caret-color: rgba(255, 255, 255, 0.9);
+    selection-background-color: rgba(120, 170, 255, 0.45);
+}
+.notchex-spotlight-entry:focus { background-color: transparent; border: 0; box-shadow: none; }
+.notchex-spotlight-search-icon { icon-size: 20px; color: rgba(255, 255, 255, 0.55); padding-right: 6px; }
+.notchex-spotlight-results {
+    spacing: 1px;
+    padding: 6px 2px 2px 2px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.notchex-spotlight-header {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 8px 12px 3px 12px;
+}
+.notchex-spotlight-row {
+    padding: 6px 10px;
+    border-radius: 10px;
+    border: 0;
+    background-color: transparent;
+}
+.notchex-spotlight-row:selected { background-color: rgba(10, 132, 255, 0.85); }
+.notchex-spotlight-row-box { spacing: 12px; }
+.notchex-spotlight-icon { color: rgba(255, 255, 255, 0.85); }
+.notchex-spotlight-title { color: rgba(255, 255, 255, 0.96); font-size: 14px; font-weight: 500; }
+.notchex-spotlight-subtitle { color: rgba(255, 255, 255, 0.5); font-size: 11px; }
+.notchex-spotlight-row:selected .notchex-spotlight-subtitle { color: rgba(255, 255, 255, 0.8); }
+.notchex-spotlight-empty { color: rgba(255, 255, 255, 0.45); font-size: 13px; padding: 18px 0; }
+
+/* screenshot event thumbnail */
+.notchex-act-shot-thumb { border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.2); }
+
+/* ——— frosted glass (modules/glass.js) ———
+   The blur itself is a GlassLayer drawn behind each surface; these rules
+   give the surface the translucent tint + hairline border of macOS. */
+.popup-menu-content.notchex-glass {
+    border-radius: 18px;
+    padding: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 10px 34px 0 rgba(0, 0, 0, 0.38);
+}
+.popup-menu-content.notchex-glass-dark { background-color: rgba(38, 38, 42, 0.58); color: #f5f5f7; }
+.popup-menu-content.notchex-glass-light {
+    background-color: rgba(246, 246, 248, 0.62);
+    border-color: rgba(0, 0, 0, 0.10);
+    color: #1d1d1f;
+}
+/* locked / no windows behind: no blur, so a near-solid tint */
+.popup-menu-content.notchex-glass-dark.notchex-glass-solid { background-color: rgba(38, 38, 42, 0.96); }
+.popup-menu-content.notchex-glass-light.notchex-glass-solid { background-color: rgba(246, 246, 248, 0.97); }
+
+/* menu rows: macOS menus highlight in blue */
+.notchex-glass .popup-menu-item { border-radius: 7px; }
+.notchex-glass .popup-menu-item:hover,
+.notchex-glass .popup-menu-item:focus { background-color: #0a84ff; color: #ffffff; }
+.notchex-glass .popup-menu-item:active { background-color: #0071e3; color: #ffffff; }
+.notchex-glass .popup-separator-menu-item .popup-separator-menu-item-separator {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+.notchex-glass-light .popup-separator-menu-item .popup-separator-menu-item-separator {
+    background-color: rgba(0, 0, 0, 0.10);
+}
+.notchex-glass .popup-sub-menu { background-color: rgba(255, 255, 255, 0.06); border-radius: 10px; }
+
+/* top bar */
+#panel.notchex-glass { background-color: rgba(24, 24, 28, 0.38); }
+#panel.notchex-glass-light { background-color: rgba(246, 246, 248, 0.45); }
+#panel.notchex-glass.notchex-glass-solid { background-color: rgba(24, 24, 28, 0.95); }
+#panel.notchex-glass .panel-button { border-radius: 7px; }
+#panel.notchex-glass .panel-button:hover { background-color: rgba(255, 255, 255, 0.14); }
+#panel.notchex-glass .panel-button:active,
+#panel.notchex-glass .panel-button:checked { background-color: rgba(255, 255, 255, 0.22); }
+
+/* calendar / notifications */
+.notchex-glass .message { background-color: rgba(255, 255, 255, 0.09); border-radius: 14px; }
+.notchex-glass .message:hover { background-color: rgba(255, 255, 255, 0.15); }
+.notchex-glass .events-button,
+.notchex-glass .world-clocks-button,
+.notchex-glass .weather-button { background-color: rgba(255, 255, 255, 0.08); border-radius: 14px; }
+.notchex-glass .events-button:hover,
+.notchex-glass .world-clocks-button:hover,
+.notchex-glass .weather-button:hover { background-color: rgba(255, 255, 255, 0.14); }
+/* flat calendar like macOS: no button discs, only today in blue */
+.notchex-glass .calendar .calendar-day,
+.notchex-glass .calendar .calendar-day-heading,
+.notchex-glass .calendar .calendar-week-number,
+.notchex-glass .calendar .calendar-month-header .calendar-month-label,
+.notchex-glass .calendar .calendar-month-header .pager-button { background-color: transparent; box-shadow: none; }
+.notchex-glass .calendar .calendar-day:hover,
+.notchex-glass .calendar .calendar-month-header .calendar-month-label:hover,
+.notchex-glass .calendar .calendar-month-header .pager-button:hover { background-color: rgba(255, 255, 255, 0.14); }
+.notchex-glass .calendar .calendar-day:selected,
+.notchex-glass .calendar .calendar-day:checked { background-color: rgba(255, 255, 255, 0.22); }
+.notchex-glass .calendar .calendar-day.calendar-today,
+.notchex-glass .calendar .calendar-day.calendar-today:selected { background-color: #0a84ff; color: #ffffff; }
+.notchex-glass-light .calendar .calendar-day:hover { background-color: rgba(0, 0, 0, 0.08); }
+.notchex-glass .popup-menu-item.popup-menu-item:hover .popup-menu-icon { color: #ffffff; }
+
+/* ——— macOS Control Center (Quick Settings) ——— */
+.quick-settings.notchex-cc { padding: 12px; border-radius: 22px; }
+.notchex-cc .quick-settings-grid { spacing-rows: 10px; spacing-columns: 10px; }
+
+/* tiles: rounded modules with a round icon that turns blue when on */
+.notchex-cc .quick-toggle,
+.notchex-cc .quick-menu-toggle .quick-toggle,
+.notchex-cc .quick-menu-toggle .quick-toggle-arrow {
+    background-color: rgba(255, 255, 255, 0.11);
+    color: #f5f5f7;
+    border-radius: 14px;
+    min-height: 3.4em;
+}
+.notchex-cc .quick-menu-toggle .quick-toggle:ltr { border-radius: 14px 0 0 14px; }
+.notchex-cc .quick-menu-toggle .quick-toggle:rtl { border-radius: 0 14px 14px 0; }
+.notchex-cc .quick-menu-toggle .quick-toggle:ltr:last-child,
+.notchex-cc .quick-menu-toggle .quick-toggle:rtl:last-child { border-radius: 14px; }
+.notchex-cc .quick-menu-toggle .quick-toggle-arrow:ltr { border-radius: 0 14px 14px 0; border-left-width: 0; }
+.notchex-cc .quick-menu-toggle .quick-toggle-arrow:rtl { border-radius: 14px 0 0 14px; border-right-width: 0; }
+.notchex-cc .quick-toggle:hover,
+.notchex-cc .quick-menu-toggle .quick-toggle-arrow:hover { background-color: rgba(255, 255, 255, 0.17); }
+.notchex-cc .quick-toggle:checked,
+.notchex-cc .quick-menu-toggle .quick-toggle-arrow:checked { background-color: rgba(255, 255, 255, 0.11); color: #f5f5f7; }
+.notchex-cc .quick-toggle:checked:hover,
+.notchex-cc .quick-menu-toggle .quick-toggle-arrow:checked:hover { background-color: rgba(255, 255, 255, 0.17); }
+.notchex-cc .quick-toggle .quick-toggle-icon {
+    icon-size: 16px;
+    padding: 7px;
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.16);
+    color: #f5f5f7;
+}
+.notchex-cc .quick-toggle:checked .quick-toggle-icon { background-color: #0a84ff; color: #ffffff; }
+.notchex-cc .quick-toggle .quick-toggle-title { font-weight: 600; }
+.notchex-cc .quick-toggle .quick-toggle-subtitle { color: rgba(245, 245, 247, 0.62); }
+
+/* sliders: wide white bars in their own module, like Display / Sound */
+.notchex-cc .quick-slider {
+    background-color: rgba(255, 255, 255, 0.11);
+    border-radius: 14px;
+    padding: 8px 10px;
+}
+.notchex-cc .quick-slider .slider-bin,
+.notchex-cc .quick-slider .slider-bin:hover,
+.notchex-cc .quick-slider .slider-bin:focus { background-color: transparent; box-shadow: none; }
+.notchex-cc .slider {
+    height: 22px;
+    color: #ffffff;
+    -barlevel-height: 22px;
+    -barlevel-background-color: rgba(255, 255, 255, 0.20);
+    -barlevel-active-background-color: #ffffff;
+    -barlevel-border-width: 0;
+    -barlevel-overdrive-color: #ff9f0a;
+    -slider-handle-radius: 11px;
+    -slider-handle-border-width: 1px;
+    -slider-handle-border-color: rgba(0, 0, 0, 0.14);
+}
+.notchex-cc .quick-slider .icon-button { background-color: transparent; border-radius: 999px; }
+.notchex-cc .quick-slider .icon-button:hover { background-color: rgba(255, 255, 255, 0.14); }
+
+/* bottom row (battery, screenshot, settings, lock, power) */
+.notchex-cc .quick-settings-system-item .icon-button {
+    background-color: rgba(255, 255, 255, 0.11);
+    border-radius: 999px;
+}
+.notchex-cc .quick-settings-system-item .icon-button:hover { background-color: rgba(255, 255, 255, 0.19); }
+.notchex-cc .quick-settings-system-item .power-item,
+.notchex-cc .quick-settings-system-item .power-item:hover { background-color: transparent; }
+
+/* expanded menus (Wi-Fi list, Bluetooth devices, …) */
+.notchex-cc .quick-toggle-menu {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.notchex-cc .quick-toggle-menu .header .icon { background-color: rgba(255, 255, 255, 0.16); }
+.notchex-cc .quick-toggle-menu .header .icon.active { background-color: #0a84ff; color: #ffffff; }
+.notchex-cc .quick-toggle-menu .popup-menu-item:hover,
+.notchex-cc .quick-toggle-menu .popup-menu-item:focus { background-color: rgba(255, 255, 255, 0.12); color: #f5f5f7; }
+.notchex-cc .quick-toggle-menu .popup-menu-item:checked { background-color: transparent; }
+
+/* light appearance */
+.notchex-glass-light.notchex-cc .quick-toggle,
+.notchex-glass-light.notchex-cc .quick-menu-toggle .quick-toggle-arrow,
+.notchex-glass-light.notchex-cc .quick-slider,
+.notchex-glass-light.notchex-cc .quick-settings-system-item .icon-button { background-color: rgba(0, 0, 0, 0.06); color: #1d1d1f; }
+.notchex-glass-light.notchex-cc .quick-toggle:checked { background-color: rgba(0, 0, 0, 0.06); color: #1d1d1f; }
+.notchex-glass-light.notchex-cc .quick-toggle .quick-toggle-icon { background-color: rgba(0, 0, 0, 0.10); color: #1d1d1f; }
+.notchex-glass-light.notchex-cc .quick-toggle:checked .quick-toggle-icon { background-color: #0a84ff; color: #ffffff; }
+.notchex-glass-light.notchex-cc .slider {
+    color: #ffffff;
+    -barlevel-background-color: rgba(0, 0, 0, 0.12);
+    -barlevel-active-background-color: #ffffff;
+}

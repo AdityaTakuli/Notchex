@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.notchex"
+          path="/org/gnome/shell/extensions/notchex/">
+
+    <!-- modules -->
+    <key name="show-system"        type="b"><default>true</default><summary>Show system monitor in expanded view</summary></key>
+    <key name="show-notifications" type="b"><default>true</default><summary>Enable dynamic notification peek</summary></key>
+    <key name="show-calendar"      type="b"><default>true</default><summary>Enable Google Calendar peek</summary></key>
+    <key name="show-tasks"         type="b"><default>true</default><summary>Enable Google Tasks peek</summary></key>
+    <key name="show-claude-usage"  type="b"><default>true</default><summary>Show Claude Code usage/limit tab</summary></key>
+
+    <!-- clock -->
+    <key name="hide-datemenu"    type="b"><default>true</default><summary>Hide the built-in GNOME clock / date menu</summary></key>
+    <key name="show-date"        type="b"><default>true</default><summary>Show date next to time in collapsed pill</summary></key>
+    <key name="show-seconds"     type="b"><default>false</default><summary>Include seconds in the clock</summary></key>
+    <key name="clock-format"     type="s"><default>"24h"</default><summary>Clock format (24h / 12h)</summary></key>
+
+    <!-- shape -->
+    <key name="collapsed-width"  type="i"><default>200</default><range min="120" max="480"/><summary>Minimum collapsed island width</summary></key>
+    <key name="collapsed-height" type="i"><default>28</default> <range min="22"  max="56"/> <summary>Collapsed island height</summary></key>
+    <key name="expanded-width"   type="i"><default>640</default><range min="420" max="960"/><summary>Expanded island width</summary></key>
+    <key name="expanded-height"  type="i"><default>280</default><range min="200" max="480"/><summary>Minimum expanded island height</summary></key>
+    <key name="corner-radius"    type="i"><default>24</default> <range min="0"   max="40"/> <summary>Island corner radius</summary><description>Applied to every state; the collapsed pill becomes a capsule automatically when the radius exceeds half its height.</description></key>
+    <key name="border-width"     type="i"><default>1</default>  <range min="0"   max="3"/>  <summary>Outline thickness</summary></key>
+    <key name="island-style" type="s">
+      <choices><choice value="notch"/><choice value="floating"/></choices>
+      <default>"notch"</default>
+      <summary>Island shape</summary>
+      <description>notch: attached to the top screen edge with rounded bottom corners (MacBook style). floating: fully rounded island below the edge.</description>
+    </key>
+    <key name="top-margin"       type="i"><default>2</default>  <range min="0"   max="24"/> <summary>Gap between the top screen edge and the island (floating style)</summary></key>
+
+    <!-- colors (CSS rgba strings so users can use any transparency) -->
+    <key name="bg-color"         type="s"><default>"rgba(0, 0, 0, 1.0)"</default><summary>Island background color</summary></key>
+    <key name="text-color"       type="s"><default>"rgba(255, 255, 255, 0.96)"</default><summary>Primary text color</summary></key>
+    <key name="accent-color"     type="s"><default>"rgba(255, 255, 255, 0.14)"</default><summary>Accent color (active tab)</summary></key>
+    <key name="border-color"     type="s"><default>"rgba(255, 255, 255, 0.08)"</default><summary>Outline color</summary></key>
+    <key name="shadow-color"     type="s"><default>"rgba(0, 0, 0, 0.45)"</default><summary>Shadow color</summary></key>
+    <key name="enable-shadow"    type="b"><default>true</default><summary>Draw a soft shadow that follows the island shape</summary></key>
+
+    <!-- animation -->
+    <key name="enable-animations" type="b"><default>true</default><summary>Animate island transitions</summary></key>
+    <key name="animation-speed" type="s">
+      <choices><choice value="slow"/><choice value="normal"/><choice value="fast"/></choices>
+      <default>"normal"</default>
+      <summary>Animation speed</summary>
+    </key>
+    <key name="hover-delay"    type="i"><default>180</default><range min="0" max="1500"/><summary>Hover time before the island reacts (ms)</summary></key>
+    <key name="collapse-delay" type="i"><default>300</default><range min="0" max="5000"/><summary>Delay before collapsing after the pointer leaves (ms)</summary></key>
+
+    <!-- behavior -->
+    <key name="expand-on-hover"   type="b"><default>true</default><summary>Expand when hovered</summary><description>When off, hovering shows a compact preview and a click expands.</description></key>
+    <key name="expand-on-click"   type="b"><default>true</default><summary>Expand when clicked</summary></key>
+    <key name="auto-collapse"     type="b"><default>true</default><summary>Collapse automatically when the pointer leaves</summary><description>When off, click the clock header (or use the shortcut) to collapse.</description></key>
+    <key name="always-show-clock" type="b"><default>true</default><summary>Keep the clock visible while media is shown in the pill</summary></key>
+    <key name="always-show-media" type="b"><default>true</default><summary>Keep paused media in the pill (otherwise only while playing)</summary></key>
+    <key name="autohide-top-bar"  type="b"><default>false</default><summary>Hide the top bar (macOS style)</summary><description>The GNOME top bar slides away and reappears when the pointer touches the top edge outside the island. Windows start just below the island instead of below the top bar.</description></key>
+    <key name="fill-top-strip"    type="b"><default>true</default><summary>Paint the strip beside the island</summary><description>With the top bar hidden, fill the space beside the island with the island color while an app window is open, so it looks like one black bar (MacBook style). On an empty desktop, and when off, the wallpaper shows through.</description></key>
+    <key name="eq-follow-audio"   type="b"><default>true</default><summary>Music bars follow the audio</summary><description>Analyses the default output (not the microphone) while music plays and the pill is visible. Off: the bars use a simple animation.</description></key>
+    <key name="pill-show-weather" type="b"><default>false</default><summary>Show current temperature in the collapsed pill</summary></key>
+    <key name="pill-show-system"  type="b"><default>false</default><summary>Show CPU / RAM / temperature in the collapsed pill</summary></key>
+
+    <!-- battery icon tinting -->
+    <key name="battery-charging-color" type="s"><default>"rgba(80, 220, 120, 1.0)"</default><summary>Battery icon color while charging</summary></key>
+    <key name="battery-normal-color"   type="s"><default>"rgba(255, 255, 255, 0.85)"</default><summary>Battery icon color while discharging</summary></key>
+    <key name="battery-low-color"      type="s"><default>"rgba(255, 140, 60, 1.0)"</default> <summary>Battery icon color when low</summary></key>
+
+    <!-- performance -->
+    <key name="poll-interval"    type="i"><default>1</default><range min="1" max="30"/><summary>System monitor poll interval (seconds)</summary></key>
+
+    <!-- notifications -->
+    <key name="notif-auto-dismiss" type="i"><default>8</default><range min="0" max="120"/><summary>Auto-dismiss banner notifications after N seconds (0=disabled)</summary></key>
+
+    <!-- notifications: DND + native suppression -->
+    <key name="notif-suppress-native" type="b"><default>true</default><summary>Auto-dismiss native banner when notch peek shows</summary></key>
+
+    <!-- live activities (transient island events) -->
+    <key name="show-media"       type="b"><default>true</default><summary>Media tab and media in the collapsed pill</summary></key>
+    <key name="event-media"      type="b"><default>true</default><summary>Show "Now Playing" when the track changes</summary></key>
+    <key name="event-volume"     type="b"><default>true</default><summary>Show volume changes in the island</summary></key>
+    <key name="event-brightness" type="b"><default>true</default><summary>Show screen brightness changes in the island</summary></key>
+    <key name="event-battery"    type="b"><default>true</default><summary>Show charging / low battery events</summary></key>
+    <key name="event-bluetooth"  type="b"><default>true</default><summary>Show Bluetooth device connect / disconnect events</summary></key>
+    <key name="event-calendar"   type="b"><default>true</default><summary>Show upcoming calendar events</summary></key>
+    <key name="calendar-lead-minutes" type="i"><default>10</default><range min="1" max="60"/><summary>Minutes before an event to announce it</summary></key>
+    <key name="replace-system-osd" type="b"><default>true</default><summary>Hide GNOME's volume/brightness popup when the island shows it</summary></key>
+    <key name="event-duration"   type="i"><default>4</default><range min="1" max="15"/><summary>How long informational events stay on screen (s)</summary></key>
+
+    <!-- dock -->
+    <key name="dock-enabled"          type="b"><default>true</default><summary>Show the Notchex Dock</summary></key>
+    <key name="dock-position" type="s">
+      <choices><choice value="bottom"/><choice value="left"/><choice value="right"/></choices>
+      <default>"bottom"</default><summary>Dock position</summary>
+    </key>
+    <key name="dock-icon-size"        type="i"><default>48</default><range min="32" max="96"/><summary>Dock icon size (px)</summary></key>
+    <key name="dock-magnify"          type="b"><default>true</default><summary>Magnify icons under the pointer</summary></key>
+    <key name="dock-magnification"    type="i"><default>60</default><range min="10" max="120"/><summary>Magnification strength (% of icon size)</summary></key>
+    <key name="dock-autohide" type="s">
+      <choices><choice value="always"/><choice value="autohide"/><choice value="intelligent"/></choices>
+      <default>"intelligent"</default>
+      <summary>Dock visibility</summary>
+      <description>always: always shown, windows make room. autohide: shown only when the pointer reaches the edge. intelligent: hides when a window overlaps it.</description>
+    </key>
+    <key name="dock-opacity"          type="i"><default>72</default><range min="0" max="100"/><summary>Dock background opacity (%)</summary></key>
+    <key name="dock-theme" type="s">
+      <choices><choice value="auto"/><choice value="dark"/><choice value="light"/></choices>
+      <default>"auto"</default><summary>Dock surface theme</summary>
+    </key>
+    <key name="dock-corner-radius"    type="i"><default>20</default><range min="0" max="32"/><summary>Dock corner radius</summary></key>
+    <key name="dock-edge-margin"      type="i"><default>8</default><range min="0" max="40"/><summary>Gap between the Dock and the screen edge</summary></key>
+    <key name="dock-show-trash"       type="b"><default>true</default><summary>Show the Trash in the Dock</summary></key>
+    <key name="dock-show-running"     type="b"><default>true</default><summary>Running indicators</summary></key>
+    <key name="dock-show-previews"    type="b"><default>true</default><summary>Window previews on hover</summary></key>
+    <key name="dock-show-tooltips"    type="b"><default>true</default><summary>App name tooltips</summary></key>
+    <key name="dock-launch-animation" type="b"><default>true</default><summary>Bounce icons when launching</summary></key>
+    <key name="dock-separators"       type="b"><default>true</default><summary>Separators between pinned, running and Trash</summary></key>
+
+    <!-- spotlight search -->
+    <key name="search-enabled" type="b"><default>true</default><summary>Enable Spotlight search</summary></key>
+    <key name="shortcut-search" type="as">
+      <default>["&lt;Super&gt;space"]</default>
+      <summary>Open Spotlight search</summary>
+      <description>Super+Space is also GNOME's keyboard-layout switch; with more than one layout configured, pick another shortcut.</description>
+    </key>
+    <key name="search-replace-overview" type="b"><default>true</default><summary>Search in the island instead of the Overview search bar</summary></key>
+    <key name="search-files" type="b"><default>true</default><summary>Include files (via the Files app search index)</summary></key>
+    <key name="search-remember-history" type="b"><default>true</default><summary>Show recently opened results</summary></key>
+    <key name="search-history" type="as"><default>[]</default><summary>Recently opened Spotlight results</summary></key>
+
+    <!-- glass (frosted blur) -->
+    <key name="glass-enabled" type="b"><default>true</default><summary>macOS-style frosted glass</summary></key>
+    <key name="glass-menus" type="b"><default>true</default><summary>Glass top-bar menus (Quick Settings, calendar, indicators)</summary></key>
+    <key name="glass-panel" type="b"><default>true</default><summary>Glass top bar</summary></key>
+    <key name="glass-dock" type="b"><default>true</default><summary>Glass Dock</summary></key>
+    <key name="glass-blur" type="i"><default>36</default><range min="0" max="80"/><summary>Glass blur strength</summary></key>
+    <key name="control-center-style" type="b"><default>true</default><summary>macOS Control Center look for Quick Settings</summary></key>
+
+    <!-- zoom -->
+    <key name="zoom-gestures" type="b"><default>true</default><summary>macOS-style screen zoom gestures</summary><description>Three-finger pinch zooms the screen in and out; three-finger double-tap toggles zoom.</description></key>
+
+    <!-- icons -->
+    <key name="icon-source" type="s">
+      <choices><choice value="system"/><choice value="macos"/><choice value="custom"/></choices>
+      <default>"system"</default>
+      <summary>App icon source</summary>
+      <description>system: GNOME icons. macos: macOS-style icons from macOSicons.com (needs your own API key), cached locally. custom: only your own icons. Custom per-app icons are always honoured.</description>
+    </key>
+    <key name="icon-custom-map" type="a{ss}"><default>{}</default><summary>Per-app custom icon paths (app id → image)</summary></key>
+    <key name="icon-refresh-days" type="i"><default>30</default><range min="0" max="365"/><summary>Re-download cached macOS-style icons older than this (0 = never)</summary></key>
+    <key name="macosicons-key-version" type="i"><default>0</default><summary>Bumped when the macOSicons API key in the keyring changes</summary></key>
+    <key name="icon-customize-request" type="s"><default>""</default><summary>App id the preferences window should open the icon picker for</summary></key>
+
+    <!-- window style -->
+    <key name="saved-button-layout" type="s"><default>""</default><summary>Window button layout before macOS-style buttons were turned on</summary></key>
+
+    <!-- misc -->
+    <key name="hide-top-bar-center"  type="b"><default>false</default><summary>(reserved) keep other center-box widgets hidden</summary></key>
+
+    <!-- keybindings -->
+    <key name="shortcut-toggle" type="as">
+      <default>["&lt;Super&gt;n"]</default>
+      <summary>Toggle the notch (expand/collapse)</summary>
+    </key>
+
+    <!-- notes -->
+    <key name="notes-folder" type="s">
+      <default>""</default>
+      <summary>Folder where notes are saved as markdown files, one dated subfolder per day (empty = ~/Documents/Notchex Notes)</summary>
+    </key>
+
+    <!-- weather -->
+    <key name="weather-location" type="s">
+      <default>""</default>
+      <summary>Weather location (city name or lat,lon). Empty = IP auto.</summary>
+    </key>
+    <key name="weather-unit" type="s">
+      <choices><choice value="metric"/><choice value="imperial"/></choices>
+      <default>"metric"</default>
+      <summary>Temperature unit</summary>
+    </key>
+    <key name="weather-refresh" type="i">
+      <default>30</default>
+      <range min="5" max="240"/>
+      <summary>Weather refresh interval (minutes)</summary>
+    </key>
+
+    <!-- claude usage -->
+    <key name="claude-usage-refresh" type="i">
+      <default>15</default>
+      <range min="5" max="120"/>
+      <summary>Claude usage refresh interval (minutes)</summary>
+    </key>
+
+    <!-- pomodoro -->
+    <key name="pomodoro-work"   type="i"><default>25</default><range min="1" max="180"/><summary>(legacy) Pomodoro work duration</summary></key>
+    <key name="pomodoro-break"  type="i"><default>5</default> <range min="1" max="60"/> <summary>(legacy) Short break</summary></key>
+    <key name="pomodoro-long"   type="i"><default>15</default><range min="1" max="60"/> <summary>Pomodoro long break (min)</summary></key>
+    <key name="pomodoro-cycles" type="i"><default>4</default> <range min="1" max="10"/> <summary>Work cycles before long break</summary></key>
+
+    <!-- pomodoro presets: each entry is "work/break" e.g. "50/10" -->
+    <key name="pomodoro-presets" type="as">
+      <default>["50/10","25/5","10/2"]</default>
+      <summary>Preset work/break pairs (minutes)</summary>
+    </key>
+    <key name="pomodoro-active-preset" type="s">
+      <default>"25/5"</default>
+      <summary>Currently selected preset</summary>
+    </key>
+
+    <!-- weather dual location -->
+    <key name="weather-location-2" type="s">
+      <default>""</default>
+      <summary>Secondary weather location (empty = disabled)</summary>
+    </key>
+    <key name="weather-location-2-label" type="s">
+      <default>""</default>
+      <summary>Friendly label for secondary location (e.g. 'Home', 'Work')</summary>
+    </key>
+    <key name="weather-location-label" type="s">
+      <default>""</default>
+      <summary>Friendly label for primary location</summary>
+    </key>
+
+    <!-- calendar / tasks source filter (empty = all) -->
+    <key name="calendar-enabled-sources" type="as">
+      <default>[]</default>
+      <summary>If non-empty, only sync events from these GOA account emails</summary>
+    </key>
+    <key name="tasks-enabled-lists" type="as">
+      <default>[]</default>
+      <summary>If non-empty, only show tasks from these list display names</summary>
+    </key>
+  </schema>
+</schemalist>
