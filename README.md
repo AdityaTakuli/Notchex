@@ -10,6 +10,8 @@
 [![X11](https://img.shields.io/badge/X11-compatible-success)](#compatibility)
 [![No build step](https://img.shields.io/badge/build%20step-none-lightgrey)](#development)
 
+**[Website](https://adityatakuli.github.io/Notchex/)** · **[Install guide](https://adityatakuli.github.io/Notchex/install.html)** · **[Releases](https://github.com/AdityaTakuli/Notchex/releases/latest)**
+
 </div>
 
 Notchex puts a working MacBook-style **notch** at the top of your GNOME screen. It replaces the top-bar clock, shows what's going on (music, timers, meetings), briefly grows for events such as a track change, a volume change, a Bluetooth device connecting or a notification arriving, and expands into a tabbed hub when you hover over it.
@@ -151,6 +153,8 @@ All of these can be turned off individually.
 - Wayland or X11
 
 See [Optional dependencies](#optional-dependencies) for features that rely on extra packages.
+
+A step-by-step version of this section, with troubleshooting, is on the website: **[adityatakuli.github.io/Notchex/install.html](https://adityatakuli.github.io/Notchex/install.html)**.
 
 ### One-line install (recommended)
 
