@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Notchex: a working notch for GNOME</title>
+    <meta name="description" content="Notchex adds a working MacBook-style notch to the top of your GNOME screen, plus a magnifying Dock, Spotlight search and a frosted-glass macOS look. Free and open source for GNOME 46–50.">
+    <meta name="theme-color" content="#0b0b0d">
+    <meta property="og:title" content="Notchex: a working notch for GNOME">
+    <meta property="og:description" content="Music, timers, meetings, notifications and quick controls in a notch at the top of your screen, plus a Dock and Spotlight search. For GNOME 46–50.">
+    <meta property="og:type" content="website">
+    <!-- After adding docs/og.png, uncomment:
+    <meta property="og:image" content="https://adityatakuli.github.io/Notchex/og.png"> -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='10' rx='5' fill='%23000'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="wrap">
+        <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"></span>Notchex</a>
+        <nav class="nav">
+            <a class="hide-sm" href="#features">Features</a>
+            <a class="hide-sm" href="#privacy">Privacy</a>
+            <a href="install.html">Install</a>
+            <a href="https://github.com/AdityaTakuli/Notchex">GitHub</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+<!-- ============ Hero ============ -->
+<section class="hero">
+    <div class="wrap">
+        <span class="eyebrow">New in 2.1: choose exactly which parts you want</span>
+        <h1>A working notch<br>for GNOME.</h1>
+        <p class="lede">
+            Notchex puts a MacBook-style notch at the top of your screen. It shows your music,
+            timers, meetings and notifications, and opens into a full hub when you hover over it.
+            It also adds a Dock, Spotlight search and a macOS-style desktop around it.
+        </p>
+        <div class="cta-row">
+            <a class="btn btn-primary" href="install.html">Install Notchex</a>
+            <a class="btn btn-secondary" href="https://github.com/AdityaTakuli/Notchex">View on GitHub</a>
+        </div>
+        <p class="hero-meta">GNOME Shell 46 – 50 · Wayland &amp; X11 · Free &amp; open source · No sudo</p>
+
+        <!-- Animated demo of the notch. Replace with a real screen recording later if you like. -->
+        <div class="stage" role="img" aria-label="Animated preview of the Notchex notch changing between idle, music, volume, notification and hub views">
+            <div class="notch" data-state="idle" aria-hidden="true">
+                <div class="state s-idle">
+                    <span class="dim" data-date>Sat 17 Oct</span>
+                    <span data-clock>10:42</span>
+                    <span class="dim">82%</span>
+                </div>
+                <div class="state s-music">
+                    <span class="art"></span>
+                    <span>Midnight City <span class="dim">· M83</span></span>
+                    <span class="eq"><i></i><i></i><i></i><i></i></span>
+                </div>
+                <div class="state s-volume">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
+                    <span class="level"><span></span></span>
+                    <span class="dim">68%</span>
+                </div>
+                <div class="state s-notify">
+                    <span class="notify-icon"></span>
+                    <span class="notify-text">
+                        <b>Team stand-up in 10 min</b>
+                        <span>Google Calendar · Meet link attached</span>
+                    </span>
+                </div>
+                <div class="state s-hub">
+                    <div class="hub-tabs">
+                        <span class="on">System</span><span>Media</span><span>Calendar</span><span>Tasks</span><span>Weather</span><span>Timer</span>
+                    </div>
+                    <div class="hub-rows">
+                        <div class="hub-row">CPU <div class="bar"><span style="width:34%;background:#0a84ff"></span></div>34%</div>
+                        <div class="hub-row">Memory <div class="bar"><span style="width:58%;background:#30d158"></span></div>58%</div>
+                        <div class="hub-row">GPU <div class="bar"><span style="width:12%;background:#bf5af2"></span></div>12%</div>
+                        <div class="hub-row">Storage <div class="bar"><span style="width:71%;background:#ff9f0a"></span></div>71%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="stage-caption">Idle: date, time and battery</div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ Features ============ -->
+<section id="features">
+    <div class="wrap">
+        <div class="section-head">
+            <h2>Everything at the top of your screen.</h2>
+            <p>The notch replaces the top-bar clock. It stays small until something happens, then grows to show it.</p>
+        </div>
+
+        <div class="grid">
+            <article class="card">
+                <div class="icon i-gray"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="7" rx="3.5"/><rect x="3" y="14" width="18" height="6" rx="2" opacity=".45"/></svg></div>
+                <h3>The notch</h3>
+                <p>Shows date, time and battery when idle. Adds album art and live equalizer bars while music plays, or a countdown while a Pomodoro runs.</p>
+                <ul>
+                    <li><b>Notch</b> shape attached to the top edge, or a <b>floating</b> pill</li>
+                    <li>Hover or press <kbd>Super</kbd> + <kbd>N</kbd> to expand it</li>
+                </ul>
+            </article>
+
+            <article class="card">
+                <div class="icon i-pink"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></div>
+                <h3>Live activities</h3>
+                <p>The notch briefly grows for things you'd want to know about:</p>
+                <ul>
+                    <li>Track changes from Spotify, YouTube, VLC and any MPRIS player</li>
+                    <li>Volume, brightness and battery alerts</li>
+                    <li>Bluetooth devices connecting, with their battery level</li>
+                    <li>Notifications and upcoming meetings</li>
+                </ul>
+            </article>
+
+            <article class="card">
+                <div class="icon i-blue"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg></div>
+                <h3>A hub in the notch</h3>
+                <p>Hover to open a tabbed dashboard: system monitor, media, Google Calendar and Tasks, weather, Pomodoro, notes, stats and quick toggles. You can turn each tab on or off.</p>
+            </article>
+
+            <article class="card">
+                <div class="icon i-purple"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="15" width="20" height="6" rx="3"/><rect x="5" y="9" width="4" height="4" rx="1"/><rect x="10" y="7" width="5" height="6" rx="1.2"/><rect x="16" y="9" width="4" height="4" rx="1"/></svg></div>
+                <h3>Magnifying Dock</h3>
+                <p>A macOS-style Dock that uses your GNOME favorites. Icons magnify as you move over them. Put it at the bottom, left or right, and keep it always on, auto-hiding or hiding only when a window covers it.</p>
+            </article>
+
+            <article class="card">
+                <div class="icon i-orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></div>
+                <h3>Spotlight search</h3>
+                <p>Press <kbd>Super</kbd> + <kbd>Space</kbd> and the notch turns into a search bar. Find apps, settings, files and system actions, or type <code>12*7+3</code> to use it as a calculator.</p>
+            </article>
+
+            <article class="card">
+                <div class="icon i-dark"><svg viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="3" fill="#ff5f57"/><circle cx="12" cy="12" r="3" fill="#febc2e"/><circle cx="18.5" cy="12" r="3" fill="#28c840"/></svg></div>
+                <h3>macOS-style desktop</h3>
+                <p>Frosted-glass top bar and menus, a Control Center look for Quick Settings, an auto-hiding top bar, three-finger zoom and optional traffic-light window buttons. You can turn each one off.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- ============ Pick your parts ============ -->
+<section id="choose">
+    <div class="wrap">
+        <div class="section-head">
+            <h2>Use all of it, or just one part.</h2>
+            <p>Every part of Notchex works on its own. Open the <b>Features</b> page in preferences, pick a preset, then switch individual parts on or off. Changes apply right away, with no log out.</p>
+        </div>
+        <div class="grid presets">
+            <article class="card">
+                <span class="tag">Preset</span>
+                <h3>Everything</h3>
+                <p>The notch, Dock, Spotlight and the full macOS look.</p>
+            </article>
+            <article class="card">
+                <span class="tag">Preset</span>
+                <h3>Notch only</h3>
+                <p>Just the notch, with notifications and Spotlight. The rest of GNOME stays as it is.</p>
+            </article>
+            <article class="card">
+                <span class="tag">Preset</span>
+                <h3>Dock only</h3>
+                <p>Just the magnifying Dock. GNOME keeps its own clock.</p>
+            </article>
+            <article class="card">
+                <span class="tag">Preset</span>
+                <h3>Look only</h3>
+                <p>Frosted glass and the Control Center style, with no notch and no Dock.</p>
+            </article>
+        </div>
+        <div class="table-wrap" style="margin-top:18px">
+            <table>
+                <thead><tr><th>Part</th><th>What it changes</th></tr></thead>
+                <tbody>
+                    <tr><td><b>Notch</b></td><td>Replaces the top-bar clock with the notch, live activities and the hub</td></tr>
+                    <tr><td><b>Notifications in the notch</b></td><td>New notifications appear in the notch instead of a banner</td></tr>
+                    <tr><td><b>Spotlight search</b></td><td><kbd>Super</kbd> + <kbd>Space</kbd> search inside the notch</td></tr>
+                    <tr><td><b>Auto-hide top bar</b></td><td>The top bar slides away until you reach the top edge</td></tr>
+                    <tr><td><b>Dock</b></td><td>Magnifying Dock at the bottom, left or right</td></tr>
+                    <tr><td><b>App and desktop look</b></td><td>Frosted glass, Control Center look, traffic-light window buttons, zoom gestures</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ============ Hub tabs ============ -->
+<section id="tabs">
+    <div class="wrap">
+        <div class="section-head">
+            <h2>Ten tabs. Turn on the ones you use.</h2>
+            <p>The notch resizes to fit each tab, so it never takes more room than it needs.</p>
+        </div>
+        <div class="chips">
+            <div class="chip"><b>System</b><span>CPU, memory, GPU, storage, temperature, network</span></div>
+            <div class="chip"><b>Media</b><span>Album art, seekable progress, playback controls</span></div>
+            <div class="chip"><b>Calendar</b><span>Google Calendar via GNOME Online Accounts</span></div>
+            <div class="chip"><b>Tasks</b><span>Google Tasks: view and add from the notch</span></div>
+            <div class="chip"><b>Weather</b><span>Two locations and a 3-day forecast</span></div>
+            <div class="chip"><b>Timer</b><span>Pomodoro with presets and cycle tracking</span></div>
+            <div class="chip"><b>Notes</b><span>Sticky notes saved as Markdown files</span></div>
+            <div class="chip"><b>Stats</b><span>Today, weekly chart and your streak</span></div>
+            <div class="chip"><b>Quick</b><span>Wi-Fi, Bluetooth, Night Light, sliders, power</span></div>
+            <div class="chip"><b>Limits</b><span>Claude Code session and weekly usage</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ Screenshots ============ -->
+<section id="screenshots">
+    <div class="wrap">
+        <div class="section-head">
+            <h2>See it in action.</h2>
+        </div>
+        <!--
+            To add screenshots: put PNGs in docs/ and replace each placeholder
+            <div class="frame">…</div> with
+            <div class="frame"><img src="notch.png" alt="…" loading="lazy"></div>
+        -->
+        <div class="shots">
+            <figure class="shot">
+                <div class="frame">Screenshot: notch expanded on the System tab</div>
+                <figcaption>The hub, open on the System tab</figcaption>
+            </figure>
+            <figure class="shot">
+                <div class="frame">Screenshot: music playing in the notch</div>
+                <figcaption>Now Playing with audio-reactive bars</figcaption>
+            </figure>
+            <figure class="shot">
+                <div class="frame">Screenshot: Dock and Spotlight</div>
+                <figcaption>Magnifying Dock and Spotlight search</figcaption>
+            </figure>
+            <figure class="shot">
+                <div class="frame">Screenshot: Control Center look</div>
+                <figcaption>Frosted glass and the Control Center look</figcaption>
+            </figure>
+        </div>
+    </div>
+</section>
+
+<!-- ============ Shortcuts ============ -->
+<section id="shortcuts">
+    <div class="wrap">
+        <div class="section-head">
+            <h2>Keyboard first.</h2>
+            <p>You can change both Notchex shortcuts in preferences.</p>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Input</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><kbd>Super</kbd> + <kbd>N</kbd></td><td>Expand or collapse the notch</td></tr>
+                    <tr><td><kbd>Super</kbd> + <kbd>Space</kbd></td><td>Open Spotlight search</td></tr>
+                    <tr><td><kbd>↑</kbd> <kbd>↓</kbd> · <kbd>Tab</kbd> · <kbd>Enter</kbd> · <kbd>Esc</kbd></td><td>Move, switch category, open and close in Spotlight</td></tr>
+                    <tr><td>Three-finger pinch</td><td>Zoom the screen in or out</td></tr>
+                    <tr><td>Three-finger double-tap</td><td>Toggle zoom</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ============ Privacy & performance ============ -->
+<section id="privacy">
+    <div class="wrap">
+        <div class="section-head">
+            <h2>Light, local and private.</h2>
+            <p>Plain GJS on top of GNOME Shell. The idle notch reacts to events instead of checking for them, so it uses almost nothing until something changes.</p>
+        </div>
+        <div class="grid">
+            <article class="card">
+                <h3>No telemetry</h3>
+                <p>Notchex only goes online for features you turn on, like weather or Google Tasks. Access tokens stay in memory and are never written to disk.</p>
+            </article>
+            <article class="card">
+                <h3>Nearly idle at rest</h3>
+                <p>The clock updates once a minute. System stats are only read while the System tab is on screen. The equalizer runs in a separate process, so it can never freeze your desktop.</p>
+            </article>
+            <article class="card">
+                <h3>Clean uninstall</h3>
+                <p>Notchex installs for your user only and never needs <code>sudo</code>. Turn off a module and it stops completely. Uninstall and it's gone.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- ============ Final CTA ============ -->
+<section class="final">
+    <div class="wrap">
+        <h2>Install in one line.</h2>
+        <p>Run this in a terminal, then log out and back in.</p>
+        <div class="code"><pre><code>curl -fsSL https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.sh | bash</code></pre></div>
+        <div class="cta-row">
+            <a class="btn btn-primary" href="install.html">Full install guide</a>
+            <a class="btn btn-secondary" href="https://github.com/AdityaTakuli/Notchex/releases/latest">Download release</a>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+    <div class="wrap">
+        <span>Notchex · GPL-3.0-or-later · Made by <a href="https://github.com/AdityaTakuli">Aditya Takuli</a></span>
+        <span class="footer-links">
+            <a href="install.html">Install</a>
+            <a href="https://github.com/AdityaTakuli/Notchex">GitHub</a>
+            <a href="https://github.com/AdityaTakuli/Notchex/issues">Report an issue</a>
+        </span>
+    </div>
+</footer>
+
+<script src="site.js"></script>
+</body>
+</html>

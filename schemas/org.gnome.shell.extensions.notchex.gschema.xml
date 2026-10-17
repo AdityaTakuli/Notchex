@@ -3,8 +3,11 @@
   <schema id="org.gnome.shell.extensions.notchex"
           path="/org/gnome/shell/extensions/notchex/">
 
+    <!-- features (the "Features" page in preferences) -->
+    <key name="notch-enabled" type="b"><default>true</default><summary>Show the notch</summary><description>The notch at the top of the screen, with live activities and the hub. Spotlight search and the auto-hiding top bar live inside the notch, so they are off while it is off. When off, GNOME's own clock comes back.</description></key>
+
     <!-- modules -->
-    <key name="show-system"        type="b"><default>true</default><summary>Show system monitor in expanded view</summary></key>
+    <key name="show-system"       type="b"><default>true</default><summary>Show system monitor in expanded view</summary></key>
     <key name="show-notifications" type="b"><default>true</default><summary>Enable dynamic notification peek</summary></key>
     <key name="show-calendar"      type="b"><default>true</default><summary>Enable Google Calendar peek</summary></key>
     <key name="show-tasks"         type="b"><default>true</default><summary>Enable Google Tasks peek</summary></key>

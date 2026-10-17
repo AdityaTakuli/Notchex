@@ -2,7 +2,7 @@
 
 # Notchex
 
-**A Dynamic Island and a macOS-style desktop for GNOME.**
+**A working notch and a macOS-style desktop for GNOME.**
 
 [![GNOME Shell 46–50](https://img.shields.io/badge/GNOME%20Shell-46%20%E2%80%93%2050-4A86CF?logo=gnome&logoColor=white)](https://www.gnome.org/)
 [![License: GPL-3.0+](https://img.shields.io/badge/License-GPL--3.0%2B-blue.svg)](LICENSE)
@@ -12,15 +12,17 @@
 
 </div>
 
-Notchex puts an iPhone-style **Dynamic Island** at the top of your GNOME screen. It replaces the top-bar clock, shows what's going on (music, timers, meetings), briefly grows for events such as a track change, a volume change, a Bluetooth device connecting or a notification arriving, and expands into a tabbed hub when you hover over it.
+Notchex puts a working MacBook-style **notch** at the top of your GNOME screen. It replaces the top-bar clock, shows what's going on (music, timers, meetings), briefly grows for events such as a track change, a volume change, a Bluetooth device connecting or a notification arriving, and expands into a tabbed hub when you hover over it.
 
-Around the island, Notchex adds the rest of the macOS feel: a **magnifying Dock**, **Spotlight search** inside the island, **frosted-glass** top bar and menus, a **Control Center** look for Quick Settings, an **auto-hiding top bar**, **three-finger zoom** gestures and optional **traffic-light window buttons**.
+Around the notch, Notchex adds the rest of the macOS feel: a **magnifying Dock**, **Spotlight search** inside the notch, **frosted-glass** top bar and menus, a **Control Center** look for Quick Settings, an **auto-hiding top bar**, **three-finger zoom** gestures and optional **traffic-light window buttons**.
 
-It's plain GJS on top of St/Clutter. There's no Electron, no npm and no build step. Everything in the idle island is driven by signals, so it does almost nothing until something actually changes.
+Every part is optional. The **Features** page in preferences lets you keep only what you want: just the notch, just the Dock, just the look, or everything.
+
+It's plain GJS on top of St/Clutter. There's no Electron, no npm and no build step. Everything in the idle notch is driven by signals, so it does almost nothing until something actually changes.
 
 <!--
   Screenshots: drop images into docs/ and uncomment.
-  <p align="center"><img src="docs/island.png" width="720" alt="The island expanded on the System tab"></p>
+  <p align="center"><img src="docs/notch.png" width="720" alt="The notch expanded on the System tab"></p>
   <p align="center"><img src="docs/dock-spotlight.png" width="720" alt="Dock and Spotlight search"></p>
 -->
 
@@ -29,7 +31,7 @@ It's plain GJS on top of St/Clutter. There's no Electron, no npm and no build st
 ## Contents
 
 - [Features](#features)
-  - [The island](#the-island)
+  - [The notch](#the-notch)
   - [Live activities](#live-activities)
   - [Hub tabs](#hub-tabs)
   - [Dock](#dock)
@@ -45,7 +47,6 @@ It's plain GJS on top of St/Clutter. There's no Electron, no npm and no build st
 - [Troubleshooting](#troubleshooting)
 - [Development](#development)
 - [Project layout](#project-layout)
-- [Migrating from NexNotch](#migrating-from-nexnotch)
 - [Credits](#credits)
 - [License](#license)
 
@@ -53,7 +54,7 @@ It's plain GJS on top of St/Clutter. There's no Electron, no npm and no build st
 
 ## Features
 
-### The island
+### The notch
 
 One rounded surface sits at the top center of your primary monitor and changes shape to show what's relevant.
 
@@ -61,7 +62,7 @@ One rounded surface sits at the top center of your primary monitor and changes s
 |---|---|
 | **Idle** | A capsule showing date, time and battery. While music plays it adds album art, the track and **audio-reactive equalizer bars**. While a Pomodoro runs it shows the countdown. It can also show the temperature or CPU/RAM. |
 | **Hover** | Expands into the hub (the default). With *Expand on hover* turned off, hovering shows a compact second line instead (track, next meeting, timer) and a click expands it. |
-| **Expanded** | A tabbed dashboard. The island resizes to fit each tab. Click the clock header or press `Super + N` to fold it. |
+| **Expanded** | A tabbed dashboard. The notch resizes to fit each tab. Click the clock header or press `Super + N` to fold it. |
 | **Event** | Briefly grows for a live activity, then goes back to what it was showing. |
 
 There are two shapes: **notch**, which attaches to the top screen edge with rounded bottom corners like a MacBook, and **floating**, a fully rounded pill with a configurable gap from the edge.
@@ -84,7 +85,7 @@ Every source is signal-driven. None of them poll.
 
 When several events arrive at once, the most important one wins: critical battery, then notification, media, Bluetooth, volume, brightness and calendar. Less important events wait briefly and are dropped if they go stale. Repeated events of the same kind, such as holding a volume key, update in place instead of animating again.
 
-GNOME's own volume and brightness popup is hidden while the island shows the change. It still appears whenever the island can't show it, for example when the island is expanded, a fullscreen app is open, or a more important event is on screen.
+GNOME's own volume and brightness popup is hidden while the notch shows the change. It still appears whenever the notch can't show it, for example when the notch is expanded, a fullscreen app is open, or a more important event is on screen.
 
 ### Hub tabs
 
@@ -93,7 +94,7 @@ GNOME's own volume and brightness popup is hidden while the island shows the cha
 | **System** | CPU, memory, GPU (AMD and Intel Xe through `gpu_busy_percent`), swap and storage bars; temperature, battery, network, disk I/O, uptime and load. |
 | **Media** | Large album art, title, artist and album, a seekable progress bar, and previous / play-pause / next. |
 | **Calendar** | Google Calendar events through your existing GNOME Online Accounts setup, with no extra login. You can filter by account. |
-| **Tasks** | Google Tasks (through the Tasks REST API with your GOA token). You can add tasks from the island and filter by list. |
+| **Tasks** | Google Tasks (through the Tasks REST API with your GOA token). You can add tasks from the notch and filter by list. |
 | **Weather** | Two locations, condition icons and a 3-day forecast. Uses the free wttr.in backend and accepts city names, districts, GPS coordinates and airport codes. |
 | **Timer** | Pomodoro with presets (50/10, 25/5, 10/2, or your own), a progress ring and cycle tracking. Sessions are logged to JSONL. |
 | **Notes** | Sticky notes saved as Markdown files, one dated folder per day. Fully keyboard-accessible. |
@@ -120,7 +121,7 @@ If Ubuntu Dock or Dash to Dock is also enabled, preferences shows a warning so y
 
 ### Spotlight search
 
-Press `Super + Space` and the island grows into a wide search field.
+Press `Super + Space` and the notch grows into a wide search field.
 
 - Searches **apps**, **Settings panels**, **system actions** (lock, suspend, restart, shut down, log out, screenshot) and **files** (through the Files app's Tracker index)
 - Includes a **calculator**: type `12*7+3` to get the answer
@@ -135,10 +136,10 @@ All of these can be turned off individually.
 
 - **Frosted glass.** The top bar, its menus (Quick Settings, calendar, indicators) and the Dock blur whatever is behind them, with rounded corners and a hairline border. GNOME's blur has no corner radius, so Notchex masks a blurred clone of the windows to each rounded shape with a small shader. The blur is off on the lock screen, so it never shows windows there.
 - **Control Center.** Quick Settings is restyled to look like macOS Control Center: rounded tiles with a round icon that turns blue when on, wide sliders in their own modules, and round buttons.
-- **Auto-hiding top bar.** The GNOME top bar slides away and comes back when the pointer touches the top edge outside the island, while a panel menu is open, or in the Overview. Maximized windows stop just below the island. Optionally, the strip beside the island is painted black while a window is open, so the top looks like one continuous MacBook bar.
+- **Auto-hiding top bar.** The GNOME top bar slides away and comes back when the pointer touches the top edge outside the notch, while a panel menu is open, or in the Overview. Maximized windows stop just below the notch. Optionally, the strip beside the notch is painted black while a window is open, so the top looks like one continuous MacBook bar.
 - **Screen zoom.** Pinch with three fingers to zoom in and out, or double-tap with three fingers to toggle zoom. This drives GNOME's own magnifier, so the Accessibility settings stay in sync.
 - **Traffic-light window buttons.** Red, yellow and green close / minimize / zoom buttons on the left of every GTK 3 and GTK 4 app. Notchex remembers your previous button layout and restores it when you turn the option off. Apps pick up the change after a restart.
-- **macOS-style app icons (optional).** The Dock, Spotlight and the island can use macOS-style icons from [macOSicons.com](https://macosicons.com) (this needs your own API key), or your own icon for any app. Native GNOME icons are always the fallback.
+- **macOS-style app icons (optional).** The Dock, Spotlight and the notch can use macOS-style icons from [macOSicons.com](https://macosicons.com) (this needs your own API key), or your own icon for any app. Native GNOME icons are always the fallback.
 
 ---
 
@@ -217,7 +218,7 @@ gnome-extensions disable Vitals@CoreCoding.com           # covered by the System
 
 | Input | Action |
 |---|---|
-| `Super + N` | Expand or collapse the island |
+| `Super + N` | Expand or collapse the notch |
 | `Super + Space` | Open Spotlight search |
 | `↑` `↓` / `Tab` / `Enter` / `Esc` | Navigate, switch category, open and close in Spotlight |
 | `Alt + Super + 8` | Toggle screen zoom (GNOME default) |
@@ -237,9 +238,10 @@ Open preferences with `gnome-extensions prefs notchex@adityatakuli`, from the Ex
 
 | Page | What you can change |
 |---|---|
+| **Features** | One switch each for the Notch, notifications in the notch, Spotlight, the auto-hiding top bar, the Dock, frosted glass, the Control Center look, window buttons and zoom gestures, plus presets: *Everything*, *Notch only*, *Dock only* and *Look only*. Spotlight and the auto-hiding top bar live inside the notch, so they're off while the notch is off. |
 | **General** | Which modules are on, the system-monitor poll interval, hiding GNOME's clock, zoom gestures |
-| **Appearance** | Shape (notch or floating), corner radius, sizes, outline, top margin; background, text, accent, outline and shadow colors with presets (Island, Glass, Graphite, Nord, Dracula); animation speed and hover/collapse delays; behavior (expand on hover or click, auto-collapse, pill contents, auto-hiding top bar, painting the strip beside the island, audio-reactive bars); traffic-light window buttons; battery icon colors; glass blur strength and which surfaces use it; Control Center style |
-| **Live Activities** | A toggle for each event, how long ahead to announce meetings, how long events stay on screen, and whether the island replaces GNOME's volume/brightness popup |
+| **Appearance** | Shape (notch or floating), corner radius, sizes, outline, top margin; background, text, accent, outline and shadow colors with presets (Notch, Glass, Graphite, Nord, Dracula); animation speed and hover/collapse delays; behavior (expand on hover or click, auto-collapse, pill contents, auto-hiding top bar, painting the strip beside the notch, audio-reactive bars); traffic-light window buttons; battery icon colors; glass blur strength and which surfaces use it; Control Center style |
+| **Live Activities** | A toggle for each event, how long ahead to announce meetings, how long events stay on screen, and whether the notch replaces GNOME's volume/brightness popup |
 | **Dock** | On or off, position, icon size, magnification, visibility mode, theme, opacity, corner radius, edge gap, Trash, running indicators, previews, tooltips, launch bounce, separators |
 | **Search** | On or off, shortcut, replacing the Overview search, including files, history (and clearing it) |
 | **Icons** | Icon source (GNOME, macOS-style or custom), your macOSicons.com API key, how often cached icons refresh, custom icons for each app, icon credits |
@@ -315,12 +317,12 @@ Files Notchex writes:
 
 ## Performance
 
-- **Idle:** the clock ticks once a minute, aligned to the minute. The only other timers are slow refreshes: weather every 30 minutes, the calendar range every 5 minutes, tasks every 10 minutes and Claude usage every 15 minutes. Everything else in the idle island reacts to signals.
+- **Idle:** the clock ticks once a minute, aligned to the minute. The only other timers are slow refreshes: weather every 30 minutes, the calendar range every 5 minutes, tasks every 10 minutes and Claude usage every 15 minutes. Everything else in the idle notch reacts to signals.
 - **System stats** are polled only while the System tab is on screen (every second by default), or at three times the interval if CPU/RAM is shown in the pill. Otherwise they aren't polled at all.
 - **Media progress** uses a one-second timer that exists only while the Media tab is visible and a track is playing.
 - **Audio-reactive bars** run in a **separate process** (`spectrum-helper.js`) that reads the speaker output, never the microphone. It runs only while music plays and the pill is visible, so a stalled audio pipeline can never freeze the compositor.
 - **Quick tab** checks run every 15 seconds, only while the tab is visible. Its NetworkManager and rfkill clients are created the first time the tab opens.
-- **Animations** move only the island itself. Tab content is laid out once at its final width, so nothing reflows on every frame.
+- **Animations** move only the notch itself. Tab content is laid out once at its final width, so nothing reflows on every frame.
 - All async work runs through `Gio.Cancellable`, so disabling the extension never leaves calls pending on destroyed objects. Modules you turn off stop completely.
 
 ---
@@ -332,7 +334,7 @@ Files Notchex writes:
 | GNOME Shell 46, 47, 48, 49, 50 | Supported. Version differences are isolated in `modules/compat.js` |
 | Wayland | Fully supported |
 | X11 | Fully supported |
-| Multi-monitor | The island and Dock live on the primary monitor |
+| Multi-monitor | The notch and Dock live on the primary monitor |
 | HiDPI / fractional scaling | Supported |
 | Ubuntu, Fedora, Arch, Debian, openSUSE | Any distro with a supported GNOME version |
 
@@ -413,7 +415,7 @@ dbus-run-session -- gnome-shell --devkit --wayland
 - GNOME-version differences go in `modules/compat.js` and nowhere else.
 - Async I/O uses GLib async primitives, never synchronous calls on the shell thread.
 - External programs are looked up with `GLib.find_program_in_path()` first.
-- Animations go through `modules/animations.js`, so the island, Dock and Spotlight share one style of motion.
+- Animations go through `modules/animations.js`, so the notch, Dock and Spotlight share one style of motion.
 
 ### Contributing
 
@@ -429,8 +431,8 @@ dbus-run-session -- gnome-shell --devkit --wayland
 ```
 notchex@adityatakuli/
 ├── metadata.json             # UUID, supported shell versions
-├── extension.js              # enable/disable; mounts the island, Dock, Spotlight, zoom, glass
-├── notch.js                  # the island: geometry, animation, hover/click, tabs, events
+├── extension.js              # enable/disable; mounts the notch, Dock, Spotlight, zoom, glass
+├── notch.js                  # the notch: geometry, animation, hover/click, tabs, events
 ├── prefs.js                  # Adwaita preferences window
 ├── stylesheet.css
 ├── Makefile
@@ -467,7 +469,7 @@ notchex@adityatakuli/
     ├── dock.js               # the Dock
     ├── search.js             # Spotlight UI
     ├── search-providers.js   # apps, settings, actions, calculator, files
-    ├── icon-manager.js       # one icon pipeline for Dock, Spotlight and island
+    ├── icon-manager.js       # one icon pipeline for Dock, Spotlight and notch
     ├── icon-provider.js      #   shared paths and base
     ├── system-icon-provider.js
     ├── local-icon-provider.js
@@ -480,30 +482,16 @@ notchex@adityatakuli/
 
 ---
 
-## Migrating from NexNotch
-
-Notchex started as a fork of [NexNotch](https://github.com/NexVar/NexNotch) and has a new UUID and settings schema, so the two can be installed side by side. Coming from NexNotch:
-
-- Disable NexNotch first: `gnome-extensions disable nexnotch@nexvar`.
-- Settings don't carry over automatically. To copy them across, run:
-  ```sh
-  dconf dump /org/gnome/shell/extensions/nexnotch/ | dconf load /org/gnome/shell/extensions/notchex/
-  ```
-- Enter your macOSicons API key again (it's stored in the keyring under a new name).
-- If NexNotch's traffic-light buttons were on, Notchex recognizes and replaces their `gtk.css` block.
-
----
-
 ## Credits
 
-Notchex is built and maintained by **[Aditya Takuli](https://github.com/AdityaTakuli)**.
+Notchex is created and maintained by **[Aditya Takuli](https://github.com/AdityaTakuli)**.
 
-It's based on **[NexNotch](https://github.com/NexVar/NexNotch)** by [NexVar](https://nexvar.io) and [Mert Ali Dalkır](https://mertdlkr.com), which provided the original island, hub tabs and live activities. Notchex adds the Dock, Spotlight search, frosted glass, Control Center styling, the auto-hiding top bar, zoom gestures, window buttons, the icon system, audio-reactive bars and many other changes.
-
-Thanks also to:
+Thanks to:
 - [wttr.in](https://wttr.in) for the free weather API
 - [macOSicons.com](https://macosicons.com) for the community icon library (each icon's credits are shown in preferences)
 - The GNOME Shell and GJS developers
+
+Notchex began as a fork of [NexNotch](https://github.com/NexVar/NexNotch) (GPL-3.0).
 
 ---
 
@@ -512,9 +500,9 @@ Thanks also to:
 [GPL-3.0-or-later](LICENSE).
 
 Copyright © 2026 Aditya Takuli.
-Portions copyright © 2026 NexVar and Mert Ali Dalkır (original NexNotch).
+Includes code from NexNotch, © 2026 NexVar and Mert Ali Dalkır, under the same license.
 
-Notchex is not affiliated with Apple. "Dynamic Island", "Spotlight", "Dock" and "macOS" are used only to describe the look and feel.
+Notchex is not affiliated with Apple. "Spotlight", "Dock" and "macOS" are used only to describe the look and feel.
 
 <div align="center">
 

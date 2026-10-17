@@ -10,16 +10,16 @@ stylesheet.css, LICENSE, README.md, modules/*.js, schemas/*.gschema.xml.
 ## Upload form
 
 ### Name
-Notchex — Dynamic Island for GNOME
+Notchex — a working notch for GNOME
 
 ### Tagline (short)
-Dynamic Island for Linux. MacBook-notch-style hover hub: system stats, Calendar, Tasks, Weather, Pomodoro, Notes, Shelf, Quick actions.
+A working MacBook-style notch for GNOME. Hover hub: system stats, Calendar, Tasks, Weather, Pomodoro, Notes, Shelf, Quick actions.
 
 ### Description (long — paste into e.g.o form)
 
-Notchex brings the iPhone Dynamic Island vibe to your GNOME desktop. A
-MacBook-notch-shaped pill replaces the top-bar clock and expands on hover
-into a tabbed productivity hub — based on NexNotch by NexVar (https://nexvar.io).
+Notchex adds a working MacBook-style notch to your GNOME desktop. The
+notch replaces the top-bar clock and expands on hover
+into a tabbed productivity hub.
 
 **Tabs**
 

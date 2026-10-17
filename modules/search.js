@@ -43,8 +43,8 @@ export class Spotlight {
         this._isOpen = false;
         this._gen = 0;
         this._settingsId = settings.connect('changed', (_s, key) => {
-            if (key === 'search-enabled' || key === 'shortcut-search') this._syncKeybinding();
-            if (key === 'search-enabled' || key === 'search-replace-overview') this._syncOverview();
+            if (key === 'search-enabled' || key === 'notch-enabled' || key === 'shortcut-search') this._syncKeybinding();
+            if (key === 'search-enabled' || key === 'notch-enabled' || key === 'search-replace-overview') this._syncOverview();
         });
         this._syncKeybinding();
         this._syncOverview();
@@ -53,7 +53,7 @@ export class Spotlight {
     /* Typing in the Overview starts our search instead of GNOME's, and
        GNOME's "Type to search" bar is folded away. Restored on disable. */
     _syncOverview() {
-        const want = this._settings.get_boolean('search-enabled') &&
+        const want = this._enabled() &&
             this._settings.get_boolean('search-replace-overview');
         const ctrl = Main.overview.searchController;
         const bin = Main.overview._overview?._controls?._searchEntryBin ?? null;
@@ -97,9 +97,15 @@ export class Spotlight {
         this._view = null;
     }
 
+    /* Spotlight draws inside the notch, so it needs the notch to be on. */
+    _enabled() {
+        return this._settings.get_boolean('search-enabled') &&
+            this._settings.get_boolean('notch-enabled');
+    }
+
     _syncKeybinding() {
         this._unbind();
-        if (!this._settings.get_boolean('search-enabled')) return;
+        if (!this._enabled()) return;
         try {
             Main.wm.addKeybinding('shortcut-search', this._settings, Meta.KeyBindingFlags.NONE,
                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW, () => this.toggle());

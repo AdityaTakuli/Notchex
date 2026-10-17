@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Notchex installer — Dynamic Island and macOS-style desktop for GNOME.
+# Notchex installer — a working notch and macOS-style desktop for GNOME.
 #
 #   curl -fsSL https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.sh | bash
 #

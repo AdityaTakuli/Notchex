@@ -35,39 +35,69 @@ export default class NotchexExtension extends Extension {
         } catch (_) {}
 
         this._icons = new IconManager(this._settings);
-        this._notch = new Notch(this);
 
-        /* Mount the notch into the top chrome layer — OUTSIDE the panel's
-           actor tree. This keeps any Shell.BlurEffect that blur-my-shell
-           attaches to the panel from bleeding through the notch.
-           The notch positions itself (centred on the primary monitor) as
-           part of every size animation and on monitor/scale changes, so no
-           allocation-driven repositioning is needed here. */
-        Main.layoutManager.addTopChrome(this._notch, {
-            trackFullscreen: true,
-            affectsStruts: false,
-            affectsInputRegion: true,
-        });
-
-        this._notch.start();
+        /* The notch can be switched off on its own (Features page), so it
+           is created and destroyed by _syncNotch rather than here. */
+        this._notchSig = this._settings.connect('changed::notch-enabled', () => this._syncNotch());
+        this._syncNotch();
 
         this._dock = new Dock(this._settings, {
             onLaunch: app => this._notch?.showAppLaunch(app),
             icons: this._icons,
         });
 
+        /* Spotlight draws inside the notch. The host forwards to whichever
+           notch currently exists, so search keeps working across toggles. */
         this._search = new Spotlight(this._settings, {
             icons: this._icons,
             onLaunch: app => this._notch?.showAppLaunch(app),
             screenshot: () => this._notch?.takeScreenshot(),
-            host: this._notch,
+            host: {
+                openSearch: (view, onDismiss) => this._notch?.openSearch(view, onDismiss) ?? false,
+                closeSearch: immediate => this._notch?.closeSearch(immediate),
+                resizeSearch: () => this._notch?.resizeSearch(),
+            },
         });
 
         this._zoom = new TrackpadZoom(this._settings);
         this._glass = new PanelGlass(this._settings);
     }
 
+    _syncNotch() {
+        const want = this._settings.get_boolean('notch-enabled');
+        if (want && !this._notch) {
+            this._notch = new Notch(this);
+
+            /* Mount the notch into the top chrome layer — OUTSIDE the panel's
+               actor tree. This keeps any Shell.BlurEffect that blur-my-shell
+               attaches to the panel from bleeding through the notch.
+               The notch positions itself (centred on the primary monitor) as
+               part of every size animation and on monitor/scale changes, so no
+               allocation-driven repositioning is needed here. */
+            Main.layoutManager.addTopChrome(this._notch, {
+                trackFullscreen: true,
+                affectsStruts: false,
+                affectsInputRegion: true,
+            });
+
+            this._notch.start();
+        } else if (!want && this._notch) {
+            this._search?.close(true);
+            this._destroyNotch();
+        }
+    }
+
+    _destroyNotch() {
+        if (!this._notch) return;
+        this._notch.stop();
+        try { Main.layoutManager.removeChrome(this._notch); } catch (_) {}
+        this._notch.destroy();
+        this._notch = null;
+    }
+
     disable() {
+        if (this._notchSig) this._settings.disconnect(this._notchSig);
+        this._notchSig = 0;
         this._glass?.destroy();
         this._glass = null;
         this._zoom?.destroy();
@@ -76,12 +106,7 @@ export default class NotchexExtension extends Extension {
         this._dock = null;
         this._search?.destroy();
         this._search = null;
-        if (this._notch) {
-            this._notch.stop();
-            try { Main.layoutManager.removeChrome(this._notch); } catch (_) {}
-            this._notch.destroy();
-            this._notch = null;
-        }
+        this._destroyNotch();
         this._icons?.destroy();
         this._icons = null;
         this._settings = null;

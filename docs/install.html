@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Install Notchex</title>
+    <meta name="description" content="How to install, update and uninstall Notchex, the working notch for GNOME Shell 46–50.">
+    <meta name="theme-color" content="#0b0b0d">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='10' rx='5' fill='%23000'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="wrap">
+        <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"></span>Notchex</a>
+        <nav class="nav">
+            <a class="hide-sm" href="./#features">Features</a>
+            <a class="hide-sm" href="./#privacy">Privacy</a>
+            <a href="install.html" aria-current="page">Install</a>
+            <a href="https://github.com/AdityaTakuli/Notchex">GitHub</a>
+        </nav>
+    </div>
+</header>
+
+<main class="wrap">
+
+<div class="page-hero">
+    <h1>Install Notchex</h1>
+    <p>About a minute. Notchex installs for your user only and never asks for <code>sudo</code>.</p>
+</div>
+
+<div class="docs">
+    <nav class="toc" aria-label="On this page">
+        <b>On this page</b>
+        <a href="#requirements">Requirements</a>
+        <a href="#install">Install</a>
+        <a href="#after">After installing</a>
+        <a href="#conflicts">Avoid conflicts</a>
+        <a href="#optional">Optional packages</a>
+        <a href="#integrations">Integrations</a>
+        <a href="#update">Update</a>
+        <a href="#uninstall">Uninstall</a>
+        <a href="#troubleshooting">Troubleshooting</a>
+    </nav>
+
+    <article class="doc">
+
+        <h2 id="requirements">Requirements</h2>
+        <ul>
+            <li><b>GNOME Shell 46, 47, 48, 49 or 50</b>. Run <code>gnome-shell --version</code> to check.</li>
+            <li>Wayland or X11</li>
+            <li>Any distro with a supported GNOME version: Ubuntu, Fedora, Arch, Debian, openSUSE and others</li>
+        </ul>
+
+        <h2 id="install">Install</h2>
+        <p class="muted">Choose one method. The one-line installer is the easiest.</p>
+
+        <div class="method-tabs" role="tablist">
+            <button role="tab" aria-selected="true" aria-controls="m-oneline">One-line installer</button>
+            <button role="tab" aria-selected="false" aria-controls="m-zip">Release zip</button>
+            <button role="tab" aria-selected="false" aria-controls="m-source">From source</button>
+        </div>
+
+        <div class="method-panel" id="m-oneline" role="tabpanel">
+            <ol class="steps">
+                <li>
+                    <b>Run the installer</b>
+                    It checks your GNOME version, downloads the latest release, installs it and turns it on.
+                    <div class="code"><pre><code>curl -fsSL https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.sh | bash</code></pre></div>
+                    <span class="muted">Want to read it first? <a href="https://github.com/AdityaTakuli/Notchex/blob/main/install.sh">install.sh</a> is short.</span>
+                </li>
+                <li>
+                    <b>Log out and log back in</b>
+                    On X11 you can press <kbd>Alt</kbd> + <kbd>F2</kbd>, type <code>r</code> and press <kbd>Enter</kbd> instead.
+                </li>
+            </ol>
+            <details>
+                <summary>Install a specific version</summary>
+                <div class="code"><pre><code>curl -fsSL https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.sh | bash -s -- --version v2.0.0</code></pre></div>
+                <p class="muted">Other options: <code>--zip FILE</code> installs from a local zip, and <code>--no-enable</code> installs without turning it on.</p>
+            </details>
+        </div>
+
+        <div class="method-panel" id="m-zip" role="tabpanel" hidden>
+            <ol class="steps">
+                <li>
+                    <b>Download the zip</b>
+                    Get <code>notchex@adityatakuli.shell-extension.zip</code> from the
+                    <a href="https://github.com/AdityaTakuli/Notchex/releases/latest">latest release</a>.
+                </li>
+                <li>
+                    <b>Install it</b>
+                    <div class="code"><pre><code>gnome-extensions install --force notchex@adityatakuli.shell-extension.zip</code></pre></div>
+                </li>
+                <li>
+                    <b>Log out and back in, then turn it on</b>
+                    <div class="code"><pre><code>gnome-extensions enable notchex@adityatakuli</code></pre></div>
+                </li>
+            </ol>
+        </div>
+
+        <div class="method-panel" id="m-source" role="tabpanel" hidden>
+            <ol class="steps">
+                <li>
+                    <b>Clone and install</b>
+                    You need <code>git</code>, <code>make</code> and <code>glib-compile-schemas</code> (part of GLib).
+                    <div class="code"><pre><code>git clone https://github.com/AdityaTakuli/Notchex.git
+cd Notchex
+make install</code></pre></div>
+                </li>
+                <li>
+                    <b>Log out and back in, then turn it on</b>
+                    <div class="code"><pre><code>gnome-extensions enable notchex@adityatakuli</code></pre></div>
+                </li>
+            </ol>
+        </div>
+
+        <h2 id="after">After installing</h2>
+        <p>The notch now sits at the top center of your main monitor in place of the clock. Try:</p>
+        <ul>
+            <li>Hover over the notch, or press <kbd>Super</kbd> + <kbd>N</kbd>, to open the hub</li>
+            <li>Press <kbd>Super</kbd> + <kbd>Space</kbd> for Spotlight search</li>
+            <li>Play some music to see Now Playing in the notch</li>
+        </ul>
+        <div class="note">
+            <b>Only want some of it?</b>
+            Preferences opens on the <b>Features</b> page. Pick a preset (Everything, Notch only, Dock only or Look only), or switch the Notch, Dock, Spotlight and macOS look on or off one by one.
+        </div>
+        <p>To open preferences, search <b>"Notchex Settings"</b> in Spotlight, use the Extensions app, or run:</p>
+        <div class="code"><pre><code>gnome-extensions prefs notchex@adityatakuli</code></pre></div>
+
+        <h2 id="conflicts">Avoid conflicts</h2>
+        <p>Notchex already does what these extensions do. Running them together can cause visual glitches, like two docks:</p>
+        <div class="code"><pre><code>gnome-extensions disable ubuntu-dock@ubuntu.com          <span class="comment"># the Notchex Dock replaces it</span>
+gnome-extensions disable dash-to-dock@micxgx.gmail.com
+gnome-extensions disable Vitals@CoreCoding.com           <span class="comment"># covered by the System tab</span></code></pre></div>
+        <p class="muted">Want to keep your current dock? Turn off the Notchex Dock on the <b>Dock</b> page in preferences instead.</p>
+
+        <h2 id="optional">Optional packages</h2>
+        <p>Most systems already have these. If one is missing, only the feature that needs it turns off.</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Package</th><th>Used for</th></tr></thead>
+                <tbody>
+                    <tr><td><code>libsoup3</code> (<code>gir1.2-soup-3.0</code>)</td><td>Weather, Tasks, Claude usage, macOS-style icons</td></tr>
+                    <tr><td><code>libsecret</code> (<code>gir1.2-secret-1</code>)</td><td>Storing the macOSicons API key in the keyring</td></tr>
+                    <tr><td>GStreamer + PulseAudio/PipeWire-Pulse plugins</td><td>Audio-reactive equalizer bars</td></tr>
+                    <tr><td><code>evolution-data-server</code></td><td>Calendar events</td></tr>
+                    <tr><td>Nautilus / Tracker</td><td>File results in Spotlight</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 id="integrations">Integrations</h2>
+
+        <h3>Google Calendar and Tasks</h3>
+        <ol>
+            <li>Open <b>Settings → Online Accounts</b> and add your Google account.</li>
+            <li>Make sure <b>Calendar</b> is switched on for that account.</li>
+            <li>That's it. The Calendar and Tasks tabs find the account automatically, with no extra login.</li>
+        </ol>
+
+        <h3>Weather</h3>
+        <p>On the <b>Weather</b> page in preferences, enter a city (<code>Berlin</code>), a district, coordinates (<code>52.52,13.40</code>) or an airport code (<code>SFO</code>). Leave it empty to detect your location automatically.</p>
+
+        <h3>Claude Code usage</h3>
+        <p>Install the <a href="https://docs.claude.com/en/docs/claude-code">Claude Code</a> CLI and run <code>claude</code> once to sign in. The <b>Limits</b> tab then shows your session and weekly usage.</p>
+
+        <h3>macOS-style icons</h3>
+        <p>Get a free API key at <a href="https://macosicons.com">macosicons.com</a>, paste it on the <b>Icons</b> page and set <i>Icon source</i> to <b>macOS-style</b>. The key is stored in your GNOME keyring.</p>
+
+        <h2 id="update">Update</h2>
+        <p>Run the same one-line command again, then log out and back in:</p>
+        <div class="code"><pre><code>curl -fsSL https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.sh | bash</code></pre></div>
+        <p class="muted">From source: <code>git pull &amp;&amp; make install</code>.</p>
+
+        <h2 id="uninstall">Uninstall</h2>
+        <div class="note warn">
+            <b>Using traffic-light window buttons?</b>
+            Turn them off in preferences <i>before</i> uninstalling, so your original button layout and <code>gtk.css</code> are restored.
+        </div>
+        <div class="code"><pre><code>curl -fsSL https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.sh | bash -s -- --uninstall</code></pre></div>
+        <p class="muted">From a source checkout: <code>gnome-extensions disable notchex@adityatakuli &amp;&amp; make uninstall</code>.</p>
+
+        <h2 id="troubleshooting">Troubleshooting</h2>
+
+        <details>
+            <summary>Notchex doesn't show up after installing</summary>
+            <p>On Wayland you have to log out and back in. Then check that GNOME sees it:</p>
+            <div class="code"><pre><code>gnome-extensions list | grep notchex</code></pre></div>
+        </details>
+
+        <details>
+            <summary>The installer says my GNOME version isn't supported</summary>
+            <p>Notchex supports GNOME Shell 46 to 50. Check yours with <code>gnome-shell --version</code>. Older releases such as Ubuntu 22.04 (GNOME 42) aren't supported.</p>
+        </details>
+
+        <details>
+            <summary>There are two docks</summary>
+            <p>Disable Ubuntu Dock or Dash to Dock (see <a href="#conflicts">Avoid conflicts</a>), or turn off the Notchex Dock on the <b>Dock</b> page.</p>
+        </details>
+
+        <details>
+            <summary><kbd>Super</kbd> + <kbd>Space</kbd> doesn't open Spotlight</summary>
+            <p>If you have more than one keyboard layout, GNOME uses that shortcut to switch layouts. Pick a different Spotlight shortcut on the <b>Search</b> page.</p>
+        </details>
+
+        <details>
+            <summary>The Calendar tab is empty</summary>
+            <p>Make sure the Google account in Online Accounts has <i>Calendar</i> switched on. If it's still empty, log out and back in.</p>
+        </details>
+
+        <details>
+            <summary>There's no GPU usage</summary>
+            <p>GPU usage appears only on drivers that report it (AMD and some Intel). NVIDIA isn't shown, because reading it would mean running <code>nvidia-smi</code> every second.</p>
+        </details>
+
+        <details>
+            <summary>Something else is wrong</summary>
+            <p>Watch the logs while you reproduce the problem, then <a href="https://github.com/AdityaTakuli/Notchex/issues">open an issue</a> and paste the output:</p>
+            <div class="code"><pre><code>journalctl -f -o cat /usr/bin/gnome-shell</code></pre></div>
+        </details>
+
+    </article>
+</div>
+
+</main>
+
+<footer class="site-footer">
+    <div class="wrap">
+        <span>Notchex · GPL-3.0-or-later · Made by <a href="https://github.com/AdityaTakuli">Aditya Takuli</a></span>
+        <span class="footer-links">
+            <a href="./">Home</a>
+            <a href="https://github.com/AdityaTakuli/Notchex">GitHub</a>
+            <a href="https://github.com/AdityaTakuli/Notchex/issues">Report an issue</a>
+        </span>
+    </div>
+</footer>
+
+<script src="site.js"></script>
+</body>
+</html>

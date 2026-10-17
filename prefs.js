@@ -15,13 +15,27 @@ export default class NotchexPrefs extends ExtensionPreferences {
         const settings = this.getSettings('org.gnome.shell.extensions.notchex');
         window.set_default_size(720, 720);
 
-        window.add(this._generalPage(settings));
-        window.add(this._appearancePage(settings));
-        window.add(this._activitiesPage(settings));
-        window.add(this._dockPage(settings));
+        const generalPage = this._generalPage(settings);
+        const appearancePage = this._appearancePage(settings);
+        const activitiesPage = this._activitiesPage(settings);
+        const dockPage = this._dockPage(settings);
         const iconsPage = this._iconsPage(settings, window);
+        const searchPage = this._searchPage(settings);
+
+        /* Features comes first: one place to pick which parts of Notchex
+           you want, with links to each part's detailed page. */
+        window.add(this._featuresPage(settings, window, {
+            notch: appearancePage,
+            dock: dockPage,
+            search: searchPage,
+            look: appearancePage,
+        }));
+        window.add(generalPage);
+        window.add(appearancePage);
+        window.add(activitiesPage);
+        window.add(dockPage);
         window.add(iconsPage);
-        window.add(this._searchPage(settings));
+        window.add(searchPage);
         window.add(this._clockPage(settings));
         window.add(this._notifPage(settings));
         window.add(this._weatherPage(settings));
@@ -41,6 +55,125 @@ export default class NotchexPrefs extends ExtensionPreferences {
                 return GLib.SOURCE_REMOVE;
             });
         }
+    }
+
+    /* ——— Features ——— */
+
+    _featuresPage(settings, window, pages) {
+        const page = new Adw.PreferencesPage({title: 'Features', icon_name: 'view-grid-symbolic'});
+
+        const intro = new Adw.PreferencesGroup({
+            title: 'Choose what Notchex changes',
+            description: 'Each part works on its own. Start from a preset, then switch individual parts on or off. Changes apply right away.',
+        });
+        const presets = [
+            ['Everything', 'The notch, Dock, Spotlight and the full macOS look', 'starred-symbolic', {
+                'notch-enabled': true, 'show-notifications': true, 'search-enabled': true,
+                'dock-enabled': true, 'glass-enabled': true, 'control-center-style': true, 'zoom-gestures': true,
+            }],
+            ['Notch only', 'Just the notch, with notifications and Spotlight. GNOME looks the same otherwise.', 'view-reveal-symbolic', {
+                'notch-enabled': true, 'show-notifications': true, 'search-enabled': true,
+                'dock-enabled': false, 'glass-enabled': false, 'control-center-style': false,
+            }],
+            ['Dock only', 'Just the magnifying Dock. GNOME keeps its own clock.', 'view-app-grid-symbolic', {
+                'notch-enabled': false, 'dock-enabled': true,
+                'glass-enabled': false, 'control-center-style': false,
+            }],
+            ['Look only', 'Frosted glass and the Control Center style, with no notch or Dock', 'applications-graphics-symbolic', {
+                'notch-enabled': false, 'dock-enabled': false,
+                'glass-enabled': true, 'control-center-style': true,
+            }],
+        ];
+        for (const [title, subtitle, icon, values] of presets) {
+            const row = new Adw.ActionRow({title, subtitle});
+            row.add_prefix(new Gtk.Image({icon_name: icon}));
+            const btn = new Gtk.Button({label: 'Use', valign: Gtk.Align.CENTER, css_classes: ['pill']});
+            btn.connect('clicked', () => {
+                for (const [key, value] of Object.entries(values))
+                    settings.set_boolean(key, value);
+            });
+            row.add_suffix(btn);
+            row.set_activatable_widget(btn);
+            intro.add(row);
+        }
+        page.add(intro);
+
+        const more = target => {
+            const btn = new Gtk.Button({
+                label: 'More',
+                valign: Gtk.Align.CENTER,
+                css_classes: ['flat'],
+                tooltip_text: `Open the ${target.title} page`,
+            });
+            btn.connect('clicked', () => window.set_visible_page(target));
+            return btn;
+        };
+        const needsNotch = row => {
+            settings.bind('notch-enabled', row, 'sensitive', Gio.SettingsBindFlags.GET);
+            return row;
+        };
+
+        /* the notch and what lives inside it */
+        const notch = new Adw.PreferencesGroup({
+            title: 'Notch',
+            description: 'Spotlight and the auto-hiding top bar live inside the notch, so they need it on.',
+            header_suffix: more(pages.notch),
+        });
+        notch.add(this._boolRow(settings, 'notch-enabled', 'Notch',
+            'Replaces the top-bar clock. Shows music, timers and events, and opens into the hub.'));
+        notch.add(needsNotch(this._boolRow(settings, 'show-notifications', 'Notifications in the notch',
+            'New notifications appear in the notch instead of a banner')));
+        notch.add(needsNotch(this._boolRow(settings, 'search-enabled', 'Spotlight search',
+            'Super+Space turns the notch into a search bar')));
+        notch.add(needsNotch(this._boolRow(settings, 'autohide-top-bar', 'Auto-hide the top bar',
+            'The top bar slides away and comes back at the top edge')));
+        page.add(notch);
+
+        /* the Dock */
+        const dock = new Adw.PreferencesGroup({
+            title: 'Dock',
+            header_suffix: more(pages.dock),
+        });
+        dock.add(this._boolRow(settings, 'dock-enabled', 'Dock',
+            'macOS-style Dock with magnifying icons, at the bottom or side of the screen'));
+        page.add(dock);
+
+        /* changes to GNOME's own look and apps */
+        const look = new Adw.PreferencesGroup({
+            title: 'App and desktop look',
+            header_suffix: more(pages.look),
+        });
+        look.add(this._boolRow(settings, 'glass-enabled', 'Frosted glass',
+            'Blur behind the top bar, its menus and the Dock'));
+        look.add(this._boolRow(settings, 'control-center-style', 'Control Center look',
+            'Quick Settings styled like macOS Control Center'));
+        look.add(this._macButtonsRow(settings,
+            'Red, yellow and green buttons on the left of app windows. Apps pick this up after a restart.'));
+        look.add(this._boolRow(settings, 'zoom-gestures', 'Zoom gestures',
+            'Pinch with three fingers to zoom the screen'));
+        page.add(look);
+
+        return page;
+    }
+
+    /* The window-button switch appears on two pages; keep them in step. */
+    _macButtonsRow(settings, subtitle = 'Red / yellow / green close, minimize and zoom on the left') {
+        this._macRows ??= [];
+        const row = new Adw.SwitchRow({
+            title: 'macOS window buttons',
+            subtitle,
+            active: macButtonsApplied(),
+        });
+        row.connect('notify::active', () => {
+            if (this._syncingMac) return;
+            try { applyMacWindowButtons(settings, row.active); } catch (e) { console.error(e); }
+            this._syncingMac = true;
+            for (const other of this._macRows)
+                if (other !== row) other.active = row.active;
+            this._syncingMac = false;
+        });
+        this._macRows.push(row);
+        return row;
     }
 
     _generalPage(settings) {
@@ -81,10 +214,10 @@ export default class NotchexPrefs extends ExtensionPreferences {
 
         const shape = new Adw.PreferencesGroup({
             title: 'Shape',
-            description: 'Notch keeps the top edge attached to the screen and rounds the bottom corners, like a MacBook notch. Floating is a fully rounded island.',
+            description: 'Notch keeps the top edge attached to the screen and rounds the bottom corners, like a MacBook notch. Floating is a fully rounded pill.',
         });
         shape.add(this._choiceRow(settings, 'island-style', 'Style',
-            [['notch', 'Notch — attached to the top edge'], ['floating', 'Floating island']]));
+            [['notch', 'Notch — attached to the top edge'], ['floating', 'Floating pill']]));
         shape.add(this._intRow(settings, 'corner-radius',    'Corner radius',            0,  40, 1));
         shape.add(this._intRow(settings, 'collapsed-width',  'Collapsed width (minimum)', 120, 480, 5));
         shape.add(this._intRow(settings, 'collapsed-height', 'Collapsed height',        22,  56, 1));
@@ -109,7 +242,7 @@ export default class NotchexPrefs extends ExtensionPreferences {
         const presetRow = new Adw.ActionRow({title: 'Presets', subtitle: 'One-click theme swap'});
         const presetBox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, spacing: 4, halign: Gtk.Align.END, valign: Gtk.Align.CENTER});
         for (const [label, bg, ac, border] of [
-            ['Island',   'rgba(0, 0, 0, 1.00)',    'rgba(255, 255, 255, 0.14)', 'rgba(255, 255, 255, 0.08)'],
+            ['Notch',    'rgba(0, 0, 0, 1.00)',    'rgba(255, 255, 255, 0.14)', 'rgba(255, 255, 255, 0.08)'],
             ['Glass',    'rgba(12, 12, 14, 0.78)', 'rgba(255, 255, 255, 0.16)', 'rgba(255, 255, 255, 0.14)'],
             ['Graphite', 'rgba(22, 22, 26, 0.94)', 'rgba(180, 180, 190, 0.22)', 'rgba(255, 255, 255, 0.07)'],
             ['Nord',     'rgba(46, 52, 64, 0.94)', 'rgba(136, 192, 208, 0.30)', 'rgba(136, 192, 208, 0.18)'],
@@ -146,9 +279,9 @@ export default class NotchexPrefs extends ExtensionPreferences {
         behavior.add(this._boolRow(settings, 'always-show-media', 'Always show media',
             'Keep paused media in the pill (otherwise only while playing).'));
         behavior.add(this._boolRow(settings, 'autohide-top-bar', 'Hide the top bar (Mac style)',
-            'The top bar reappears when you push the pointer to the top edge. Windows start right below the island.'));
-        behavior.add(this._boolRow(settings, 'fill-top-strip', 'Black strip beside the island',
-            'With the top bar hidden, fill the space beside the island with its color while an app is open. The wallpaper shows on an empty desktop.'));
+            'The top bar reappears when you push the pointer to the top edge. Windows start right below the notch.'));
+        behavior.add(this._boolRow(settings, 'fill-top-strip', 'Black strip beside the notch',
+            'With the top bar hidden, fill the space beside the notch with its color while an app is open. The wallpaper shows on an empty desktop.'));
         behavior.add(this._boolRow(settings, 'eq-follow-audio', 'Music bars follow the audio',
             'Reads what your speakers play (never the microphone). GNOME may show its recording indicator while it runs.'));
         behavior.add(this._boolRow(settings, 'pill-show-weather', 'Temperature in the pill'));
@@ -160,15 +293,7 @@ export default class NotchexPrefs extends ExtensionPreferences {
             title: 'Windows',
             description: 'Applies to all apps (Terminal, Files, Settings…). Apps pick it up when restarted. Sandboxed snap/Flatpak apps may keep their own buttons.',
         });
-        const macButtons = new Adw.SwitchRow({
-            title: 'macOS window buttons',
-            subtitle: 'Red / yellow / green close, minimize and zoom on the left',
-            active: macButtonsApplied(),
-        });
-        macButtons.connect('notify::active', () => {
-            try { applyMacWindowButtons(settings, macButtons.active); } catch (e) { console.error(e); }
-        });
-        windows.add(macButtons);
+        windows.add(this._macButtonsRow(settings));
         page.add(windows);
 
         const battGroup = new Adw.PreferencesGroup({
@@ -201,11 +326,11 @@ export default class NotchexPrefs extends ExtensionPreferences {
         const page = new Adw.PreferencesPage({title: 'Live Activities', icon_name: 'emblem-important-symbolic'});
 
         const group = new Adw.PreferencesGroup({
-            title: 'Island events',
-            description: 'Short-lived events the island expands for, then folds back. When several happen at once the most important wins: critical battery › notifications › media › Bluetooth › volume › brightness › calendar.',
+            title: 'Notch events',
+            description: 'Short-lived events the notch expands for, then folds back. When several happen at once the most important wins: critical battery › notifications › media › Bluetooth › volume › brightness › calendar.',
         });
         group.add(this._boolRow(settings, 'event-media',      'Now Playing', 'When the track changes in any MPRIS player'));
-        group.add(this._boolRow(settings, 'show-notifications', 'Notifications', 'Show incoming notifications in the island'));
+        group.add(this._boolRow(settings, 'show-notifications', 'Notifications', 'Show incoming notifications in the notch'));
         group.add(this._boolRow(settings, 'event-volume',     'Volume'));
         group.add(this._boolRow(settings, 'event-brightness', 'Screen brightness'));
         group.add(this._boolRow(settings, 'event-battery',    'Battery', 'Charger connected / removed, low and critical battery'));
@@ -218,7 +343,7 @@ export default class NotchexPrefs extends ExtensionPreferences {
 
         const osd = new Adw.PreferencesGroup({title: 'System popups'});
         osd.add(this._boolRow(settings, 'replace-system-osd', 'Replace GNOME volume / brightness popup',
-            'The GNOME popup still appears whenever the island cannot show the change (expanded, fullscreen app, or a more important event on screen).'));
+            'The GNOME popup still appears whenever the notch cannot show the change (expanded, fullscreen app, or a more important event on screen).'));
         page.add(osd);
 
         return page;
@@ -318,7 +443,7 @@ export default class NotchexPrefs extends ExtensionPreferences {
         });
         group.add(sc);
         group.add(this._boolRow(settings, 'search-replace-overview', 'Replace the Overview search bar',
-            'Typing in the Overview opens search in the island instead.'));
+            'Typing in the Overview opens search in the notch instead.'));
         group.add(this._boolRow(settings, 'search-files', 'Include files',
             'Uses the Files app\'s search index (Tracker).'));
         group.add(this._boolRow(settings, 'search-remember-history', 'Remember recent searches'));
