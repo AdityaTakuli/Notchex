@@ -22,11 +22,14 @@ Every part is optional. The **Features** page in preferences lets you keep only 
 
 It's plain GJS on top of St/Clutter. There's no Electron, no npm and no build step. Everything in the idle notch is driven by signals, so it does almost nothing until something actually changes.
 
-<!--
-  Screenshots: drop images into docs/ and uncomment.
-  <p align="center"><img src="docs/notch.png" width="720" alt="The notch expanded on the System tab"></p>
-  <p align="center"><img src="docs/dock-spotlight.png" width="720" alt="Dock and Spotlight search"></p>
--->
+<p align="center">
+  <img src="docs/shots/hub-system.png" width="49%" alt="The notch open on the System tab">
+  <img src="docs/shots/hub-media.png" width="49%" alt="The notch open on the Media tab">
+</p>
+<p align="center">
+  <img src="docs/shots/spotlight.jpg" width="49%" alt="Spotlight search in the notch, with the Dock">
+  <img src="docs/shots/control.jpg" width="49%" alt="Control Center look, with music in the notch">
+</p>
 
 ---
 

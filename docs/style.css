@@ -393,21 +393,20 @@ section + section { border-top: 1px solid var(--border); }
 .chip span { color: var(--text-dim); font-size: 14px; }
 
 /* Screenshots */
-.shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; }
+.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; }
 @media (max-width: 600px) { .shots { grid-template-columns: 1fr; } }
 .shot { margin: 0; }
 .shot .frame {
     aspect-ratio: 16 / 10;
     border-radius: var(--radius);
-    border: 1px dashed var(--border);
+    border: 1px solid var(--border);
     background: var(--bg-sunken);
-    display: grid;
-    place-items: center;
-    color: var(--text-dim);
-    font-size: 14px;
+    box-shadow: var(--shadow);
+    display: block;
     overflow: hidden;
 }
-.shot .frame img { width: 100%; height: 100%; object-fit: cover; }
+.shot .frame img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.4s ease; }
+.shot .frame:hover img { transform: scale(1.03); }
 .shot figcaption { margin-top: 10px; font-size: 15px; color: var(--text-dim); }
 
 /* Tables */
