@@ -5,25 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Install Notchex</title>
     <meta name="description" content="How to install, update and uninstall Notchex, the working notch for GNOME Shell 46–50.">
-    <meta name="theme-color" content="#0b0b0d">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='11' width='26' height='10' rx='5' fill='%23000'/%3E%3C/svg%3E">
+    <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b0b0d" media="(prefers-color-scheme: dark)">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M3 10h26v4a8 8 0 0 1-8 8H11a8 8 0 0 1-8-8z' fill='%23000'/%3E%3C/svg%3E">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<a class="skip" href="#main">Skip to content</a>
+
 <header class="site-header">
     <div class="wrap">
         <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"></span>Notchex</a>
-        <nav class="nav">
+        <nav class="nav" aria-label="Main">
             <a class="hide-sm" href="./#features">Features</a>
+            <a class="hide-sm" href="./#screenshots">Screenshots</a>
             <a class="hide-sm" href="./#privacy">Privacy</a>
-            <a href="install.html" aria-current="page">Install</a>
             <a href="https://github.com/AdityaTakuli/Notchex">GitHub</a>
+            <a class="nav-cta" href="install.html" aria-current="page">Install</a>
         </nav>
     </div>
 </header>
 
-<main class="wrap">
+<main class="wrap" id="main">
 
 <div class="page-hero">
     <h1>Install Notchex</h1>
@@ -56,13 +60,13 @@
         <h2 id="install">Install</h2>
         <p class="muted">Choose one method. The one-line installer is the easiest.</p>
 
-        <div class="method-tabs" role="tablist">
-            <button role="tab" aria-selected="true" aria-controls="m-oneline">One-line installer</button>
-            <button role="tab" aria-selected="false" aria-controls="m-zip">Release zip</button>
-            <button role="tab" aria-selected="false" aria-controls="m-source">From source</button>
+        <div class="method-tabs" role="tablist" aria-label="Install method">
+            <button role="tab" aria-selected="true" aria-controls="m-oneline" id="t-oneline">One-line installer</button>
+            <button role="tab" aria-selected="false" aria-controls="m-zip" id="t-zip">Release zip</button>
+            <button role="tab" aria-selected="false" aria-controls="m-source" id="t-source">From source</button>
         </div>
 
-        <div class="method-panel" id="m-oneline" role="tabpanel">
+        <div class="method-panel" id="m-oneline" role="tabpanel" aria-labelledby="t-oneline">
             <ol class="steps">
                 <li>
                     <b>Run the installer</b>
@@ -82,7 +86,7 @@
             </details>
         </div>
 
-        <div class="method-panel" id="m-zip" role="tabpanel" hidden>
+        <div class="method-panel" id="m-zip" role="tabpanel" aria-labelledby="t-zip" hidden>
             <ol class="steps">
                 <li>
                     <b>Download the zip</b>
@@ -100,7 +104,7 @@
             </ol>
         </div>
 
-        <div class="method-panel" id="m-source" role="tabpanel" hidden>
+        <div class="method-panel" id="m-source" role="tabpanel" aria-labelledby="t-source" hidden>
             <ol class="steps">
                 <li>
                     <b>Clone and install</b>
@@ -141,7 +145,7 @@ gnome-extensions disable Vitals@CoreCoding.com           <span class="comment">#
         <p>Most systems already have these. If one is missing, only the feature that needs it turns off.</p>
         <div class="table-wrap">
             <table>
-                <thead><tr><th>Package</th><th>Used for</th></tr></thead>
+                <thead><tr><th scope="col">Package</th><th scope="col">Used for</th></tr></thead>
                 <tbody>
                     <tr><td><code>libsoup3</code> (<code>gir1.2-soup-3.0</code>)</td><td>Weather, Tasks, Claude usage, macOS-style icons</td></tr>
                     <tr><td><code>libsecret</code> (<code>gir1.2-secret-1</code>)</td><td>Storing the macOSicons API key in the keyring</td></tr>
