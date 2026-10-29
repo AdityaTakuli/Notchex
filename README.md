@@ -115,7 +115,7 @@ A macOS-style Dock built on GNOME's own favorites, so it uses the same pinned ap
 
 - Icons **magnify** under the pointer, with adjustable strength
 - Can sit at the **bottom, left or right**
-- Three visibility modes: **always** shown (windows make room), **autohide** (appears when the pointer reaches the edge) and **intelligent** (hides when a window overlaps it)
+- Three visibility modes: **always** shown (windows make room), **autohide** (appears when the pointer reaches the edge) and **intelligent** (hides when a window overlaps it, and a few seconds after nothing does)
 - Running indicators, window previews on hover, app-name tooltips and a bounce on launch
 - Drag an icon out of the Dock to unpin it
 - **Trash** with a full/empty state, and separators between pinned apps, running apps and the Trash

@@ -103,7 +103,7 @@
       <choices><choice value="always"/><choice value="autohide"/><choice value="intelligent"/></choices>
       <default>"intelligent"</default>
       <summary>Dock visibility</summary>
-      <description>always: always shown, windows make room. autohide: shown only when the pointer reaches the edge. intelligent: hides when a window overlaps it.</description>
+      <description>always: always shown, windows make room. autohide: shown only when the pointer reaches the edge. intelligent: hides when a window overlaps it, and a few seconds after nothing does.</description>
     </key>
     <key name="dock-opacity"          type="i"><default>72</default><range min="0" max="100"/><summary>Dock background opacity (%)</summary></key>
     <key name="dock-theme" type="s">

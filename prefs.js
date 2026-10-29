@@ -359,7 +359,7 @@ export default class NotchexPrefs extends ExtensionPreferences {
         main.add(this._choiceRow(settings, 'dock-position', 'Position',
             [['bottom', 'Bottom'], ['left', 'Left'], ['right', 'Right']]));
         main.add(this._choiceRow(settings, 'dock-autohide', 'Visibility', [
-            ['intelligent', 'Hide when a window overlaps'],
+            ['intelligent', 'Hide when a window overlaps or after a few idle seconds'],
             ['autohide', 'Auto-hide (show at the screen edge)'],
             ['always', 'Always visible'],
         ]));

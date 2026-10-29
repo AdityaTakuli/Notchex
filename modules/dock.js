@@ -19,6 +19,9 @@ import {boxLayout, launchContext, isDesktopWindow, makeRect} from './compat.js';
 import {GlassLayer} from './glass.js';
 
 const HIDE_DELAY_MS = 650;
+/* "intelligent" mode: with nothing covering the Dock, it stays up this
+   long and then tucks away until the pointer reaches the edge */
+const IDLE_HIDE_MS = 3000;
 const GLASS_KEYS = ['glass-enabled', 'glass-dock', 'glass-blur'];
 const TOOLTIP_DELAY_MS = 250;
 const PREVIEW_DELAY_MS = 650;
@@ -421,6 +424,12 @@ export class Dock {
         this._enabled = false;
         for (const id of this._timers) GLib.source_remove(id);
         this._timers.clear();
+        /* the dock re-enables itself on settings changes; a leftover id
+           here would make _queueAutohide/_queueIconGeometry bail forever */
+        this._autohideIdle = this._geomTimer = this._hideTimer = 0;
+        this._tooltipTimer = this._previewTimer = this._previewHide = 0;
+        this._idleTimer = 0;
+        this._idleExpired = false;
         this._hideTooltip();
         this._hidePreviews(true);
         this._clearPlaceholder();
@@ -747,9 +756,27 @@ export class Dock {
         if (this._keepVisible()) show = true;
         else if (this.hideMode === 'always') show = true;
         else if (this.hideMode === 'autohide') show = false;
-        else show = !this._windowOverlaps();
+        else show = this._intelligentShow();
         if (force) this._revealed = !show;
         this._reveal(show);
+    }
+
+    /* Hidden while a window covers the Dock. Once nothing does (a window
+       was minimized, closed or moved away) it shows for IDLE_HIDE_MS and
+       then hides too; the hot edge brings it back. */
+    _intelligentShow() {
+        if (this._windowOverlaps()) {
+            this._idleTimer = this._cancel(this._idleTimer);
+            this._idleExpired = false;
+            return false;
+        }
+        if (this._idleExpired) return false;
+        this._idleTimer ||= this._later(IDLE_HIDE_MS, () => {
+            this._idleTimer = 0;
+            this._idleExpired = true;
+            this._updateAutohide();
+        });
+        return true;
     }
 
     _windowOverlaps() {
