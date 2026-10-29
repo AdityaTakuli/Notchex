@@ -272,6 +272,8 @@ export default class NotchexPrefs extends ExtensionPreferences {
         behavior.add(this._boolRow(settings, 'expand-on-hover', 'Expand on hover',
             'When off, hovering shows a compact preview and clicking expands.'));
         behavior.add(this._boolRow(settings, 'expand-on-click', 'Expand on click'));
+        behavior.add(this._boolRow(settings, 'pill-gestures', 'Scroll and swipe on the notch',
+            'Scroll to change the volume, swipe sideways to skip tracks'));
         behavior.add(this._boolRow(settings, 'auto-collapse', 'Auto-collapse',
             'When off, click the clock header or use the shortcut to collapse.'));
         behavior.add(this._boolRow(settings, 'always-show-clock', 'Always show clock',
@@ -733,7 +735,7 @@ export default class NotchexPrefs extends ExtensionPreferences {
             title: 'Claude Code usage',
             description: 'Reads the local Claude Code CLI session (the same login `claude` already uses) and shows session/weekly quota utilization. Requires having run `claude` at least once to sign in.',
         });
-        group.add(this._boolRow(settings, 'show-claude-usage', 'Show Claude usage tab'));
+        group.add(this._boolRow(settings, 'show-claude-usage', 'Show Claude usage (System → Claude)'));
         group.add(this._intRow(settings, 'claude-usage-refresh', 'Refresh interval (min)', 5, 120, 5));
         page.add(group);
         return page;
@@ -1004,7 +1006,7 @@ export default class NotchexPrefs extends ExtensionPreferences {
 
         const dndGroup = new Adw.PreferencesGroup({
             title: 'Do Not Disturb',
-            description: 'Toggle from the notch Quick tab. This mirrors the GNOME "Show banners" setting, so it also affects other apps.',
+            description: 'Toggle from the notch (System → Controls). This mirrors the GNOME "Show banners" setting, so it also affects other apps.',
         });
         const dndRow = new Adw.ActionRow({
             title: 'System DND state',

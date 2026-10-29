@@ -33,6 +33,7 @@ export const QuickHub = GObject.registerClass({
         'updated': {},
         'request-collapse': {},
         'request-screenshot': {},
+        'request-resize': {},
     },
 }, class QuickHub extends GObject.Object {
     _init(settings, deps = {}) {
@@ -41,6 +42,7 @@ export const QuickHub = GObject.registerClass({
         this._volume = deps.volume ?? null;
         this._brightness = deps.brightness ?? null;
         this._bluetooth = deps.bluetooth ?? null;
+        this._privacy = deps.privacy ?? null;
         this._mic = false;
         this._cam = false;
         this._btDevices = [];
@@ -105,8 +107,12 @@ export const QuickHub = GObject.registerClass({
 
     async _refresh() {
         try {
-            this._mic = await this._anyAppUsing('Audio/Source');
-            this._cam = await this._anyCameraUsing();
+            /* the privacy watcher knows without spawning pactl/fuser (and
+               fuser also counted PipeWire holding the camera as "in use") */
+            if (!this._privacy) {
+                this._mic = await this._anyAppUsing('Audio/Source');
+                this._cam = await this._anyCameraUsing();
+            }
             this._btDevices = await this._btBatteries();
             this._kbLayout  = this._currentLayout();
             this.emit('updated');
@@ -382,8 +388,10 @@ export const QuickHub = GObject.registerClass({
         }
 
         const privacyRow = new St.BoxLayout({style_class: 'notchex-quick-row'});
-        privacyRow.add_child(this._pill('Mic',    this._mic  ? 'on'  : 'off', this._mic));
-        privacyRow.add_child(this._pill('Camera', this._cam  ? 'on'  : 'off', this._cam));
+        const mic = this._privacy ? this._privacy.mic : this._mic;
+        const cam = this._privacy ? this._privacy.camera : this._cam;
+        privacyRow.add_child(this._pill('Microphone', mic ? 'In use' : 'Off', mic));
+        privacyRow.add_child(this._pill('Camera', cam ? 'In use' : 'Off', cam));
         privacyRow.add_child(this._pill('Layout', this._kbLayout || '—', false));
         box.add_child(privacyRow);
 
@@ -399,12 +407,22 @@ export const QuickHub = GObject.registerClass({
             }
         }
 
+        /* icon-only actions (their name shows in the hint on hover) and one
+           Power button that reveals the destructive actions on demand */
         const actions = new St.BoxLayout({style_class: 'notchex-quick-actions'});
+        const hint = new St.Label({text: '', style_class: 'notchex-quick-hint',
+            x_expand: true, y_align: Clutter.ActorAlign.CENTER});
+        const iconAction = (label, icon, cb) => {
+            const b = this._actionButton(label, cb, icon, true);
+            b.connect('notify::hover', () => { hint.text = b.hover ? label : ''; });
+            b.connect('key-focus-in', () => { hint.text = label; });
+            b.connect('key-focus-out', () => { hint.text = ''; });
+            actions.add_child(b);
+        };
         /* instant full-screen shot (the island folds away first); the
            area/window picker is GNOME's own screenshot tool */
-        actions.add_child(this._actionButton('Screenshot', () => this.emit('request-screenshot'),
-            'camera-photo-symbolic'));
-        actions.add_child(this._actionButton('Area…', () => {
+        iconAction('Screenshot', 'camera-photo-symbolic', () => this.emit('request-screenshot'));
+        iconAction('Capture Area', 'selection-mode-symbolic', () => {
             this.emit('request-collapse');
             const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 350, () => {
                 this._armedTimers.delete(id);
@@ -412,21 +430,33 @@ export const QuickHub = GObject.registerClass({
                 return GLib.SOURCE_REMOVE;
             });
             this._armedTimers.add(id);
-        }, 'selection-mode-symbolic'));
-        actions.add_child(this._actionButton('Settings', () => {
+        });
+        iconAction('Settings', 'emblem-system-symbolic', () => {
             this.emit('request-collapse');
             try { Gio.DesktopAppInfo.new('org.gnome.Settings.desktop')?.launch([], null); }
             catch (e) { logError(e, 'notchex:quick:settings'); }
-        }, 'emblem-system-symbolic'));
-        /* Lock and Suspend are safe one-click; Log out / Reboot / Shutdown
-           require a second confirmation click within 3 s ("Really?" arm
-           state) so accidental taps in a tiny hover panel don't kill work. */
-        actions.add_child(this._actionButton('Lock',      () => this._run(['loginctl', 'lock-session']), 'system-lock-screen-symbolic'));
-        actions.add_child(this._actionButton('Suspend',   () => this._run(['systemctl', 'suspend']), 'media-playback-pause-symbolic'));
-        actions.add_child(this._armedActionButton('Log out',  ['gnome-session-quit', '--logout', '--no-prompt']));
-        actions.add_child(this._armedActionButton('Reboot',   ['systemctl', 'reboot']));
-        actions.add_child(this._armedActionButton('Shutdown', ['systemctl', 'poweroff']));
+        });
+        iconAction('Lock', 'system-lock-screen-symbolic', () => this._run(['loginctl', 'lock-session']));
+        iconAction('Suspend', 'weather-clear-night-symbolic', () => this._run(['systemctl', 'suspend']));
+        actions.add_child(hint);
+
+        /* Log out / Restart / Shut Down stay one level down, and each still
+           needs a confirming second click ("Really?" arm state) so a stray
+           click in a hover panel can't kill work. */
+        const power = new St.BoxLayout({style_class: 'notchex-quick-power', visible: false});
+        power.add_child(this._armedActionButton('Log Out',   ['gnome-session-quit', '--logout', '--no-prompt']));
+        power.add_child(this._armedActionButton('Restart',   ['systemctl', 'reboot']));
+        power.add_child(this._armedActionButton('Shut Down', ['systemctl', 'poweroff']));
+        const powerBtn = this._actionButton('Power', () => {
+            power.visible = !power.visible;
+            powerBtn.checked = power.visible;
+            this.emit('request-resize');
+        }, 'system-shutdown-symbolic');
+        powerBtn.toggle_mode = false;
+        powerBtn.accessible_name = 'Power options';
+        actions.add_child(powerBtn);
         box.add_child(actions);
+        box.add_child(power);
 
         return box;
     }
@@ -438,9 +468,13 @@ export const QuickHub = GObject.registerClass({
         return p;
     }
 
-    _actionButton(label, cb, icon = null) {
-        const b = new St.Button({style_class: 'notchex-quick-action', accessible_name: label, can_focus: true});
-        if (icon) {
+    _actionButton(label, cb, icon = null, iconOnly = false) {
+        const b = new St.Button({style_class: 'notchex-quick-action', accessible_name: label, can_focus: true,
+            track_hover: true});
+        if (icon && iconOnly) {
+            b.add_style_class_name('icon-only');
+            b.set_child(new St.Icon({icon_name: icon, icon_size: 16}));
+        } else if (icon) {
             const inner = new St.BoxLayout({style_class: 'notchex-quick-action-inner'});
             inner.add_child(new St.Icon({icon_name: icon, icon_size: 13, y_align: Clutter.ActorAlign.CENTER}));
             inner.add_child(new St.Label({text: label, y_align: Clutter.ActorAlign.CENTER}));

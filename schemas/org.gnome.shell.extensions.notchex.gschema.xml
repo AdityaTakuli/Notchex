@@ -55,6 +55,7 @@
     <!-- behavior -->
     <key name="expand-on-hover"   type="b"><default>true</default><summary>Expand when hovered</summary><description>When off, hovering shows a compact preview and a click expands.</description></key>
     <key name="expand-on-click"   type="b"><default>true</default><summary>Expand when clicked</summary></key>
+    <key name="pill-gestures"     type="b"><default>true</default><summary>Scroll and swipe on the notch</summary><description>Scroll up or down over the notch to change the volume; swipe sideways to skip tracks.</description></key>
     <key name="auto-collapse"     type="b"><default>true</default><summary>Collapse automatically when the pointer leaves</summary><description>When off, click the clock header (or use the shortcut) to collapse.</description></key>
     <key name="always-show-clock" type="b"><default>true</default><summary>Keep the clock visible while media is shown in the pill</summary></key>
     <key name="always-show-media" type="b"><default>true</default><summary>Keep paused media in the pill (otherwise only while playing)</summary></key>

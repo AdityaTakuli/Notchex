@@ -37,7 +37,10 @@ const out = new Gio.DataOutputStream({
 let pipeline;
 try {
     pipeline = Gst.parse_launch(
-        `pulsesrc device=${device} client-name=Notchex buffer-time=60000 latency-time=20000 ! ` +
+        /* tagged so the privacy dot doesn't count reading the speakers as a mic */
+        `pulsesrc device=${device} client-name=Notchex ` +
+        'stream-properties="props,application.id=(string)io.notchex.Spectrum" ' +
+        'buffer-time=60000 latency-time=20000 ! ' +
         'audioconvert ! audioresample ! audio/x-raw,rate=16000,channels=1 ! ' +
         'spectrum bands=64 threshold=-80 interval=40000000 post-messages=true message-magnitude=true ! ' +
         'fakesink sync=false');

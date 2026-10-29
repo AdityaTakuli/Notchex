@@ -8,6 +8,21 @@ import Soup from 'gi://Soup?version=3.0';
 import {getAccessToken, listGoogleAccounts} from './goa.js';
 
 const TASKS_API = 'https://tasks.googleapis.com/tasks/v1';
+const CALENDAR_API = 'https://www.googleapis.com/calendar/v3';
+
+/* video-call hosts we offer a Join button for */
+const MEETING_URL = /https:\/\/(?:[\w-]+\.)*(?:meet\.google\.com|zoom\.us|teams\.microsoft\.com|teams\.live\.com|webex\.com|whereby\.com|meet\.jit\.si)\/[^\s<>"')\]]*/i;
+
+function meetingUrlFrom(item) {
+    if (item.hangoutLink?.startsWith('https://')) return item.hangoutLink;
+    const video = item.conferenceData?.entryPoints?.find(e => e.entryPointType === 'video');
+    if (video?.uri?.startsWith('https://')) return video.uri;
+    for (const text of [item.location, item.description]) {
+        const m = text?.match(MEETING_URL);
+        if (m) return m[0];
+    }
+    return null;
+}
 
 const CALENDAR_SERVER_XML = `
 <node>
@@ -59,6 +74,8 @@ export const CalendarPeek = GObject.registerClass({
         this._sigIds = [];
         this._refreshTimer = 0;
         this._tasksTimer = 0;
+        this._meetTimer = 0;
+        this._meetLinks = new Map();
         this._soup = new Soup.Session();
         this._soup.set_timeout(15);
         this._listMeta = new Map();
@@ -75,6 +92,12 @@ export const CalendarPeek = GObject.registerClass({
             this._refreshTasks();
             return GLib.SOURCE_CONTINUE;
         });
+        this._refreshMeetings();
+        this._meetTimer = GLib.timeout_add_seconds(GLib.PRIORITY_LOW, 300, () => {
+            if (this._stopped) return GLib.SOURCE_REMOVE;
+            this._refreshMeetings();
+            return GLib.SOURCE_CONTINUE;
+        });
     }
 
     stop() {
@@ -82,6 +105,7 @@ export const CalendarPeek = GObject.registerClass({
         if (this._cancellable) { try { this._cancellable.cancel(); } catch (_) {} this._cancellable = null; }
         if (this._refreshTimer) { GLib.source_remove(this._refreshTimer); this._refreshTimer = 0; }
         if (this._tasksTimer)   { GLib.source_remove(this._tasksTimer);   this._tasksTimer = 0; }
+        if (this._meetTimer)    { GLib.source_remove(this._meetTimer);    this._meetTimer = 0; }
         if (this._filterSig1) { this._settings.disconnect(this._filterSig1); this._filterSig1 = 0; }
         if (this._filterSig2) { this._settings.disconnect(this._filterSig2); this._filterSig2 = 0; }
         if (this._proxy) {
@@ -243,6 +267,54 @@ export const CalendarPeek = GObject.registerClass({
             this._tasks = tasks;
             this.emit('updated');
         } catch (e) { logError(e, 'notchex:tasks:refresh'); }
+    }
+
+    /* GNOME's calendar server only passes titles and times, so meeting
+       links come from Google Calendar directly (same GOA token as Tasks).
+       Keyed by start time + title to match the server's events. */
+    async _refreshMeetings() {
+        if (this._stopped) return;
+        try {
+            const accounts = (await listGoogleAccounts()).filter(a => !a.calendarDisabled);
+            const links = new Map();
+            const now = Date.now();
+            const range = `timeMin=${encodeURIComponent(new Date(now - 3600e3).toISOString())}` +
+                `&timeMax=${encodeURIComponent(new Date(now + 24 * 3600e3).toISOString())}`;
+            for (const acct of accounts) {
+                if (this._stopped) return;
+                try {
+                    const token = await getAccessToken(acct.email);
+                    const data = await this._apiGet(token, `${CALENDAR_API}/calendars/primary/events?` +
+                        `${range}&singleEvents=true&orderBy=startTime&maxResults=50`);
+                    for (const item of data.items ?? []) {
+                        const url = meetingUrlFrom(item);
+                        const start = item.start?.dateTime ? Date.parse(item.start.dateTime) / 1000 : null;
+                        if (url && start) links.set(`${Math.round(start)}|${item.summary ?? ''}`, url);
+                    }
+                } catch (e) { logError(e, `notchex:meetings:account:${acct.email}`); }
+            }
+            this._meetLinks = links;
+            this.emit('updated');
+        } catch (e) { logError(e, 'notchex:meetings:refresh'); }
+    }
+
+    /* https link to join `ev`'s video call, or null */
+    meetingLink(ev) {
+        if (!ev) return null;
+        const exact = this._meetLinks.get(`${Math.round(ev.start)}|${ev.summary ?? ''}`);
+        if (exact) return exact;
+        for (const [key, url] of this._meetLinks) {
+            const [start, ...rest] = key.split('|');
+            if (Math.abs(Number(start) - ev.start) < 60 && rest.join('|') === (ev.summary ?? '')) return url;
+        }
+        return null;
+    }
+
+    joinMeeting(ev) {
+        const url = this.meetingLink(ev);
+        if (!url) return false;
+        try { Gio.AppInfo.launch_default_for_uri(url, null); } catch (e) { logError(e, 'notchex:meetings:join'); }
+        return true;
     }
 
     _apiGet(token, url) {

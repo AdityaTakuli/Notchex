@@ -200,11 +200,13 @@ export function mediaEvent(info, duration, onClick) {
 
 /* ——— calendar ——— */
 
-export function calendarEvent(ev, minutesAway, duration, onClick) {
+export function calendarEvent(ev, minutesAway, duration, onClick, onJoin = null) {
     const when = new Date(ev.start * 1000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
     const caption = minutesAway <= 0 ? 'Starting now' : `In ${minutesAway} min`;
     return {
-        key: `cal:${ev.id}`, priority: Priority.CALENDAR, duration: Math.max(duration, 5000), width: 360,
+        key: `cal:${ev.id}`, priority: Priority.CALENDAR, width: onJoin ? 420 : 360,
+        /* with a Join button, stay up long enough to reach it */
+        duration: Math.max(duration, onJoin ? 12000 : 5000),
         ttl: 60000,
         onClick,
         build() {
@@ -213,6 +215,12 @@ export function calendarEvent(ev, minutesAway, duration, onClick) {
             row.add_child(_textCol(caption, ev.summary || 'Untitled event'));
             row.add_child(new St.Label({text: when, style_class: 'notchex-act-value',
                 y_align: Clutter.ActorAlign.CENTER}));
+            if (onJoin) {
+                const b = new St.Button({label: 'Join', style_class: 'notchex-join-btn', can_focus: true,
+                    y_align: Clutter.ActorAlign.CENTER, accessible_name: 'Join video call'});
+                b.connect('clicked', () => onJoin());
+                row.add_child(b);
+            }
             return row;
         },
     };

@@ -131,6 +131,7 @@ export const Weather = GObject.registerClass({
         return {
             temp: this._data._unit === 'u' ? `${cur.temp_F}°` : `${cur.temp_C}°`,
             icon: weatherIcon(cur.weatherCode),
+            desc: cur.weatherDesc?.[0]?.value?.trim() || null,
         };
     }
 

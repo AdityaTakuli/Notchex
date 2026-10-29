@@ -383,8 +383,8 @@ export const SystemMonitor = GObject.registerClass({
             c.add_child(val);
             return c;
         };
-        headline.add_child(hcell('CPU', `${s.cpu.toFixed(0)}%`, this._level(s.cpu, 65, 85)));
-        headline.add_child(hcell('MEMORY', `${s.ram.toFixed(0)}%`, this._level(s.ram, 75, 90)));
+        /* CPU and memory live in the bars below; the headline only carries
+           what has no bar */
         if (s.temp > 0) headline.add_child(hcell('TEMP', `${s.temp.toFixed(0)}°C`, this._level(s.temp, 75, 90)));
         if (s.battery) {
             const timeStr = s.battery.minutes
@@ -399,13 +399,13 @@ export const SystemMonitor = GObject.registerClass({
 
         /* left: utilisation bars */
         const bars = new St.BoxLayout({vertical: true, x_expand: true, style_class: 'notchex-sys-bars'});
-        const bar = (label, pct, value) => {
+        const bar = (label, pct, value, warn = 70, danger = 88) => {
             const row = new St.BoxLayout({style_class: 'notchex-sys-bar-row', x_expand: true});
             row.add_child(new St.Label({text: label, style_class: 'notchex-sys-inline-label', y_align: Clutter.ActorAlign.CENTER}));
             const track = new St.BoxLayout({style_class: 'notchex-bar', y_align: Clutter.ActorAlign.CENTER});
             const clamped = Math.max(0, Math.min(100, pct));
             const fill = new St.Widget({style_class: 'notchex-bar-fill', x_expand: false});
-            const lvl = this._level(clamped, 70, 88);
+            const lvl = this._level(clamped, warn, danger);
             if (lvl) fill.add_style_class_name(lvl);
             fill.set_style(`width: ${Math.round(1.6 * clamped)}px;`);
             track.add_child(fill);
@@ -420,7 +420,7 @@ export const SystemMonitor = GObject.registerClass({
         if (s.swap > 0) bar('Swap', s.swap, `${s.swap.toFixed(0)}%`);
         if (s.disk_total > 0) {
             const pct = (s.disk_used / s.disk_total) * 100;
-            bar('Storage', pct, `${this._gbFmt(s.disk_used)} / ${this._gbFmt(s.disk_total)}`);
+            bar('Storage', pct, `${this._gbFmt(s.disk_used)} / ${this._gbFmt(s.disk_total)}`, 90, 95);
         }
         body.add_child(bars);
 

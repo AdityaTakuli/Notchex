@@ -23,9 +23,11 @@ import {VolumeWatcher}     from './modules/volume.js';
 import {BrightnessWatcher} from './modules/brightness.js';
 import {BatteryWatcher}    from './modules/battery.js';
 import {BluetoothWatcher}  from './modules/bluetooth.js';
+import {PrivacyWatcher}    from './modules/privacy.js';
 import {EventManager, Priority} from './modules/events.js';
 import {OsdInterceptor}    from './modules/osd.js';
 import {renderMediaView, artTile, Equalizer} from './modules/media.js';
+import {renderNowView}     from './modules/now.js';
 import {resolveArt, shutdownArtwork} from './modules/artwork.js';
 import * as Activities     from './modules/activities.js';
 import {TopBarAutoHide}    from './modules/topbar.js';
@@ -50,7 +52,23 @@ function parseColor(str) {
     return [0, 0, 0, 1];
 }
 
-const TAB_IDS = ['system', 'media', 'calendar', 'tasks', 'weather', 'pomodoro', 'notes', 'stats', 'quick', 'claude'];
+/* The hub's top-level sections, each holding one or more views (a view id
+   is what modules render). Five sections keep the switcher readable; the
+   music player is part of Now rather than a section of its own. */
+const SECTIONS = [
+    {id: 'now',      label: 'Now',      views: [['now', 'Overview'], ['weather', 'Weather']]},
+    {id: 'calendar', label: 'Calendar', views: [['calendar', 'Events'], ['tasks', 'Tasks']]},
+    {id: 'timer',    label: 'Timer',    views: [['pomodoro', 'Timer']]},
+    {id: 'notes',    label: 'Notes',    views: [['notes', 'Notes']]},
+    {id: 'system',   label: 'System',   views: [['system', 'Monitor'], ['stats', 'Stats'],
+        ['quick', 'Controls'], ['claude', 'Claude']]},
+];
+const VIEW_ALIASES = {media: 'now'};
+const SCROLL_STEP = 0.02;
+
+function sectionOf(view) {
+    return SECTIONS.find(sec => sec.views.some(([v]) => v === view)) ?? SECTIONS[0];
+}
 
 /* Settings that only change geometry / styling. */
 const APPEARANCE_KEYS = new Set([
@@ -92,7 +110,8 @@ class Notch extends St.Widget {
         this._collapseTimeout = 0;
         this._clockTimer      = 0;
         this._phaseTimers = new Set();
-        this._activeTab = 'system';
+        this._activeTab = 'now';
+        this._lastView = {};
         this._calNotified = new Map();
 
         this._loadDims();
@@ -103,6 +122,7 @@ class Notch extends St.Widget {
         const volume     = new VolumeWatcher();
         const brightness = new BrightnessWatcher();
         const bluetooth  = new BluetoothWatcher();
+        const privacy    = new PrivacyWatcher();
         this._modules = {
             system:        new SystemMonitor(this._settings),
             notifications: new NotificationPeek(this._settings),
@@ -111,13 +131,14 @@ class Notch extends St.Widget {
             notes:         new Notes(this._settings),
             weather:       new Weather(this._settings),
             pomodoro:      new Pomodoro(this._settings),
-            quick:         new QuickHub(this._settings, {volume, brightness, bluetooth}),
+            quick:         new QuickHub(this._settings, {volume, brightness, bluetooth, privacy}),
             stats:         new Stats(this._settings),
             claude:        new ClaudeUsage(this._settings),
             volume,
             brightness,
             battery:       new BatteryWatcher(),
             bluetooth,
+            privacy,
         };
         this._events = new EventManager(this);
         this._osd = new OsdInterceptor(kind => this._onOsd(kind));
@@ -136,15 +157,16 @@ class Notch extends St.Widget {
         this._moduleSigs = [];
         this._on(m.system,        'updated',          (_, s)      => this._onSystemUpdated(s));
         this._on(m.notifications, 'peek',             (_, src, n) => this._peekNotification(src, n));
-        this._on(m.calendar,      'updated',          ()          => this._rerenderIf('calendar', 'tasks'));
+        this._on(m.calendar,      'updated',          ()          => this._rerenderIf('calendar', 'tasks', 'now'));
         this._on(m.mpris,         'changed',          (_, info)   => this._updateMedia(info));
         this._on(m.mpris,         'track-changed',    (_, info)   => this._onTrackChanged(info));
-        this._on(m.weather,       'updated',          ()          => { this._rerenderIf('weather'); this._updateWeatherChip(); });
-        this._on(m.pomodoro,      'tick',             ()          => { this._rerenderIf('pomodoro'); this._updatePomodoroIndicator(); });
-        this._on(m.pomodoro,      'state',            ()          => { this._rerenderIf('pomodoro'); this._updatePomodoroIndicator(); });
+        this._on(m.weather,       'updated',          ()          => { this._rerenderIf('weather', 'now'); this._updateWeatherChip(); });
+        this._on(m.pomodoro,      'tick',             ()          => { this._onPomodoroTick(); this._updatePomodoroIndicator(); });
+        this._on(m.pomodoro,      'state',            ()          => { this._rerenderIf('pomodoro', 'now'); this._updatePomodoroIndicator(); });
         this._on(m.quick,         'updated',          ()          => this._rerenderIf('quick'));
         this._on(m.quick,         'request-collapse', ()          => this._collapse());
         this._on(m.quick,         'request-screenshot', ()        => this.takeScreenshot());
+        this._on(m.quick,         'request-resize',   ()          => this._resizeExpanded());
         this._on(m.claude,        'updated',          ()          => this._rerenderIf('claude'));
         this._on(m.notes,         'updated',          ()          => this._rerenderIf('notes'));
         this._on(m.volume,        'changed',          (_, st)     => this._onVolume(st));
@@ -153,10 +175,14 @@ class Notch extends St.Widget {
         this._on(m.battery,       'updated',          (_, snap)   => { this._batteryState = snap; this._updateBatteryIcon(); });
         this._on(m.battery,       'event',            (_, ev)     => this._onBatteryEvent(ev));
         this._on(m.bluetooth,     'device',           (_, dev)    => this._onBluetooth(dev));
+        this._on(m.privacy,       'changed',          ()          => { this._updatePrivacyDot(); this._rerenderIf('quick'); });
 
         this.connect('notify::hover', () => this._onHoverChanged());
         this.connect('button-release-event', (_a, event) => this._onRelease(event));
+        this.connect('scroll-event', (_a, event) => this._onScroll(event));
         this.connect('destroy', () => this._onDestroy());
+        /* the detached activity bubble follows the island as it moves */
+        this.connect('notify::allocation', () => this._syncBubble());
 
         this._settingsSig = this._settings.connect('changed', (_, key) => this._onSettingChanged(key));
         this._monitorsSig = Main.layoutManager.connect('monitors-changed', () => this.relayout());
@@ -456,8 +482,9 @@ class Notch extends St.Widget {
         if (key.startsWith('show-') || key === 'event-volume' || key === 'event-brightness' ||
             key === 'event-battery' || key === 'event-bluetooth') {
             for (const [id, btn] of Object.entries(this._tabButtons ?? {}))
-                btn.visible = this._tabEnabled(id);
-            if (!this._tabEnabled(this._activeTab)) this._switchTab('system');
+                btn.visible = this._sectionEnabled(id);
+            if (!this._tabEnabled(this._activeTab)) this._switchTab('now');
+            else if (this._expanded) this._renderSubTabs();
             this._reconcileModulesWithPrefs();
             this._syncOsd();
             if (key === 'show-media') this._updateMedia(this._modules.mpris.info());
@@ -541,6 +568,10 @@ class Notch extends St.Widget {
         this._rightInner = new St.BoxLayout({style_class: 'notchex-cluster', x_expand: true,
             x_align: Clutter.ActorAlign.END, y_align: Clutter.ActorAlign.CENTER});
         this._rightCluster.add_child(this._rightInner);
+        /* camera / microphone in use, like the dot on macOS */
+        this._privacyDot = new St.Widget({style_class: 'notchex-privacy-dot', visible: false,
+            y_align: Clutter.ActorAlign.CENTER});
+        this._rightCluster.add_child(this._privacyDot);
         this._weatherChip = new St.BoxLayout({style_class: 'notchex-chip notchex-weather-chip', visible: false,
             y_align: Clutter.ActorAlign.CENTER});
         this._weatherIcon = new St.Icon({icon_size: 13, style_class: 'notchex-weather-chip-icon'});
@@ -600,22 +631,26 @@ class Notch extends St.Widget {
         this._expandedLayer.add_child(this._header);
 
         this._tabs = new St.BoxLayout({style_class: 'notchex-tabs'});
+        /* second-level switcher for sections with several views */
+        this._subTabs = new St.BoxLayout({style_class: 'notchex-subtabs', visible: false});
         this._content = new St.Bin({style_class: 'notchex-content', x_expand: true, y_expand: true,
             x_align: Clutter.ActorAlign.FILL, y_align: Clutter.ActorAlign.FILL});
         this._expandedLayer.add_child(this._tabs);
+        this._expandedLayer.add_child(this._subTabs);
         this._expandedLayer.add_child(this._content);
 
         this._tabButtons = {};
-        for (const id of TAB_IDS) {
+        for (const sec of SECTIONS) {
+            const id = sec.id;
             const btn = new St.Button({
                 style_class: 'notchex-tab',
-                label: this._tabLabel(id),
+                label: sec.label,
                 can_focus: true,
                 x_expand: true,
                 track_hover: true,
-                visible: this._tabEnabled(id),
+                visible: this._sectionEnabled(id),
             });
-            btn.connect('clicked', () => this._switchTab(id));
+            btn.connect('clicked', () => this._switchTab(this._sectionView(sec)));
             this._tabs.add_child(btn);
             this._tabButtons[id] = btn;
         }
@@ -655,15 +690,20 @@ class Notch extends St.Widget {
         } catch (e) { logError(e, 'notchex:keybinding'); }
     }
 
-    _tabLabel(id) {
-        return {
-            system: 'System', media: 'Media', calendar: 'Cal', tasks: 'Tasks',
-            notes:  'Notes',  weather:  'Weather', pomodoro: 'Timer',
-            stats:  'Stats',  quick: 'Quick', claude: 'Limits',
-        }[id] ?? id;
+    _sectionEnabled(id) {
+        const sec = SECTIONS.find(x => x.id === id);
+        return !!sec && sec.views.some(([v]) => this._tabEnabled(v));
+    }
+
+    /* the view a section opens on: the one used last, else its first */
+    _sectionView(sec) {
+        const last = this._lastView[sec.id];
+        if (last && this._tabEnabled(last)) return last;
+        return sec.views.find(([v]) => this._tabEnabled(v))?.[0] ?? 'now';
     }
 
     _tabEnabled(id) {
+        if (id === 'now') return true;
         const key = {
             system:   'show-system',
             media:    'show-media',
@@ -755,6 +795,8 @@ class Notch extends St.Widget {
             this._searchLayer.set_child(null);
         }
         this._stopped = true;
+        this._destroyBubble();
+        if (this._gestureEnd) { GLib.source_remove(this._gestureEnd); this._gestureEnd = 0; }
         this._clearHoverTimeout();
         this._clearCollapseTimeout();
         this._clearPhaseTimers();
@@ -792,6 +834,7 @@ class Notch extends St.Widget {
     }
 
     _onDestroy() {
+        this._destroyBubble();
         this._clearHoverTimeout();
         this._clearCollapseTimeout();
         this._clearPhaseTimers();
@@ -908,6 +951,46 @@ class Notch extends St.Widget {
         }
     }
 
+    /* Over the collapsed notch: scroll up/down changes the volume, a
+       sideways swipe skips tracks. The expanded hub keeps normal scrolling. */
+    _onScroll(event) {
+        if (this._expanded || this._searching || !this._settings.get_boolean('pill-gestures'))
+            return Clutter.EVENT_PROPAGATE;
+        /* touchpads also send emulated wheel clicks; count only the real ones */
+        if (event.get_flags() & Clutter.EventFlags.FLAG_POINTER_EMULATED)
+            return Clutter.EVENT_STOP;
+        const vol = this._modules.volume;
+        const step = level => {
+            const st = vol.state?.();
+            if (st) vol.setLevel(Math.max(0, Math.min(1, st.level + level)));
+        };
+        const dir = event.get_scroll_direction();
+        /* same step as GNOME's own sliders, so it feels like the rest of the desktop */
+        if (dir === Clutter.ScrollDirection.UP) { step(SCROLL_STEP); return Clutter.EVENT_STOP; }
+        if (dir === Clutter.ScrollDirection.DOWN) { step(-SCROLL_STEP); return Clutter.EVENT_STOP; }
+        if (dir !== Clutter.ScrollDirection.SMOOTH) return Clutter.EVENT_PROPAGATE;
+
+        const [dx, dy] = event.get_scroll_delta();
+        const g = this._gesture ??= {x: 0, skipped: false};
+        g.x += dx;
+        if (Math.abs(dy) > Math.abs(dx)) step(-dy * SCROLL_STEP);
+        /* track skip: one per swipe, once it's clearly sideways */
+        const info = this._modules.mpris.info();
+        if (!g.skipped && Math.abs(g.x) > 4 && (info?.playing || info?.paused)) {
+            g.skipped = true;
+            if (g.x > 0) this._modules.mpris.next();
+            else this._modules.mpris.previous();
+        }
+        /* a swipe ends when the deltas stop for a moment */
+        if (this._gestureEnd) GLib.source_remove(this._gestureEnd);
+        this._gestureEnd = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 300, () => {
+            this._gestureEnd = 0;
+            this._gesture = null;
+            return GLib.SOURCE_REMOVE;
+        });
+        return Clutter.EVENT_STOP;
+    }
+
     _onRelease(event) {
         if (this._searching) {
             /* with the search grab, clicks outside the island land here */
@@ -1022,12 +1105,16 @@ class Notch extends St.Widget {
         this._clearHoverTimeout();
         this._clearCollapseTimeout();
         this._clearPhaseTimers();
+        tab = VIEW_ALIASES[tab] ?? tab;
         if (tab && this._tabEnabled(tab)) {
             if (this._expanded) { this._switchTab(tab); return; }
             this._activeTab = tab;
+        } else if (!this._expanded) {
+            /* like the Dynamic Island, the hub opens on what's live now */
+            this._activeTab = 'now';
         }
         if (this._expanded) return;
-        if (!this._tabEnabled(this._activeTab)) this._activeTab = 'system';
+        if (!this._tabEnabled(this._activeTab)) this._activeTab = 'now';
 
         this._events.suspend();
         this._expanded = true;
@@ -1087,23 +1174,59 @@ class Notch extends St.Widget {
     }
 
     _switchTab(id) {
+        id = VIEW_ALIASES[id] ?? id;
         if (this._activeTab === 'notes' && id !== 'notes') this._modules?.notes?._releaseGrab?.();
         this._activeTab = id;
+        this._lastView[sectionOf(id).id] = id;
+        /* the big clock only heads the Now view; elsewhere it's room lost.
+           Without auto-collapse it stays, since clicking it closes the hub. */
+        if (this._header)
+            this._header.visible = id === 'now' || !this._settings.get_boolean('auto-collapse');
         this._modules?.system?.setFocused?.(this._expanded && id === 'system');
         this._modules?.quick?.setFocused?.(this._expanded && id === 'quick');
         this._highlightTab();
+        this._renderSubTabs();
         this._renderTab();
     }
 
     _highlightTab() {
+        const sec = sectionOf(this._activeTab);
         for (const [tid, btn] of Object.entries(this._tabButtons ?? {})) {
-            if (tid === this._activeTab) {
+            if (tid === sec.id) {
                 btn.add_style_pseudo_class('active');
                 btn.set_style(`background-color: ${this._accentColor ?? 'rgba(255,255,255,0.14)'}; color: white;`);
             } else {
                 btn.remove_style_pseudo_class('active');
                 btn.set_style(null);
             }
+        }
+    }
+
+    _renderSubTabs() {
+        const box = this._subTabs;
+        if (!box) return;
+        box.destroy_all_children();
+        const sec = sectionOf(this._activeTab);
+        const views = sec.views.filter(([v]) => this._tabEnabled(v));
+        box.visible = views.length > 1;
+        if (!box.visible) return;
+        for (const [v, label] of views) {
+            const b = new St.Button({style_class: 'notchex-subtab', label, can_focus: true, track_hover: true});
+            if (v === this._activeTab) b.add_style_pseudo_class('checked');
+            b.connect('clicked', () => this._switchTab(v));
+            box.add_child(b);
+        }
+    }
+
+    _onPomodoroTick() {
+        if (!this._expanded) return;
+        if (this._activeTab === 'pomodoro') {
+            this._queueRender();
+        } else if (this._activeTab === 'now') {
+            /* only the timer card's text changes each second */
+            const p = this._modules.pomodoro;
+            const lbl = this._content?.get_child()?._timerTitle;
+            if (lbl && p.getState() !== 'idle') lbl.text = `${p.formatRemain()} left`;
         }
     }
 
@@ -1132,7 +1255,10 @@ class Notch extends St.Widget {
         const id = this._activeTab;
         let child = null;
         try {
-            if (id === 'media') {
+            if (id === 'now') {
+                child = renderNowView(this._modules, v => this._switchTab(v),
+                    {showMedia: this._tabEnabled('media')});
+            } else if (id === 'media') {
                 child = renderMediaView(this._modules.mpris);
             } else {
                 const mod = {
@@ -1439,7 +1565,7 @@ class Notch extends St.Widget {
 
     _onTrackChanged(info) {
         if (!this._settings.get_boolean('event-media')) return;
-        if (this._expanded && this._activeTab === 'media') return;
+        if (this._expanded && (this._activeTab === 'media' || this._activeTab === 'now')) return;
         /* give remote artwork a moment to download so the event shows it */
         const timeout = new Promise(resolve => this._phaseTimer(1200, resolve));
         Promise.race([resolveArt(info.artUrl), timeout]).then(() => {
@@ -1469,8 +1595,9 @@ class Notch extends St.Widget {
             if (this._calNotified.has(k)) continue;
             this._calNotified.set(k, now);
             if (stage === 'soon' && this._calNotified.has(`${ev.id}|${ev.start}|now`)) continue;
+            const join = cal.meetingLink?.(ev) ? () => cal.joinMeeting(ev) : null;
             this._events.push(Activities.calendarEvent(ev, mins, this._eventDuration(),
-                () => this._expand('calendar')));
+                () => this._expand('calendar'), join));
         }
     }
 
@@ -1577,12 +1704,73 @@ class Notch extends St.Widget {
         this._eq.actor.visible = visible;
         this._eq.setPlaying(!!(visible && info.playing));
         this._updateBatteryIcon();
+        this._syncBubble();
         this._centerCluster.visible = this._settings.get_boolean('always-show-clock') || !visible;
         this._dateLabelC.visible = this._settings.get_boolean('show-date') && !visible;
         if (visible !== wasVisible || wasClock !== this._centerCluster.visible || visible)
             this._resizeCollapsed();
         if (this._hoverState) this._subtitle.text = this._subtitleText();
-        this._rerenderIf('media');
+        this._rerenderIf('media', 'now');
+    }
+
+    /* Two live activities at once (music + timer): like the Dynamic Island's
+       minimal presentation, the second one sits in a small detached bubble
+       beside the island instead of crowding into it. */
+    _syncBubble() {
+        if (this._stopped) return;
+        const p = this._modules?.pomodoro;
+        const timerLive = !!p && (p.isActive() || p.getState() === 'paused');
+        const want = timerLive && this._mediaChip?.visible && !this._expanded &&
+            !this._eventActive && !this._searching;
+        if (!want) {
+            if (this._bubble?.visible) this._bubble.hide();
+            return;
+        }
+        if (!this._bubble) {
+            this._bubble = new St.Button({style_class: 'notchex-bubble', reactive: true, can_focus: true,
+                track_hover: true, accessible_name: 'Focus timer'});
+            const row = new St.BoxLayout({x_align: Clutter.ActorAlign.CENTER, y_align: Clutter.ActorAlign.CENTER});
+            this._bubbleDot = new St.Widget({style_class: 'notchex-pomo-dot', y_align: Clutter.ActorAlign.CENTER});
+            this._bubbleLabel = new St.Label({style_class: 'notchex-bubble-label', y_align: Clutter.ActorAlign.CENTER});
+            row.add_child(this._bubbleDot);
+            row.add_child(this._bubbleLabel);
+            this._bubble.set_child(row);
+            this._bubble.connect('clicked', () => this._expand('pomodoro'));
+            Main.layoutManager.addTopChrome(this._bubble, {trackFullscreen: true, affectsInputRegion: true});
+        }
+        const b = this._bubble;
+        this._bubbleLabel.text = p.formatRemain();
+        b.remove_style_class_name('break');
+        b.remove_style_class_name('paused');
+        if (p.getState() === 'paused') b.add_style_class_name('paused');
+        else if (p.getState() === 'break' || p.getState() === 'longbreak') b.add_style_class_name('break');
+        const h = this._px(this._ch);
+        const [, natW] = b.get_preferred_width(h);
+        b.set_size(Math.max(h, natW), h);
+        b.set_position(Math.round(this.x + this.width + this._px(8)), Math.round(this.y));
+        b.show();
+    }
+
+    _destroyBubble() {
+        if (!this._bubble) return;
+        try { Main.layoutManager.removeChrome(this._bubble); } catch (_) {}
+        this._bubble.destroy();
+        this._bubble = null;
+    }
+
+    _updatePrivacyDot() {
+        const p = this._modules?.privacy;
+        const dot = this._privacyDot;
+        if (!p || !dot) return;
+        const on = p.camera || p.mic;
+        dot.remove_style_class_name('camera');
+        dot.remove_style_class_name('mic');
+        if (on) dot.add_style_class_name(p.camera ? 'camera' : 'mic');
+        dot.accessible_name = p.camera ? 'Camera in use' : p.mic ? 'Microphone in use' : '';
+        if (on !== dot.visible) {
+            dot.visible = on;
+            if (!this._expanded && !this._eventActive) this._resizeCollapsed();
+        }
     }
 
     _updatePomodoroIndicator() {
@@ -1595,10 +1783,12 @@ class Notch extends St.Widget {
             this._pomoChip.visible = false;
         } else {
             this._pomoLabel.text = p.formatRemain();
-            this._pomoChip.visible = true;
+            /* with music in the pill, the timer moves out to its own bubble */
+            this._pomoChip.visible = !this._mediaChip.visible;
             if (p.getState() === 'paused') this._pomoChip.add_style_class_name('paused');
             else if (p.getState() === 'break' || p.getState() === 'longbreak') this._pomoChip.add_style_class_name('break');
         }
+        this._syncBubble();
         if (this._pomoChip.visible !== wasVisible) this._resizeCollapsed();
     }
 

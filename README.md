@@ -38,7 +38,7 @@ It's plain GJS on top of St/Clutter. There's no Electron, no npm and no build st
 - [Features](#features)
   - [The notch](#the-notch)
   - [Live activities](#live-activities)
-  - [Hub tabs](#hub-tabs)
+  - [Hub](#hub)
   - [Dock](#dock)
   - [Spotlight search](#spotlight-search)
   - [Desktop polish](#desktop-polish)
@@ -65,9 +65,9 @@ One rounded surface sits at the top center of your primary monitor and changes s
 
 | State | What you see |
 |---|---|
-| **Idle** | A capsule showing date, time and battery. While music plays it adds album art, the track and **audio-reactive equalizer bars**. While a Pomodoro runs it shows the countdown. It can also show the temperature or CPU/RAM. |
+| **Idle** | A capsule showing date, time and battery. While music plays it adds album art, the track and **audio-reactive equalizer bars**. While a Pomodoro runs it shows the countdown; with music playing too, the timer moves to a small **bubble beside the notch**. A **green or orange dot** shows when an app is using the camera or microphone. It can also show the temperature or CPU/RAM. Scroll over it to change the volume, or swipe sideways to skip tracks. |
 | **Hover** | Expands into the hub (the default). With *Expand on hover* turned off, hovering shows a compact second line instead (track, next meeting, timer) and a click expands it. |
-| **Expanded** | A tabbed dashboard. The notch resizes to fit each tab. Click the clock header or press `Super + N` to fold it. |
+| **Expanded** | The hub. It opens on **Now**, and resizes to fit each view. Press `Super + N` to fold it, or click the clock header. |
 | **Event** | Briefly grows for a live activity, then goes back to what it was showing. |
 
 There are two shapes: **notch**, which attaches to the top screen edge with rounded bottom corners like a MacBook, and **floating**, a fully rounded pill with a configurable gap from the edge.
@@ -84,7 +84,7 @@ Every source is signal-driven. None of them poll.
 | **Battery**: charging, on battery, full, low (20 %), critical (10 %) | UPower `DisplayDevice` |
 | **Bluetooth**: device connected or disconnected, with its battery level | BlueZ `Device1` / `Battery1` |
 | **Notifications**: icon, title and body; click to open, ✕ to dismiss | GNOME message tray (respects Do Not Disturb) |
-| **Upcoming meeting**: "In 10 min", then "Starting now" | Shell `CalendarServer` (GNOME Online Accounts calendars) |
+| **Upcoming meeting**: "In 10 min", then "Starting now", with a **Join** button for Google Meet, Zoom, Teams, Webex, Whereby and Jitsi links | Shell `CalendarServer` (GNOME Online Accounts calendars); call links from Google Calendar |
 | **App launch** | Launches from the Dock or Spotlight |
 | **Screenshot**: thumbnail, click to open | Notchex's instant full-screen capture |
 
@@ -92,22 +92,19 @@ When several events arrive at once, the most important one wins: critical batter
 
 GNOME's own volume and brightness popup is hidden while the notch shows the change. It still appears whenever the notch can't show it, for example when the notch is expanded, a fullscreen app is open, or a more important event is on screen.
 
-### Hub tabs
+### Hub
 
-| Tab | What it does |
+Five sections along the top. Sections with more than one view show a second row to switch between them.
+
+| Section | Views |
 |---|---|
-| **System** | CPU, memory, GPU (AMD and Intel Xe through `gpu_busy_percent`), swap and storage bars; temperature, battery, network, disk I/O, uptime and load. |
-| **Media** | Large album art, title, artist and album, a seekable progress bar, and previous / play-pause / next. |
-| **Calendar** | Google Calendar events through your existing GNOME Online Accounts setup, with no extra login. You can filter by account. |
-| **Tasks** | Google Tasks (through the Tasks REST API with your GOA token). You can add tasks from the notch and filter by list. |
-| **Weather** | Two locations, condition icons and a 3-day forecast. Uses the free wttr.in backend and accepts city names, districts, GPS coordinates and airport codes. |
+| **Now** | **Overview**: the clock and date, the music player when something is playing, and cards for the next meeting (with **Join** when a call is 15 minutes away), the focus timer and the weather. Click a card to open its view. **Weather**: two locations, condition icons and a 3-day forecast from the free wttr.in backend; accepts city names, districts, GPS coordinates and airport codes. |
+| **Calendar** | **Events**: Google Calendar events through your existing GNOME Online Accounts setup, with no extra login, filterable by account. **Tasks**: Google Tasks through the Tasks REST API with your GOA token; add tasks from the notch and filter by list. |
 | **Timer** | Pomodoro with presets (50/10, 25/5, 10/2, or your own), a progress ring and cycle tracking. Sessions are logged to JSONL. |
 | **Notes** | Sticky notes saved as Markdown files, one dated folder per day. Fully keyboard-accessible. |
-| **Stats** | Pomodoro dashboard: today, a weekly chart and your current streak. |
-| **Quick** | Wi-Fi, Bluetooth, Night Light and Focus (Do Not Disturb) toggles; volume and brightness sliders; microphone, camera and keyboard-layout indicators; Bluetooth battery levels; Screenshot, Settings, Lock and Suspend; and Log out / Reboot / Shutdown, which need **two taps** to confirm. |
-| **Limits** | Claude Code session and weekly usage rings. |
+| **System** | **Monitor**: CPU, memory, GPU (AMD and Intel Xe through `gpu_busy_percent`), swap and storage bars; temperature, battery, network, disk I/O, uptime and load. **Stats**: Pomodoro dashboard with today, a weekly chart and your streak. **Controls**: Wi-Fi, Bluetooth, Night Light and Focus toggles; volume and brightness; microphone and camera status; Bluetooth battery levels; Screenshot, Capture Area, Settings, Lock and Suspend; and a **Power** button for Log Out / Restart / Shut Down, which need **two clicks** to confirm. **Claude**: Claude Code session and weekly usage rings. |
 
-You can turn each tab on or off in preferences.
+You can turn the optional views on or off in preferences.
 
 ### Dock
 
@@ -276,7 +273,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/notchex@adityatakuli
 
 1. Open **Settings → Online Accounts** and add your Google account.
 2. Make sure **Calendar** is switched on for that account.
-3. That's it. The Calendar and Tasks tabs pick the account up automatically. Use the **Calendar & Tasks** page in preferences to limit which accounts or lists are shown.
+3. That's it. The Calendar section picks the account up automatically. Use the **Calendar & Tasks** page in preferences to limit which accounts or lists are shown.
 
 ### Weather
 
@@ -284,7 +281,7 @@ Set a location on the **Weather** page. You can use a city (`Berlin`), a distric
 
 ### Claude Code usage
 
-Install the [Claude Code](https://docs.claude.com/en/docs/claude-code) CLI and run `claude` once to sign in. The **Limits** tab reads the login that the CLI stores in `~/.claude/.credentials.json` and shows your current session and weekly usage. If it says the session expired, run `claude` again.
+Install the [Claude Code](https://docs.claude.com/en/docs/claude-code) CLI and run `claude` once to sign in. The **Claude** view (under System) reads the login that the CLI stores in `~/.claude/.credentials.json` and shows your current session and weekly usage. If it says the session expired, run `claude` again.
 
 ### macOS-style icons
 
@@ -302,9 +299,10 @@ Notchex runs locally. It only connects to the network for features you use:
 
 | Destination | When | What is sent |
 |---|---|---|
-| `wttr.in` | Weather tab is on | Your configured location (or your IP, if no location is set) |
-| `tasks.googleapis.com` | Tasks tab is on | Your GOA OAuth token, to read and create tasks |
-| `api.anthropic.com` | Limits tab is on | Your local Claude Code OAuth token, to read usage |
+| `wttr.in` | Weather is on | Your configured location (or your IP, if no location is set) |
+| `tasks.googleapis.com` | Tasks view is on | Your GOA OAuth token, to read and create tasks |
+| `www.googleapis.com` | Calendar is on and a Google account is set up in GOA | Your GOA OAuth token, to read the next day's events for video-call links (every 5 minutes) |
+| `api.anthropic.com` | Claude usage is on | Your local Claude Code OAuth token, to read usage |
 | `api.macosicons.com` | Only if you set an API key and chose macOS-style icons | App names, one at a time |
 | Album-art hosts | When a player provides remote art (e.g. Spotify) | A download of the art URL the player reports |
 
@@ -324,11 +322,11 @@ Files Notchex writes:
 
 ## Performance
 
-- **Idle:** the clock ticks once a minute, aligned to the minute. The only other timers are slow refreshes: weather every 30 minutes, the calendar range every 5 minutes, tasks every 10 minutes and Claude usage every 15 minutes. Everything else in the idle notch reacts to signals.
-- **System stats** are polled only while the System tab is on screen (every second by default), or at three times the interval if CPU/RAM is shown in the pill. Otherwise they aren't polled at all.
-- **Media progress** uses a one-second timer that exists only while the Media tab is visible and a track is playing.
+- **Idle:** the clock ticks once a minute, aligned to the minute. The only other timers are slow refreshes: weather every 30 minutes, the calendar range and call links every 5 minutes, tasks every 10 minutes and Claude usage every 15 minutes. Everything else in the idle notch reacts to signals.
+- **System stats** are polled only while the Monitor view is on screen (every second by default), or at three times the interval if CPU/RAM is shown in the pill. Otherwise they aren't polled at all.
+- **Media progress** uses a one-second timer that exists only while the music player is on screen in the hub and a track is playing.
 - **Audio-reactive bars** run in a **separate process** (`spectrum-helper.js`) that reads the speaker output, never the microphone. It runs only while music plays and the pill is visible, so a stalled audio pipeline can never freeze the compositor.
-- **Quick tab** checks run every 15 seconds, only while the tab is visible. Its NetworkManager and rfkill clients are created the first time the tab opens.
+- **Controls view** checks run every 15 seconds, only while the view is visible. Its NetworkManager and rfkill clients are created the first time it opens. Camera and microphone status come from the Shell's own camera monitor and mixer, so they need no polling.
 - **Animations** move only the notch itself. Tab content is laid out once at its final width, so nothing reflows on every frame.
 - All async work runs through `Gio.Cancellable`, so disabling the extension never leaves calls pending on destroyed objects. Modules you turn off stop completely.
 
