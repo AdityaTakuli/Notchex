@@ -16,7 +16,8 @@ function card({icon, caption, title, detail, tint, onClick}) {
         track_hover: true,
         accessible_name: [caption, title, detail].filter(Boolean).join(', '),
     });
-    const col = new St.BoxLayout({vertical: true, x_expand: true, style_class: 'notchex-now-card-col'});
+    const col = new St.BoxLayout({vertical: true, x_expand: true, y_expand: true,
+        style_class: 'notchex-now-card-col'});
     const top = new St.BoxLayout({style_class: 'notchex-now-card-top'});
     const ic = new St.Icon({icon_name: icon, icon_size: 14, style_class: 'notchex-now-card-icon',
         y_align: Clutter.ActorAlign.CENTER});
@@ -37,6 +38,8 @@ function card({icon, caption, title, detail, tint, onClick}) {
         d.clutter_text.ellipsize = 3;
         col.add_child(d);
     }
+    /* fills the rest, so cards with and without a detail line start level */
+    col.add_child(new St.Widget({y_expand: true}));
     btn.set_child(col);
     btn._title = t;
     if (onClick) btn.connect('clicked', onClick);

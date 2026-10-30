@@ -244,10 +244,18 @@ class Notch extends St.Widget {
         const shadowC = this._color('shadow-color', 'rgba(0, 0, 0, 0.45)');
         const shadow  = this._settings.get_boolean('enable-shadow')
             ? `box-shadow: 0 6px 22px 0 ${shadowC};` : '';
-        const bw = Math.max(0, this._borderW);
+        let bw = Math.max(0, this._borderW);
+        let rim = border;
+        /* the pill floats on a strip of its own color: a light rim keeps
+           its edge visible there */
+        if (!this._notchStyle) {
+            const [r, g, b, a] = parseColor(border);
+            rim = `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}, ${Math.max(a, 0.22)})`;
+            bw = Math.max(bw, 1);
+        }
         this._bgBase = `
             background-color: ${bg};
-            border: ${bw}px solid ${bw > 0 ? border : 'transparent'};
+            border: ${bw}px solid ${bw > 0 ? rim : 'transparent'};
             ${this._notchStyle ? 'border-top-width: 0;' : ''}
             ${shadow}
         `;
@@ -278,6 +286,14 @@ class Notch extends St.Widget {
         this._bgRadius = r;
         const radius = this._notchStyle ? `0 0 ${r}px ${r}px` : `${r}px`;
         this._bg.set_style(`${this._bgBase} border-radius: ${radius};`);
+    }
+
+    /* the strip beside the island while windows are open, in the island
+       color: the notch joins it, the pill floats on it with a light rim
+       (see _applyStyle) */
+    _stripColor() {
+        if (!this._settings.get_boolean('fill-top-strip')) return null;
+        return this._color('bg-color', 'rgba(0, 0, 0, 1)');
     }
 
     _updateEars(bg) {
@@ -461,7 +477,7 @@ class Notch extends St.Widget {
             this._loadDims();
             this._applyStyle();
             this.relayout();
-            if (key === 'island-style' || key === 'top-margin') this._topbar?.relayout();
+            if (['island-style', 'top-margin', 'bg-color'].includes(key)) this._topbar?.relayout();
             return;
         }
         switch (key) {
@@ -748,10 +764,7 @@ class Notch extends St.Widget {
                 const [aw, ah] = this.get_transformed_size();
                 return x >= ax && x <= ax + aw && y >= ay && y <= ay + ah;
             },
-            /* only the notch shape joins the strip; a pill on a black strip
-               would vanish into it and look just like the notch */
-            fillColor: () => this._notchStyle && this._settings.get_boolean('fill-top-strip')
-                ? this._color('bg-color', 'rgba(0, 0, 0, 1)') : null,
+            fillColor: () => this._stripColor(),
         });
         this._syncTopBar();
         this._startEnabledModules();
@@ -1515,8 +1528,11 @@ class Notch extends St.Widget {
         if (!this._searching) return;
         let natH = 0;
         try { [, natH] = this._searchLayer.get_preferred_height(this._searchW()); } catch (_) {}
-        /* the island stays one line tall; results live in the panel */
-        this._animateTo(this._searchW(), Math.max(this._px(this._ch + 18), natH), 300);
+        /* the island stays one line tall; results live in the panel. The
+           bar is shorter than the island, so centre it vertically. */
+        const h = Math.max(this._px(this._ch + 18), natH);
+        this._searchLayer.y = Math.round((h - natH) / 2);
+        this._animateTo(this._searchW(), h, 300);
         this._placeSearchPanel();
     }
 

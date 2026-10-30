@@ -25,8 +25,9 @@ const FILL_FADE_MS = 220;
 export class TopBarAutoHide {
     /* opts: reservedHeight() → px, isOverNotch(x, y) → bool,
              fillColor() → CSS color for the strip beside the island, or null.
-             The strip is only painted while an app window is open on the
-             primary monitor; on an empty desktop the wallpaper shows. */
+             The strip is only painted while a maximized or full-screen
+             window is on the primary monitor; otherwise the wallpaper
+             shows. */
     constructor(opts) {
         this._opts = opts;
         this._enabled = false;
@@ -75,7 +76,7 @@ export class TopBarAutoHide {
         const queue = () => this._queueFillCheck();
         global.window_manager.connectObject(
             'map', queue, 'destroy', queue, 'minimize', queue, 'unminimize', queue,
-            'switch-workspace', queue, this);
+            'size-changed', queue, 'switch-workspace', queue, this);
         global.display.connectObject('restacked', queue, 'window-entered-monitor', queue,
             'window-left-monitor', queue, this);
 
@@ -139,7 +140,9 @@ export class TopBarAutoHide {
         });
     }
 
-    _hasAppWindow() {
+    /* only a maximized or full-screen window joins the strip; on the
+       desktop, or with normal-sized windows, the wallpaper shows */
+    _hasMaximizedWindow() {
         const primary = Main.layoutManager.primaryIndex;
         const ws = global.workspace_manager.get_active_workspace();
         return ws.list_windows().some(w =>
@@ -149,12 +152,13 @@ export class TopBarAutoHide {
             w.get_monitor() === primary &&
             [Meta.WindowType.NORMAL, Meta.WindowType.DIALOG, Meta.WindowType.MODAL_DIALOG]
                 .includes(w.get_window_type()) &&
+            (w.is_fullscreen() || w.get_maximized() === Meta.MaximizeFlags.BOTH) &&
             w.showing_on_its_workspace());
     }
 
     _updateFill(animate) {
         if (!this._enabled) return;
-        const want = !!this._opts.fillColor() && this._hasAppWindow();
+        const want = !!this._opts.fillColor() && this._hasMaximizedWindow();
         if (want === this._filled && animate) return;
         this._filled = want;
         this._strut.remove_all_transitions();

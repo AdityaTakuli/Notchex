@@ -282,8 +282,8 @@ export default class NotchexPrefs extends ExtensionPreferences {
             'Keep paused media in the pill (otherwise only while playing).'));
         behavior.add(this._boolRow(settings, 'autohide-top-bar', 'Hide the top bar (Mac style)',
             'The top bar reappears when you push the pointer to the top edge. Windows start right below the notch.'));
-        behavior.add(this._boolRow(settings, 'fill-top-strip', 'Black strip beside the notch',
-            'With the top bar hidden, fill the space beside the notch with its color while an app is open. The wallpaper shows on an empty desktop.'));
+        behavior.add(this._boolRow(settings, 'fill-top-strip', 'Fill the strip beside the notch',
+            'With the top bar hidden, cover the space beside the notch with its color while a window is maximized or full screen. The pill gets a light rim so it stays visible. Otherwise the wallpaper shows.'));
         behavior.add(this._boolRow(settings, 'eq-follow-audio', 'Music bars follow the audio',
             'Reads what your speakers play (never the microphone). GNOME may show its recording indicator while it runs.'));
         behavior.add(this._boolRow(settings, 'pill-show-weather', 'Temperature in the pill'));
