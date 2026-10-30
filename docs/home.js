@@ -21,7 +21,7 @@
 
     /* logical size of each state (screenshots are 2x) */
     const SIZE = {
-        idle: [268, 38], meeting: [420, 48], bt: [340, 38], play: [380, 38],
+        idle: [118, 38], meeting: [420, 48], bt: [340, 38], play: [380, 38],
         focus: [300, 38], low: [340, 38], charge: [340, 38], hub: [640, 398.5],
     };
     const PILL_TOP = 6;
