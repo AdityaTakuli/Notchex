@@ -1,452 +1,237 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-shape="notch">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Notchex: a working notch for GNOME</title>
-    <meta name="description" content="Notchex adds a working MacBook-style notch to the top of your GNOME screen, plus a magnifying Dock, Spotlight search and a frosted-glass macOS look. Free and open source for GNOME 46–50.">
-    <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0b0b0d" media="(prefers-color-scheme: dark)">
-    <meta property="og:title" content="Notchex: a working notch for GNOME">
+    <title>Notchex: a working notch for Linux</title>
+    <meta name="description" content="Notchex puts a working notch at the top of your Linux desktop. Music, meetings, timers and live activities, as a MacBook-style notch or a floating pill. Free and open source for GNOME 46–50.">
+    <meta name="theme-color" content="#000000">
+    <meta name="color-scheme" content="dark">
+    <meta property="og:title" content="Notchex: a working notch for Linux">
     <meta property="og:description" content="Music, timers, meetings and live activities in a notch or a pill at the top of your screen, plus Spotlight search. Free for Linux (GNOME 46–50). Windows next.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://adityatakuli.github.io/Notchex/og.jpg">
     <meta name="twitter:card" content="summary_large_image">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M3 10h26v4a8 8 0 0 1-8 8H11a8 8 0 0 1-8-8z' fill='%23000'/%3E%3C/svg%3E">
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Cpath d='M6 9h20v3a6 6 0 0 1-6 6h-8a6 6 0 0 1-6-6z' fill='%23fff'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:wght@400;500;600;700;800&family=Ubuntu+Sans+Mono:wght@400;500&display=swap">
+    <link rel="preload" as="image" href="img/wallpaper.jpg">
+    <link rel="stylesheet" href="home.css">
 </head>
 <body>
 
 <a class="skip" href="#main">Skip to content</a>
 
-<header class="site-header">
-    <div class="wrap">
-        <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"></span>Notchex</a>
-        <nav class="nav" aria-label="Main">
-            <a class="hide-sm" href="#features">Features</a>
-            <a class="hide-sm" href="#screenshots">Screenshots</a>
-            <a class="hide-sm" href="#privacy">Privacy</a>
-            <a href="https://github.com/AdityaTakuli/Notchex">GitHub</a>
-            <a class="nav-cta" href="install.html">Install</a>
-        </nav>
+<!-- ============ Navigation: brand left, shape in the middle (where the notch lives), links right ============ -->
+<header class="nav">
+    <a class="brand" href="./" aria-label="Notchex home"><span class="brand-mark" aria-hidden="true"></span>Notchex</a>
+
+    <div class="shape-switch" role="radiogroup" aria-label="Show Notchex as">
+        <span class="shape-thumb" aria-hidden="true"></span>
+        <button type="button" role="radio" data-set-shape="notch" aria-checked="true">Notch</button>
+        <button type="button" role="radio" data-set-shape="pill" aria-checked="false">Pill</button>
     </div>
+
+    <nav class="nav-links" aria-label="Main">
+        <a class="hide-md" href="#activities">Live activities</a>
+        <a class="hide-md" href="#hub">Hub</a>
+        <a class="hide-md" href="#privacy">Privacy</a>
+        <a class="hide-sm" href="https://github.com/AdityaTakuli/Notchex">GitHub</a>
+        <a class="btn btn-small" href="install.html">Install</a>
+    </nav>
 </header>
 
 <main id="main">
 
 <!-- ============ Hero ============ -->
 <section class="hero">
-    <div class="wrap">
-        <a class="eyebrow" href="#shapes"><b>New</b> Notch or pill, live activities, glass Spotlight <span class="chev" aria-hidden="true">›</span></a>
-        <h1>A working notch<br>for GNOME.</h1>
-        <p class="lede">
-            Music, timers, meetings and notifications, right at the top of your screen.
-            Attach it to the top edge like a MacBook notch, or float it as a pill.
-            Hover over it and it opens into a full hub.
-        </p>
-        <div class="cta-row">
-            <a class="btn btn-primary" href="install.html">Install Notchex</a>
-            <a class="btn btn-secondary" href="#screenshots">See screenshots</a>
+    <div class="hero-copy">
+        <p class="eyebrow" data-hero>Free for Linux <span aria-hidden="true">·</span> Windows next</p>
+        <h1 data-hero>A working notch<br>for <span class="grad">Linux.</span></h1>
+        <p class="lede" data-hero>Music, meetings, timers and alerts, right where your eyes already go. Attach it to the edge like a MacBook notch, or float it as a pill.</p>
+        <div class="cta" data-hero>
+            <a class="btn" href="install.html">Install Notchex</a>
+            <a class="btn btn-ghost" href="https://github.com/AdityaTakuli/Notchex">View on GitHub</a>
         </div>
-        <ul class="hero-meta">
-            <li>GNOME Shell 46–50</li>
-            <li>Wayland and X11</li>
-            <li>Free and open source</li>
-            <li>No sudo</li>
-            <li>Windows version on the way</li>
-        </ul>
+    </div>
 
-        <!-- Notch or pill: drag to compare (both are real screenshots) -->
-        <figure class="compare-wrap">
-            <div class="compare" id="compare" style="--pos: 50%">
-                <img class="compare-img" src="shots/compare-pill.jpg" width="1200" height="340"
-                     alt="Notchex as a floating pill below the top edge, playing Neon Skyline">
-                <div class="compare-top" aria-hidden="true">
-                    <img class="compare-img" src="shots/compare-notch.jpg" width="1200" height="340" alt="">
-                </div>
-                <span class="compare-tag left" aria-hidden="true">Notch</span>
-                <span class="compare-tag right" aria-hidden="true">Pill</span>
-                <div class="compare-handle" aria-hidden="true"><span></span></div>
-                <input class="compare-range" type="range" min="0" max="100" value="50"
-                       aria-label="Compare the notch and the pill: left shows more notch, right shows more pill">
+    <figure class="hero-stage" data-hero-stage>
+        <div class="screen" id="hero-screen" data-logical="1280"
+             role="img" aria-label="A Linux desktop with Notchex at the top: it shows the current song, then a meeting with a Join button, then AirPods connecting, then opens into the hub">
+            <div class="island" aria-hidden="true">
+                <img data-state="idle" src="img/island/idle.jpg" width="536" height="76" alt="">
+                <img data-state="meeting" src="img/island/meeting.jpg" width="840" height="96" alt="">
+                <img data-state="bt" src="img/island/bt.jpg" width="680" height="76" alt="">
+                <img data-state="hub" src="img/island/hub.jpg" width="1280" height="797" alt="">
             </div>
-            <figcaption>Drag to compare. Same desktop, same song: the <b>notch</b> joins the top edge like a MacBook, the <b>pill</b> floats just below it.</figcaption>
-        </figure>
-    </div>
+        </div>
+        <figcaption class="stage-bar">
+            <span class="stage-caption" id="hero-caption" aria-hidden="true">Now playing</span>
+            <button type="button" class="pause" id="hero-pause" aria-pressed="false" aria-label="Pause the animation">
+                <svg class="i-pause" viewBox="0 0 14 14" aria-hidden="true"><rect x="2.5" y="1.5" width="3" height="11" rx="1"/><rect x="8.5" y="1.5" width="3" height="11" rx="1"/></svg>
+                <svg class="i-play" viewBox="0 0 14 14" aria-hidden="true"><path d="M3.5 1.8v10.4a.7.7 0 0 0 1.05.6l8.6-5.2a.7.7 0 0 0 0-1.2L4.55 1.2a.7.7 0 0 0-1.05.6z"/></svg>
+            </button>
+        </figcaption>
+    </figure>
 </section>
 
-<!-- ============ Screenshots ============ -->
-<section id="screenshots" class="band">
-    <div class="wrap">
-        <div class="section-head">
-            <h2>Running on a real desktop.</h2>
-            <p>Every screenshot is Notchex on GNOME 46, on a HiDPI screen. The music and meeting are demo data. Select one to see it full size.</p>
+<!-- ============ Live activities: scroll through them ============ -->
+<section class="chapter activities" id="activities">
+    <div class="activities-pin">
+        <div class="activities-copy">
+            <h2 data-reveal>Small things<br>stay small.</h2>
+            <p class="lede" data-reveal>The notch keeps its height and stretches sideways with a little spring. An icon slides out on the left, the status on the right, and it settles back.</p>
+            <ol class="steps" id="steps">
+                <li><button type="button" data-step="idle"><b>Music</b><span>Album art on the left, bars that move to the beat on the right.</span></button></li>
+                <li><button type="button" data-step="meeting"><b>Meetings</b><span>A few minutes out, with a Join button for Meet, Zoom and Teams.</span></button></li>
+                <li><button type="button" data-step="bt"><b>Headphones</b><span>A ring that fills to their battery level.</span></button></li>
+                <li><button type="button" data-step="play"><b>Play Here</b><span>Sound still on your speakers? One click moves it.</span></button></li>
+                <li><button type="button" data-step="focus"><b>Focus</b><span>Do Not Disturb, on or off, at a glance.</span></button></li>
+                <li><button type="button" data-step="low"><b>Battery</b><span>Low battery in red, charging in green.</span></button></li>
+            </ol>
         </div>
-        <div class="shots">
-            <figure class="shot featured">
-                <button class="frame" type="button" data-full="shots/hub-now.jpg"><img src="shots/hub-now.jpg" alt="The hub open on the Now view: the music player with album art, then cards for a meeting in 4 minutes with a Join button, a running focus timer and the weather" width="1440" height="900"></button>
-                <figcaption><b>The hub opens on Now</b>, in frosted glass. Music, your next meeting, the timer and the weather.</figcaption>
-            </figure>
-            <figure class="shot">
-                <button class="frame" type="button" data-full="shots/spotlight.jpg"><img src="shots/spotlight.jpg" alt="Spotlight in the notch: typing cal completes to Calculator, with app chips and results in a frosted-glass panel below" width="1440" height="900" loading="lazy"></button>
-                <figcaption><b>Spotlight</b>, results on frosted glass</figcaption>
-            </figure>
-            <figure class="shot">
-                <button class="frame" type="button" data-full="shots/hub-system.jpg"><img src="shots/hub-system.jpg" alt="The System section on its Monitor view, with CPU, memory, GPU, swap and storage bars, temperature, battery and network" width="1440" height="900" loading="lazy"></button>
-                <figcaption><b>System</b> monitor, one of four views</figcaption>
-            </figure>
-            <figure class="shot">
-                <button class="frame" type="button" data-full="shots/hub-weather.jpg"><img src="shots/hub-weather.jpg" alt="The Weather view with current conditions and a 3-day forecast" width="1440" height="900" loading="lazy"></button>
-                <figcaption><b>Weather</b> with a 3-day forecast</figcaption>
-            </figure>
-            <figure class="shot">
-                <button class="frame" type="button" data-full="shots/hub-timer.jpg"><img src="shots/hub-timer.jpg" alt="The Timer section with a focus session counting down inside a progress ring" width="1440" height="900" loading="lazy"></button>
-                <figcaption><b>Focus timer</b> with presets</figcaption>
-            </figure>
-            <figure class="shot">
-                <button class="frame" type="button" data-full="shots/control.jpg"><img src="shots/control-crop.jpg" alt="Quick Settings styled like macOS Control Center, with the notch showing the current track" width="1120" height="900" loading="lazy"></button>
-                <figcaption><b>Control Center look</b>, music in the notch</figcaption>
-            </figure>
-        </div>
-    </div>
-</section>
-
-<dialog class="lightbox" id="lightbox" aria-label="Screenshot">
-    <form method="dialog"><button class="close" aria-label="Close">×</button></form>
-    <img alt="">
-    <p></p>
-</dialog>
-
-<!-- ============ Shapes ============ -->
-<section id="shapes">
-    <div class="wrap">
-        <div class="section-head">
-            <h2>Notch or pill. Your call.</h2>
-            <p>Both shapes do the same things. Switch any time: right-click the notch and pick <b>Notch</b> or <b>Pill</b>.</p>
-        </div>
-        <div class="shapes">
-            <figure class="shape">
-                <img src="shots/meeting.jpg" alt="The notch attached to the top edge of the screen, showing a meeting in 4 minutes with a Join button" width="1200" height="240" loading="lazy">
-                <figcaption><b>Notch</b><span>Joined to the top edge with rounded bottom corners, like a MacBook. It fills the space where the top-bar clock was, and turns into one black bar when a window is maximized.</span></figcaption>
-            </figure>
-            <figure class="shape">
-                <img src="shots/pill-timer.jpg" alt="The floating pill below the top edge, playing music, with a separate bubble beside it counting down a focus timer" width="1200" height="200" loading="lazy">
-                <figcaption><b>Pill</b><span>A capsule that floats a few pixels below the edge, with a thin light rim. Here the timer has moved into its own bubble while music plays.</span></figcaption>
-            </figure>
-        </div>
-        <h3 class="try-head">Try it here</h3>
-        <div class="stage-wrap">
-            <div class="stage" id="stage" data-shape="notch" data-state="idle" role="img" aria-labelledby="stage-caption">
-                <svg class="wallpaper" viewBox="0 0 1600 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-                    <rect width="1600" height="800" fill="#c9c7bd"/>
-                    <path d="M0 0h420l-60 120-180 40L0 210z" fill="#6aa9ae"/>
-                    <path d="M520 0h360l-40 90-210 60-150-40z" fill="#e3d6b8"/>
-                    <path d="M1080 0h520v150l-170 60-240-30-80-90z" fill="#e3d6b8"/>
-                    <path d="M1250 240l200-40 150 40v120l-210 20z" fill="#9dbcbb"/>
-                    <path d="M300 220l200-30 140 60-80 70-230-20z" fill="#e3d6b8" opacity=".8"/>
-                    <path d="M560 470l40-150h170l30 60h40l20 70 60 40 20 140H560z" fill="#c9a2cc"/>
-                    <path d="M640 470l20-140h120l20 70h40l14 60-40 110H640z" fill="#7a6cc0"/>
-                    <path d="M0 140l90-30 110 10 40 60-20 300 40 140-40 180H0z" fill="#6c1746"/>
-                    <path d="M200 180l80-10 50 40-10 300 30 120-60 170H190l20-200z" fill="#8f1c47"/>
-                    <path d="M1040 300l40-90 60-10 20 90 60 30 40 230-30 250H980l60-230z" fill="#6c1746"/>
-                    <path d="M1150 330l60 30 40 230-20 210h-90l30-250z" fill="#8f1c47"/>
-                    <path d="M1390 330l60-20 40 60 30 200 80 40v190h-260l40-250z" fill="#6c1746"/>
-                    <path d="M0 640l380-60 300 40 260-60 330 30 330-70v280H0z" fill="#e2704f"/>
-                    <path d="M720 610l240-50 220 40 160 120-100 80H640z" fill="#ee8b63"/>
-                    <path d="M900 640l120-30 80 60-60 40-140-20z" fill="#b8384b"/>
-                    <path d="M0 700l300-30 260 70-40 60H0z" fill="#5e1440"/>
-                    <path d="M1180 720l420-80v160h-480z" fill="#5e1440"/>
-                </svg>
-
-                <div class="topbar" aria-hidden="true">
-                    <svg class="opt" viewBox="0 0 24 24" fill="currentColor"><path d="M12 18.5a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5zM12 13c2 0 3.9.8 5.3 2.2l-1.6 1.6A5.2 5.2 0 0 0 12 15.3c-1.4 0-2.7.6-3.7 1.5l-1.6-1.6A7.5 7.5 0 0 1 12 13zm0-5c3.4 0 6.5 1.3 8.8 3.6l-1.6 1.6A10.2 10.2 0 0 0 12 10.3c-2.8 0-5.4 1.1-7.2 2.9l-1.6-1.6A12.5 12.5 0 0 1 12 8z"/></svg>
-                    <svg class="opt" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 4h-2V2h-4v2H8a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1zm-1 16H9v-6h6z"/></svg>
+        <div class="activities-stage">
+            <div class="screen screen-band" id="alerts-screen" data-logical="520"
+                 role="img" aria-label="The notch showing the selected live activity">
+                <div class="island" aria-hidden="true">
+                    <img data-state="idle" src="img/island/idle.jpg" width="536" height="76" alt="">
+                    <img data-state="meeting" src="img/island/meeting.jpg" width="840" height="96" alt="">
+                    <img data-state="bt" src="img/island/bt.jpg" width="680" height="76" alt="">
+                    <img data-state="play" src="img/island/play.jpg" width="760" height="76" alt="">
+                    <img data-state="focus" src="img/island/focus.jpg" width="600" height="76" alt="">
+                    <img data-state="low" src="img/island/low.jpg" width="680" height="76" alt="">
+                    <img data-state="charge" src="img/island/charge.jpg" width="680" height="76" alt="">
                 </div>
-
-                <div class="notch" data-state="idle" aria-hidden="true">
-                    <div class="state s-idle">
-                        <span class="dim" data-date>Sat 17 Oct</span>
-                        <span data-clock>10:42</span>
-                        <span class="dim">82%</span>
-                    </div>
-                    <div class="state s-music">
-                        <span class="art"></span>
-                        <span>Midnight City <span class="dim">· M83</span></span>
-                        <span class="eq"><i></i><i></i><i></i><i></i></span>
-                    </div>
-                    <div class="state s-volume">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
-                        <span class="level"><span></span></span>
-                        <span class="dim">68%</span>
-                    </div>
-                    <div class="state s-notify">
-                        <svg class="cal-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
-                        <span class="notify-text">
-                            <span class="soon">In 4 min</span>
-                            <b>Design sync</b>
-                        </span>
-                        <span class="dim">10:46</span>
-                        <span class="join">Join</span>
-                    </div>
-                    <div class="state s-hub">
-                        <div class="hub-head">
-                            <span class="hub-time" data-clock>10:42</span>
-                            <span class="hub-date"><b data-weekday>Saturday</b><span data-longdate>October 17</span></span>
-                        </div>
-                        <div class="hub-tabs">
-                            <span class="on">Now</span><span>Calendar</span><span>Timer</span><span>Notes</span><span>System</span>
-                        </div>
-                        <div class="hub-sub opt"><span class="on">Overview</span><span>Weather</span></div>
-                        <div class="hub-media">
-                            <span class="art big"></span>
-                            <span class="hm-text"><b>Midnight City</b><span>M83</span><span class="bar"><i style="width:42%"></i></span></span>
-                            <span class="hm-ctrls">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg>
-                                <svg class="play" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg>
-                            </span>
-                        </div>
-                        <div class="hub-cards">
-                            <span class="hc"><small class="red">In 4 min</small><b>Design sync</b></span>
-                            <span class="join">Join</span>
-                            <span class="hc"><small class="orange">Focus</small><b>24:12 left</b></span>
-                            <span class="hc opt"><small>Weather</small><b>18° Clear</b></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bubble" aria-hidden="true"><i></i>24:12</div>
             </div>
-
-            <div class="stage-controls">
-                <div class="segmented" role="group" aria-label="Notch shape">
-                    <button type="button" data-shape="notch" aria-pressed="true">Notch</button>
-                    <button type="button" data-shape="pill" aria-pressed="false">Pill</button>
-                </div>
-                <div class="segmented" role="group" aria-label="Show a notch state">
-                    <button type="button" data-show="idle" aria-pressed="true">Idle</button>
-                    <button type="button" data-show="music" aria-pressed="false">Music</button>
-                    <button type="button" data-show="both" aria-pressed="false">Music + timer</button>
-                    <button type="button" data-show="volume" aria-pressed="false">Volume</button>
-                    <button type="button" data-show="notify" aria-pressed="false">Meeting</button>
-                    <button type="button" data-show="hub" aria-pressed="false">Hub</button>
-                </div>
-                <button type="button" class="icon-btn" id="stage-pause" aria-pressed="false" aria-label="Pause demo">
-                    <svg class="i-pause" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><rect x="2" y="1" width="3.5" height="12" rx="1"/><rect x="8.5" y="1" width="3.5" height="12" rx="1"/></svg>
-                    <svg class="i-play" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M3 1.5v11a.8.8 0 0 0 1.2.7l9-5.5a.8.8 0 0 0 0-1.4l-9-5.5A.8.8 0 0 0 3 1.5z"/></svg>
-                </button>
-            </div>
-            <p class="stage-caption" id="stage-caption">Idle: date, time and battery, in place of the top-bar clock</p>
         </div>
     </div>
 </section>
 
-<!-- ============ Live activities ============ -->
-<section id="activities" class="band">
-    <div class="wrap activities">
-        <div class="section-head">
-            <h2>Live activities, the size of the notch.</h2>
-            <p>Small things stay small. The notch stretches sideways with a little spring, an icon slides out on the left and the status on the right, then it settles back.</p>
-            <ul class="checks">
-                <li>Headphones connecting, with a ring that fills to their battery level</li>
-                <li>A blue <b>Play Here</b> button when headphones connect but sound is still on your speakers, and <b>Reconnect</b> when they drop off</li>
-                <li>Focus turning on or off</li>
-                <li>Low battery and charging, with the level at a glance</li>
-                <li>Meetings with a <b>Join</b> button, volume, brightness, notifications and track changes</li>
-            </ul>
-        </div>
-        <figure class="activity-shot">
-            <img src="shots/compact.jpg" alt="Five compact alerts: AirPods Pro at 72% with a green ring, AirPods Pro with a blue Play Here button, Focus On in purple, Low Battery at 20% in red, and Charging at 82% in green" width="900" height="600" loading="lazy">
-        </figure>
+<!-- ============ The hub ============ -->
+<section class="chapter hub" id="hub">
+    <div class="chapter-head">
+        <h2 data-reveal>Hover.<br>It <span class="grad">opens.</span></h2>
+        <p class="lede" data-reveal>The notch grows into a hub that opens on <b>Now</b>: what's playing, your next meeting, the focus timer and the weather. Four more sections hold your calendar and tasks, the timer, notes and the system monitor.</p>
+    </div>
+    <figure class="shot shot-hub" data-reveal>
+        <img id="hub-img" src="img/n/hub-now.jpg" data-shot="hub-now" width="1600" height="1000"
+             alt="The hub open on the Now view: the music player with album art, a meeting in 4 minutes with a Join button, a running focus timer and the weather">
+    </figure>
+    <div class="tabs" role="tablist" aria-label="Hub views">
+        <button type="button" role="tab" aria-selected="true" data-view="hub-now">Now</button>
+        <button type="button" role="tab" aria-selected="false" data-view="hub-system">System</button>
+        <button type="button" role="tab" aria-selected="false" data-view="hub-weather">Weather</button>
+        <button type="button" role="tab" aria-selected="false" data-view="hub-timer">Timer</button>
     </div>
 </section>
 
-<!-- ============ Features ============ -->
-<section id="features">
-    <div class="wrap">
-        <div class="section-head">
-            <h2>Everything at the top of your screen.</h2>
-            <p>The notch replaces the top-bar clock. It stays small until something happens, then grows to show it.</p>
-        </div>
-
-        <div class="grid">
-            <article class="card">
-                <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><rect x="3" y="16" width="18" height="3" rx="1.5" opacity=".45"/></svg></div>
-                <h3>The notch, or a pill</h3>
-                <p>Date, time and battery when idle. Album art and live equalizer bars while music plays, or a countdown while a Pomodoro runs.</p>
-                <ul>
-                    <li>Attached to the top edge as a <b>notch</b>, or floating as a <b>pill</b></li>
-                    <li>Music and a timer at once? The timer moves to a <b>bubble</b> beside it</li>
-                    <li>A green or orange dot when the camera or microphone is in use</li>
-                    <li>Scroll over it for volume, swipe sideways to skip tracks</li>
-                </ul>
-            </article>
-
-            <article class="card">
-                <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></div>
-                <h3>Live activities</h3>
-                <p>The notch briefly grows for things you'd want to know about:</p>
-                <ul>
-                    <li>Track changes from Spotify, YouTube, VLC and any MPRIS player</li>
-                    <li>Volume, brightness and battery alerts</li>
-                    <li>Bluetooth devices connecting, with their battery level</li>
-                    <li>Notifications, and upcoming meetings with a <b>Join</b> button for Meet, Zoom and Teams</li>
-                </ul>
-            </article>
-
-            <article class="card">
-                <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg></div>
-                <h3>A hub in the notch</h3>
-                <p>Hover and it opens on <b>Now</b>: what's playing, your next meeting, the timer and the weather. Four more sections hold your calendar and tasks, the focus timer, notes, and the system monitor and controls.</p>
-            </article>
-
-            <article class="card">
-                <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="15" width="20" height="6" rx="3"/><rect x="5" y="9" width="4" height="4" rx="1"/><rect x="10" y="7" width="5" height="6" rx="1.2"/><rect x="16" y="9" width="4" height="4" rx="1"/></svg></div>
-                <h3>Magnifying Dock</h3>
-                <p>A macOS-style Dock built from your GNOME favorites. Icons magnify as you move over them. Bottom, left or right; always on, auto-hiding, or hidden only when a window covers it.</p>
-            </article>
-
-            <article class="card">
-                <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></div>
-                <h3>Spotlight search</h3>
-                <p>Press <kbd>Super</kbd> + <kbd>Space</kbd> and the notch turns into a search bar that finishes your words as you type. Results float below on frosted glass: apps, settings, files and system actions. Type <code>12*7+3</code> for a calculator.</p>
-            </article>
-
-            <article class="card">
-                <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="12" r="2.6"/><circle cx="12" cy="12" r="2.6"/><circle cx="18.5" cy="12" r="2.6"/></svg></div>
-                <h3>macOS-style desktop</h3>
-                <p>Frosted glass on the open notch, the top bar and its menus. A Control Center look for Quick Settings, an auto-hiding top bar, three-finger zoom and optional traffic-light window buttons. Each one can be turned off.</p>
-            </article>
-        </div>
+<!-- ============ Spotlight ============ -->
+<section class="chapter split" id="spotlight">
+    <figure class="shot" data-reveal>
+        <img src="img/n/spotlight.jpg" data-shot="spotlight" width="1600" height="1000" loading="lazy"
+             alt="Spotlight in the notch: typing cal completes to Calculator, with app chips and results on frosted glass below">
+    </figure>
+    <div class="split-copy">
+        <h2 data-reveal>Search,<br>in the notch.</h2>
+        <p class="lede" data-reveal>Press <kbd>Super</kbd> <kbd>Space</kbd> and the notch becomes a search bar that finishes your words. Press <kbd>Tab</kbd> to take the suggestion. Results float below on frosted glass: apps, settings, files and system actions.</p>
+        <p class="note" data-reveal>Type <code>12*7+3</code> for a calculator.</p>
     </div>
 </section>
 
-<!-- ============ Pick your parts ============ -->
-<section id="choose" class="band">
-    <div class="wrap parts">
-        <div class="section-head">
-            <h2>Use all of it, or just one part.</h2>
-            <p>Every part of Notchex works on its own. Open the <b>Features</b> page in preferences, pick a preset, then switch single parts on or off.</p>
-            <p>Changes apply right away. No logging out.</p>
-            <p>Getting there takes one step: <b>right-click the notch</b>, press <kbd>Super</kbd> + <kbd>,</kbd>, or open <b>Notchex Settings</b> from your apps. No Extension Manager needed. The right-click menu also switches between notch and pill.</p>
-        </div>
-
-        <div class="prefs" id="prefs">
-            <p class="prefs-label" id="preset-label">Preset</p>
-            <div class="segmented" role="group" aria-labelledby="preset-label">
-                <button type="button" data-preset="all" aria-pressed="true">Everything</button>
-                <button type="button" data-preset="notch" aria-pressed="false">Notch only</button>
-                <button type="button" data-preset="dock" aria-pressed="false">Dock only</button>
-                <button type="button" data-preset="look" aria-pressed="false">Look only</button>
-            </div>
-            <ul class="prefs-list" aria-live="polite">
-                <li data-part="notch"><span class="txt"><b>Notch</b><span>Replaces the top-bar clock with the notch and the hub</span></span><span class="switch" aria-hidden="true"></span><span class="sr-only state"></span></li>
-                <li data-part="notify" data-needs="notch" class="sub"><span class="txt"><b>Notifications in the notch</b><span>Instead of a banner</span></span><span class="switch" aria-hidden="true"></span><span class="sr-only state"></span></li>
-                <li data-part="search" data-needs="notch" class="sub"><span class="txt"><b>Spotlight search</b><span><kbd>Super</kbd> + <kbd>Space</kbd> search inside the notch</span></span><span class="switch" aria-hidden="true"></span><span class="sr-only state"></span></li>
-                <li data-part="dock"><span class="txt"><b>Dock</b><span>Magnifying Dock at the bottom, left or right</span></span><span class="switch" aria-hidden="true"></span><span class="sr-only state"></span></li>
-                <li data-part="glass"><span class="txt"><b>Frosted glass</b><span>Translucent top bar, menus and popups</span></span><span class="switch" aria-hidden="true"></span><span class="sr-only state"></span></li>
-                <li data-part="cc"><span class="txt"><b>Control Center look</b><span>Quick Settings restyled</span></span><span class="switch" aria-hidden="true"></span><span class="sr-only state"></span></li>
-            </ul>
-        </div>
+<!-- ============ Notch or pill ============ -->
+<section class="chapter shapes" id="shapes">
+    <div class="chapter-head center">
+        <h2 data-reveal>Notch or pill.<br>Your call.</h2>
+        <p class="lede" data-reveal>Both shapes do the same things. Switch any time: right-click the notch, or use the switch at the top of this page.</p>
+    </div>
+    <div class="shape-cards">
+        <button type="button" class="shape-card" data-set-shape="notch" data-reveal>
+            <img src="img/n/both.jpg" width="1440" height="300" loading="lazy" alt="">
+            <span class="shape-card-text"><b>Notch</b><span>Joined to the top edge with rounded bottom corners. With a window maximized, it becomes one black bar, like a MacBook.</span></span>
+        </button>
+        <button type="button" class="shape-card" data-set-shape="pill" data-reveal>
+            <img src="img/p/both.jpg" width="1440" height="300" loading="lazy" alt="">
+            <span class="shape-card-text"><b>Pill</b><span>A capsule floating just below the edge, with a light rim. Music and a timer at once? The timer gets its own bubble.</span></span>
+        </button>
     </div>
 </section>
 
-<!-- ============ Hub ============ -->
-<section id="hub">
-    <div class="wrap">
-        <div class="section-head">
-            <h2>Five sections. Opens on what's happening now.</h2>
-            <p>The notch resizes to fit each view, so it never takes more room than it needs. Turn off the views you don't use.</p>
-        </div>
-        <ul class="tabs-list">
-            <li><b>Now</b><span>Music player, next meeting with Join, focus timer and weather cards. Plus the full Weather view: two locations and a 3-day forecast.</span></li>
-            <li><b>Calendar</b><span>Google Calendar events and Google Tasks through GNOME Online Accounts. Add tasks from the notch.</span></li>
-            <li><b>Timer</b><span>Pomodoro with presets, a progress ring and cycle tracking.</span></li>
-            <li><b>Notes</b><span>Sticky notes saved as Markdown files.</span></li>
-            <li><b>System</b><span>Monitor, focus stats, Controls (Wi-Fi, Bluetooth, Night Light, Focus, power) and Claude Code usage.</span></li>
-        </ul>
+<!-- ============ Everything else ============ -->
+<section class="chapter more" id="features">
+    <div class="chapter-head">
+        <h2 data-reveal>And the rest of<br>the desktop, too.</h2>
+    </div>
+    <div class="bento">
+        <article class="tile" data-reveal>
+            <h3>Gestures on the notch</h3>
+            <p>Scroll over it for volume. Swipe sideways to skip a track.</p>
+        </article>
+        <article class="tile" data-reveal>
+            <h3>Privacy dot</h3>
+            <p>A green or orange dot whenever an app uses the camera or microphone.</p>
+        </article>
+        <article class="tile" data-reveal>
+            <h3>Magnifying Dock</h3>
+            <p>Built from your favorites. Icons grow as you pass over them, and it hides when a window needs the room.</p>
+        </article>
+        <article class="tile" data-reveal>
+            <h3>Settings, one click away</h3>
+            <p>Right-click the notch, press <kbd>Super</kbd> <kbd>,</kbd> or open <b>Notchex Settings</b> from your apps.</p>
+        </article>
+        <article class="tile" data-reveal>
+            <h3>Calendar and tasks</h3>
+            <p>Google Calendar and Tasks through GNOME Online Accounts. No extra sign-in.</p>
+        </article>
+        <article class="tile" data-reveal>
+            <h3>macOS-style touches</h3>
+            <p>Frosted glass, a Control Center look, an auto-hiding top bar and three-finger zoom. Each one can be turned off.</p>
+        </article>
     </div>
 </section>
 
-<!-- ============ Shortcuts ============ -->
-<section id="shortcuts" class="band">
-    <div class="wrap">
-        <div class="section-head">
-            <h2>Keyboard first.</h2>
-            <p>Every Notchex shortcut can be changed in preferences.</p>
-        </div>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th scope="col">Input</th><th scope="col">Action</th></tr></thead>
-                <tbody>
-                    <tr><td><kbd>Super</kbd> + <kbd>N</kbd></td><td>Expand or collapse the notch</td></tr>
-                    <tr><td><kbd>Super</kbd> + <kbd>Space</kbd></td><td>Open Spotlight search</td></tr>
-                    <tr><td><kbd>Super</kbd> + <kbd>,</kbd></td><td>Open Notchex settings</td></tr>
-                    <tr><td>Right-click the notch</td><td>Settings, notch or pill, hide the notch</td></tr>
-                    <tr><td><kbd>Tab</kbd> or <kbd>→</kbd> in Spotlight</td><td>Accept the suggested completion</td></tr>
-                    <tr><td><kbd>↑</kbd> <kbd>↓</kbd> · <kbd>Tab</kbd> · <kbd>Enter</kbd> · <kbd>Esc</kbd></td><td>Move, switch category, open and close in Spotlight</td></tr>
-                    <tr><td>Scroll over the notch</td><td>Change the volume</td></tr>
-                    <tr><td>Swipe sideways over the notch</td><td>Next or previous track</td></tr>
-                    <tr><td>Three-finger pinch</td><td>Zoom the screen in or out</td></tr>
-                    <tr><td>Three-finger double-tap</td><td>Toggle zoom</td></tr>
-                </tbody>
-            </table>
-        </div>
+<!-- ============ Privacy ============ -->
+<section class="chapter privacy" id="privacy">
+    <div class="chapter-head">
+        <h2 data-reveal>Light, local<br>and private.</h2>
+        <p class="lede" data-reveal>Plain GJS on top of GNOME Shell. The notch reacts to events instead of checking for them, so at rest it does almost nothing.</p>
+    </div>
+    <div class="facts">
+        <div class="fact" data-reveal><h3>No telemetry</h3><p>Notchex only goes online for features you turn on, like weather or meeting links. Tokens stay in memory and never touch the disk.</p></div>
+        <div class="fact" data-reveal><h3>Nearly idle</h3><p>The clock ticks once a minute. System stats are read only while you look at them, and the music bars run in their own process.</p></div>
+        <div class="fact" data-reveal><h3>No sudo</h3><p>Installs for your user only. Turn a part off and it stops completely. Uninstall and it's gone.</p></div>
     </div>
 </section>
 
-<!-- ============ Privacy & performance ============ -->
-<section id="privacy">
-    <div class="wrap">
-        <div class="section-head">
-            <h2>Light, local and private.</h2>
-            <p>Plain GJS on top of GNOME Shell. The idle notch reacts to events instead of checking for them, so it uses almost nothing until something changes.</p>
-        </div>
-        <div class="grid">
-            <article class="card">
-                <h3>No telemetry</h3>
-                <p>Notchex only goes online for features you turn on, like weather, Google Tasks or meeting links. Access tokens stay in memory and are never written to disk.</p>
-            </article>
-            <article class="card">
-                <h3>Nearly idle at rest</h3>
-                <p>The clock updates once a minute. System stats are only read while the Monitor view is on screen, and the camera and mic dot needs no polling at all. The equalizer runs in a separate process, so it can never freeze your desktop.</p>
-            </article>
-            <article class="card">
-                <h3>Clean uninstall</h3>
-                <p>Notchex installs for your user only and never needs <code>sudo</code>. Turn off a part and it stops completely. Uninstall and it's gone.</p>
-            </article>
-        </div>
+<!-- ============ Install ============ -->
+<section class="install" id="install">
+    <h2 data-reveal>Install in one line.</h2>
+    <p class="lede" data-reveal>Run this in a terminal, then log out and back in.</p>
+    <div class="code" data-reveal>
+        <code id="install-cmd">curl -fsSL https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.sh | bash</code>
+        <button type="button" class="copy" data-copy="install-cmd">Copy</button>
     </div>
-</section>
-
-<!-- ============ Final CTA ============ -->
-<section class="final band">
-    <div class="wrap">
-        <div class="mark" aria-hidden="true"></div>
-        <h2>Install in one line.</h2>
-        <p>Run this in a terminal, then log out and back in.</p>
-        <div class="code"><pre><code>curl -fsSL https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.sh | bash</code></pre></div>
-        <div class="cta-row">
-            <a class="btn btn-primary" href="install.html">Full install guide</a>
-            <a class="btn btn-secondary" href="https://github.com/AdityaTakuli/Notchex/releases/latest">Download release</a>
-        </div>
-        <p class="next-up">Next up: <b>Notchex for Windows</b>, with the same notch, pill and alerts.</p>
+    <div class="cta center" data-reveal>
+        <a class="btn" href="install.html">Full install guide</a>
+        <a class="btn btn-ghost" href="https://github.com/AdityaTakuli/Notchex/releases/latest">Download release</a>
     </div>
+    <p class="meta" data-reveal>GNOME Shell 46–50 <span aria-hidden="true">·</span> Wayland and X11 <span aria-hidden="true">·</span> GPL-3.0</p>
+    <p class="next" data-reveal>Next up: <b>Notchex for Windows</b>, with the same notch, pill and alerts.</p>
 </section>
 
 </main>
 
-<footer class="site-footer">
-    <div class="wrap">
-        <span>Notchex · GPL-3.0-or-later · Made by <a href="https://github.com/AdityaTakuli">Aditya Takuli</a></span>
-        <span class="footer-links">
-            <a href="install.html">Install</a>
-            <a href="https://github.com/AdityaTakuli/Notchex">GitHub</a>
-            <a href="https://github.com/AdityaTakuli/Notchex/issues">Report an issue</a>
-        </span>
-    </div>
+<footer class="footer">
+    <span>Notchex · Made by <a href="https://github.com/AdityaTakuli">Aditya Takuli</a></span>
+    <span class="footer-links">
+        <a href="install.html">Install</a>
+        <a href="https://github.com/AdityaTakuli/Notchex">GitHub</a>
+        <a href="https://github.com/AdityaTakuli/Notchex/issues">Report an issue</a>
+    </span>
 </footer>
 
-<script src="site.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="home.js"></script>
 </body>
 </html>

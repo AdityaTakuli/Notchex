@@ -977,3 +977,6 @@ details p { margin: 6px 0; }
 .footer-links { display: flex; gap: 18px; flex-wrap: wrap; }
 
 .next-up { margin: 28px 0 0; font-size: 15px; color: var(--text-dim); }
+
+/* full-width header, matching the home page */
+.site-header .wrap { max-width: none; padding: 0 clamp(20px, 4vw, 64px); }
