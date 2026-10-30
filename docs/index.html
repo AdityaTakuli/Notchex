@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0b0b0d" media="(prefers-color-scheme: dark)">
     <meta property="og:title" content="Notchex: a working notch for GNOME">
-    <meta property="og:description" content="Music, timers, meetings, notifications and quick controls in a notch at the top of your screen, plus a Dock and Spotlight search. For GNOME 46–50.">
+    <meta property="og:description" content="Music, timers, meetings and live activities in a notch or a pill at the top of your screen, plus Spotlight search. Free for Linux (GNOME 46–50). Windows next.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://adityatakuli.github.io/Notchex/og.jpg">
     <meta name="twitter:card" content="summary_large_image">
@@ -37,7 +37,7 @@
 <!-- ============ Hero ============ -->
 <section class="hero">
     <div class="wrap">
-        <a class="eyebrow" href="#hub"><b>New</b> The Now view, Join buttons and more <span class="chev" aria-hidden="true">›</span></a>
+        <a class="eyebrow" href="#shapes"><b>New</b> Notch or pill, live activities, glass Spotlight <span class="chev" aria-hidden="true">›</span></a>
         <h1>A working notch<br>for GNOME.</h1>
         <p class="lede">
             Music, timers, meetings and notifications, right at the top of your screen.
@@ -53,9 +53,88 @@
             <li>Wayland and X11</li>
             <li>Free and open source</li>
             <li>No sudo</li>
+            <li>Windows version on the way</li>
         </ul>
 
-        <!-- Live demo of the notch on a desktop -->
+        <!-- Notch or pill: drag to compare (both are real screenshots) -->
+        <figure class="compare-wrap">
+            <div class="compare" id="compare" style="--pos: 50%">
+                <img class="compare-img" src="shots/compare-pill.jpg" width="1200" height="340"
+                     alt="Notchex as a floating pill below the top edge, playing Neon Skyline">
+                <div class="compare-top" aria-hidden="true">
+                    <img class="compare-img" src="shots/compare-notch.jpg" width="1200" height="340" alt="">
+                </div>
+                <span class="compare-tag left" aria-hidden="true">Notch</span>
+                <span class="compare-tag right" aria-hidden="true">Pill</span>
+                <div class="compare-handle" aria-hidden="true"><span></span></div>
+                <input class="compare-range" type="range" min="0" max="100" value="50"
+                       aria-label="Compare the notch and the pill: left shows more notch, right shows more pill">
+            </div>
+            <figcaption>Drag to compare. Same desktop, same song: the <b>notch</b> joins the top edge like a MacBook, the <b>pill</b> floats just below it.</figcaption>
+        </figure>
+    </div>
+</section>
+
+<!-- ============ Screenshots ============ -->
+<section id="screenshots" class="band">
+    <div class="wrap">
+        <div class="section-head">
+            <h2>Running on a real desktop.</h2>
+            <p>Every screenshot is Notchex on GNOME 46, on a HiDPI screen. The music and meeting are demo data. Select one to see it full size.</p>
+        </div>
+        <div class="shots">
+            <figure class="shot featured">
+                <button class="frame" type="button" data-full="shots/hub-now.jpg"><img src="shots/hub-now.jpg" alt="The hub open on the Now view: the music player with album art, then cards for a meeting in 4 minutes with a Join button, a running focus timer and the weather" width="1440" height="900"></button>
+                <figcaption><b>The hub opens on Now</b>, in frosted glass. Music, your next meeting, the timer and the weather.</figcaption>
+            </figure>
+            <figure class="shot">
+                <button class="frame" type="button" data-full="shots/spotlight.jpg"><img src="shots/spotlight.jpg" alt="Spotlight in the notch: typing cal completes to Calculator, with app chips and results in a frosted-glass panel below" width="1440" height="900" loading="lazy"></button>
+                <figcaption><b>Spotlight</b>, results on frosted glass</figcaption>
+            </figure>
+            <figure class="shot">
+                <button class="frame" type="button" data-full="shots/hub-system.jpg"><img src="shots/hub-system.jpg" alt="The System section on its Monitor view, with CPU, memory, GPU, swap and storage bars, temperature, battery and network" width="1440" height="900" loading="lazy"></button>
+                <figcaption><b>System</b> monitor, one of four views</figcaption>
+            </figure>
+            <figure class="shot">
+                <button class="frame" type="button" data-full="shots/hub-weather.jpg"><img src="shots/hub-weather.jpg" alt="The Weather view with current conditions and a 3-day forecast" width="1440" height="900" loading="lazy"></button>
+                <figcaption><b>Weather</b> with a 3-day forecast</figcaption>
+            </figure>
+            <figure class="shot">
+                <button class="frame" type="button" data-full="shots/hub-timer.jpg"><img src="shots/hub-timer.jpg" alt="The Timer section with a focus session counting down inside a progress ring" width="1440" height="900" loading="lazy"></button>
+                <figcaption><b>Focus timer</b> with presets</figcaption>
+            </figure>
+            <figure class="shot">
+                <button class="frame" type="button" data-full="shots/control.jpg"><img src="shots/control-crop.jpg" alt="Quick Settings styled like macOS Control Center, with the notch showing the current track" width="1120" height="900" loading="lazy"></button>
+                <figcaption><b>Control Center look</b>, music in the notch</figcaption>
+            </figure>
+        </div>
+    </div>
+</section>
+
+<dialog class="lightbox" id="lightbox" aria-label="Screenshot">
+    <form method="dialog"><button class="close" aria-label="Close">×</button></form>
+    <img alt="">
+    <p></p>
+</dialog>
+
+<!-- ============ Shapes ============ -->
+<section id="shapes">
+    <div class="wrap">
+        <div class="section-head">
+            <h2>Notch or pill. Your call.</h2>
+            <p>Both shapes do the same things. Switch any time: right-click the notch and pick <b>Notch</b> or <b>Pill</b>.</p>
+        </div>
+        <div class="shapes">
+            <figure class="shape">
+                <img src="shots/meeting.jpg" alt="The notch attached to the top edge of the screen, showing a meeting in 4 minutes with a Join button" width="1200" height="240" loading="lazy">
+                <figcaption><b>Notch</b><span>Joined to the top edge with rounded bottom corners, like a MacBook. It fills the space where the top-bar clock was, and turns into one black bar when a window is maximized.</span></figcaption>
+            </figure>
+            <figure class="shape">
+                <img src="shots/pill-timer.jpg" alt="The floating pill below the top edge, playing music, with a separate bubble beside it counting down a focus timer" width="1200" height="200" loading="lazy">
+                <figcaption><b>Pill</b><span>A capsule that floats a few pixels below the edge, with a thin light rim. Here the timer has moved into its own bubble while music plays.</span></figcaption>
+            </figure>
+        </div>
+        <h3 class="try-head">Try it here</h3>
         <div class="stage-wrap">
             <div class="stage" id="stage" data-shape="notch" data-state="idle" role="img" aria-labelledby="stage-caption">
                 <svg class="wallpaper" viewBox="0 0 1600 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
@@ -162,68 +241,6 @@
     </div>
 </section>
 
-<!-- ============ Screenshots ============ -->
-<section id="screenshots" class="band">
-    <div class="wrap">
-        <div class="section-head">
-            <h2>Running on a real desktop.</h2>
-            <p>Every screenshot is Notchex on GNOME 46. The music, weather and meeting are demo data. Select one to see it full size.</p>
-        </div>
-        <div class="shots">
-            <figure class="shot featured">
-                <button class="frame" type="button" data-full="shots/hub-now.png"><img src="shots/hub-now.png" alt="The hub open on the Now view: the music player with album art, then cards for a meeting in 4 minutes with a Join button, a running focus timer and the weather" width="880" height="550"></button>
-                <figcaption><b>The hub opens on Now</b>, in frosted glass. Music, your next meeting, the timer and the weather.</figcaption>
-            </figure>
-            <figure class="shot">
-                <button class="frame" type="button" data-full="shots/hub-system.png"><img src="shots/hub-system.png" alt="The System section on its Monitor view, with CPU, memory, GPU, swap and storage bars, temperature, battery and network" loading="lazy"></button>
-                <figcaption><b>System</b> monitor, one of four views</figcaption>
-            </figure>
-            <figure class="shot">
-                <button class="frame" type="button" data-full="shots/hub-weather.png"><img src="shots/hub-weather.png" alt="The Weather view with current conditions and a 3-day forecast" loading="lazy"></button>
-                <figcaption><b>Weather</b> with a 3-day forecast</figcaption>
-            </figure>
-            <figure class="shot">
-                <button class="frame" type="button" data-full="shots/spotlight.jpg"><img src="shots/spotlight-crop.jpg" alt="Spotlight in the notch: typing cal completes to Calculator, with app chips and results in a frosted-glass panel below" loading="lazy"></button>
-                <figcaption><b>Spotlight</b>, results on frosted glass</figcaption>
-            </figure>
-            <figure class="shot">
-                <button class="frame" type="button" data-full="shots/hub-timer.png"><img src="shots/hub-timer.png" alt="The Timer section with a focus session counting down inside a progress ring" loading="lazy"></button>
-                <figcaption><b>Focus timer</b> with presets</figcaption>
-            </figure>
-            <figure class="shot">
-                <button class="frame" type="button" data-full="shots/control.jpg"><img src="shots/control-crop.jpg" alt="Quick Settings styled like macOS Control Center, with the notch showing the current track" loading="lazy"></button>
-                <figcaption><b>Control Center look</b>, music in the notch</figcaption>
-            </figure>
-        </div>
-    </div>
-</section>
-
-<dialog class="lightbox" id="lightbox" aria-label="Screenshot">
-    <form method="dialog"><button class="close" aria-label="Close">×</button></form>
-    <img alt="">
-    <p></p>
-</dialog>
-
-<!-- ============ Shapes ============ -->
-<section id="shapes">
-    <div class="wrap">
-        <div class="section-head">
-            <h2>Notch or pill. Your call.</h2>
-            <p>Both shapes do the same things. Pick one under <b>Appearance</b> in preferences, or try both in the demo above.</p>
-        </div>
-        <div class="shapes">
-            <figure class="shape">
-                <img src="shots/shape-notch.png" alt="The notch attached to the top edge of the screen, showing a meeting in 4 minutes with a Join button" width="640" height="120" loading="lazy">
-                <figcaption><b>Notch</b><span>Joined to the top edge with rounded bottom corners, like a MacBook. It fills the space where the top-bar clock was.</span></figcaption>
-            </figure>
-            <figure class="shape">
-                <img src="shots/shape-pill.png" alt="The floating pill below the top edge, playing music, with a separate bubble beside it counting down a focus timer" width="640" height="120" loading="lazy">
-                <figcaption><b>Pill</b><span>A fully rounded capsule that floats a few pixels below the edge, with a gap you can set. Here the timer has moved into its own bubble while music plays.</span></figcaption>
-            </figure>
-        </div>
-    </div>
-</section>
-
 <!-- ============ Live activities ============ -->
 <section id="activities" class="band">
     <div class="wrap activities">
@@ -239,7 +256,7 @@
             </ul>
         </div>
         <figure class="activity-shot">
-            <img src="shots/compact.png" alt="Four compact alerts: AirPods Pro connected at 72% with a green ring, Focus On in purple, Low Battery at 20% in red, and Charging at 82% in green" width="420" height="232" loading="lazy">
+            <img src="shots/compact.jpg" alt="Five compact alerts: AirPods Pro at 72% with a green ring, AirPods Pro with a blue Play Here button, Focus On in purple, Low Battery at 20% in red, and Charging at 82% in green" width="900" height="600" loading="lazy">
         </figure>
     </div>
 </section>
@@ -413,6 +430,7 @@
             <a class="btn btn-primary" href="install.html">Full install guide</a>
             <a class="btn btn-secondary" href="https://github.com/AdityaTakuli/Notchex/releases/latest">Download release</a>
         </div>
+        <p class="next-up">Next up: <b>Notchex for Windows</b>, with the same notch, pill and alerts.</p>
     </div>
 </section>
 

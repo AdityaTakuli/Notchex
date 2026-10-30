@@ -23,15 +23,15 @@ Every part is optional. The **Features** page in preferences lets you keep only 
 It's plain GJS on top of St/Clutter. There's no Electron, no npm and no build step. Everything in the idle notch is driven by signals, so it does almost nothing until something actually changes.
 
 <p align="center">
-  <img src="docs/shots/hub-now.png" width="49%" alt="The hub open on the Now view, in frosted glass: music, a meeting with a Join button, a focus timer and the weather">
-  <img src="docs/shots/spotlight-crop.jpg" width="49%" alt="Spotlight in the notch completing cal to Calculator, with results in a frosted-glass panel">
+  <img src="docs/shots/hub-now.jpg" width="49%" alt="The hub open on the Now view, in frosted glass: music, a meeting with a Join button, a focus timer and the weather">
+  <img src="docs/shots/spotlight.jpg" width="49%" alt="Spotlight in the notch completing cal to Calculator, with results in a frosted-glass panel">
 </p>
 <p align="center">
-  <img src="docs/shots/shape-notch.png" width="49%" alt="The notch shape: attached to the top edge, showing a meeting with a Join button">
-  <img src="docs/shots/shape-pill.png" width="49%" alt="The pill shape: floating below the edge, with music and the timer in a bubble beside it">
+  <img src="docs/shots/meeting.jpg" width="49%" alt="The notch shape: attached to the top edge, showing a meeting with a Join button">
+  <img src="docs/shots/pill-timer.jpg" width="49%" alt="The pill shape: floating below the edge, with music and the timer in a bubble beside it">
 </p>
 <p align="center">
-  <img src="docs/shots/compact.png" width="40%" alt="Compact alerts: AirPods connected with a battery ring, Focus on, low battery, charging">
+  <img src="docs/shots/compact.jpg" width="45%" alt="Compact alerts: AirPods with a battery ring, AirPods with a Play Here button, Focus on, low battery, charging">
 </p>
 
 ---

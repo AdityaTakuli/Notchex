@@ -53,8 +53,10 @@ function _label(text, cls, color = null) {
 
 /* a ring that fills to `frac` when shown (battery level, progress) */
 function _ring(frac, color, sizeLogical = 22) {
+    /* actor sizes are in physical pixels: scale for HiDPI */
+    const px = Math.round(sizeLogical * St.ThemeContext.get_for_stage(global.stage).scale_factor);
     const ring = new St.DrawingArea({style_class: 'notchex-ring', y_align: Clutter.ActorAlign.CENTER,
-        width: sizeLogical, height: sizeLogical});
+        width: px, height: px});
     ring._t = 0;
     ring.connect('repaint', area => {
         const cr = area.get_context();

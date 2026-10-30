@@ -222,6 +222,84 @@ img { max-width: 100%; display: block; }
     margin: 20px 0 0; font-size: 14px; color: var(--text-dim);
 }
 
+/* ---------- Notch or pill: drag-to-compare in the hero ---------- */
+
+.compare-wrap { margin: 56px auto 0; max-width: 1080px; }
+.compare {
+    --pos: 50%;
+    position: relative;
+    aspect-ratio: 1200 / 340;
+    border-radius: 22px;
+    overflow: hidden;
+    background: #14162e;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06), 0 30px 60px -20px rgba(0, 0, 0, 0.35);
+    touch-action: pan-y;
+    isolation: isolate;
+}
+.compare-img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: 50% 0; display: block;
+    user-select: none; -webkit-user-drag: none;
+}
+.compare-top {
+    position: absolute; inset: 0;
+    clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+}
+.compare-handle {
+    position: absolute; top: 0; bottom: 0; left: var(--pos);
+    width: 2px; margin-left: -1px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.35);
+    pointer-events: none;
+}
+.compare-handle span {
+    position: absolute; top: 72%; left: 50%;
+    width: 40px; height: 40px; margin: -20px 0 0 -20px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+/* ‹ › arrows */
+.compare-handle span::before, .compare-handle span::after {
+    content: ""; position: absolute; top: 50%; width: 7px; height: 7px; margin-top: -4px;
+    border: solid #1d1d1f; border-width: 0 0 2px 2px;
+}
+.compare-handle span::before { left: 10px; transform: rotate(45deg); }
+.compare-handle span::after { right: 10px; transform: rotate(-135deg); }
+.compare-range {
+    position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+    opacity: 0; cursor: ew-resize; -webkit-appearance: none; appearance: none;
+}
+.compare-range::-webkit-slider-thumb { -webkit-appearance: none; width: 48px; height: 600px; }
+.compare-range::-moz-range-thumb { width: 48px; height: 600px; border: 0; }
+.compare:has(.compare-range:focus-visible) .compare-handle span {
+    outline: 3px solid var(--focus); outline-offset: 3px;
+}
+.compare-tag {
+    position: absolute; bottom: 16px;
+    padding: 5px 12px; border-radius: 999px;
+    font-size: 13px; font-weight: 600; color: #fff;
+    background: rgba(0, 0, 0, 0.45);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    pointer-events: none; transition: opacity 0.2s;
+}
+.compare-tag.left { left: 16px; }
+.compare-tag.right { right: 16px; }
+.compare-wrap figcaption {
+    margin-top: 14px; text-align: center; font-size: 15px; color: var(--text-dim);
+}
+@media (max-width: 600px) {
+    /* zoom in on the middle so the shapes stay readable */
+    .compare { aspect-ratio: 16 / 9; border-radius: 16px; }
+    .compare-wrap { margin-top: 40px; }
+    .compare-tag { bottom: 10px; font-size: 12px; }
+    .compare-tag.left { left: 10px; }
+    .compare-tag.right { right: 10px; }
+}
+
+.try-head { margin: 64px 0 0; text-align: center; font-size: 24px; letter-spacing: -0.01em; }
+.try-head + .stage-wrap { margin-top: 24px; }
+
 /* ---------- The stage: a desktop with the live notch on it ---------- */
 
 .stage-wrap { margin: 56px auto 0; max-width: 1040px; }
@@ -688,7 +766,7 @@ section { padding: 96px 0; }
 
 /* ---------- Hub tabs ---------- */
 
-.activities { display: grid; grid-template-columns: 1fr auto; gap: 48px; align-items: center; }
+.activities { display: grid; grid-template-columns: 1fr minmax(0, 450px); gap: 48px; align-items: center; }
 @media (max-width: 860px) { .activities { grid-template-columns: 1fr; gap: 28px; } }
 .activities .section-head { margin-bottom: 0; }
 .checks { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 10px; }
@@ -696,7 +774,7 @@ section { padding: 96px 0; }
 .checks li::before { content: ""; position: absolute; left: 4px; top: 0.45em; width: 9px; height: 9px; border-radius: 50%; background: var(--accent-fill); }
 .checks b { color: var(--text); }
 .activity-shot { margin: 0; justify-self: center; }
-.activity-shot img { display: block; width: min(420px, 100%); height: auto; border-radius: 18px; box-shadow: var(--shadow); }
+.activity-shot img { display: block; width: min(450px, 100%); height: auto; border-radius: 18px; box-shadow: var(--shadow); }
 
 .shapes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
 @media (max-width: 760px) { .shapes { grid-template-columns: 1fr; } }
@@ -897,3 +975,5 @@ details p { margin: 6px 0; }
 .site-footer a { color: var(--text-dim); }
 .site-footer a:hover { color: var(--text); }
 .footer-links { display: flex; gap: 18px; flex-wrap: wrap; }
+
+.next-up { margin: 28px 0 0; font-size: 15px; color: var(--text-dim); }

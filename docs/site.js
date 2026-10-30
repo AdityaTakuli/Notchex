@@ -201,3 +201,44 @@ if (tocLinks.length && 'IntersectionObserver' in window) {
         if (el) observer.observe(el);
     });
 }
+
+// Notch or pill: drag-to-compare in the hero
+const compare = document.getElementById('compare');
+if (compare) {
+    const range = compare.querySelector('.compare-range');
+    const tags = compare.querySelectorAll('.compare-tag');
+    let touched = false;
+    const set = v => {
+        compare.style.setProperty('--pos', v + '%');
+        tags[0].style.opacity = v < 14 ? 0 : 1;   // Notch
+        tags[1].style.opacity = v > 86 ? 0 : 1;   // Pill
+    };
+    range.addEventListener('input', () => { touched = true; set(range.value); });
+
+    // a short peek on first sight so it's clear the divider moves
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!calm && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver(entries => {
+            if (!entries[0].isIntersecting) return;
+            io.disconnect();
+            const keys = [[0, 50], [600, 32], [1300, 68], [1900, 50]];
+            const t0 = performance.now() + 500;
+            const ease = x => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+            const step = now => {
+                if (touched) return;
+                const t = now - t0;
+                if (t < 0) { requestAnimationFrame(step); return; }
+                let i = 1;
+                while (i < keys.length - 1 && t > keys[i][0]) i++;
+                const [ta, va] = keys[i - 1], [tb, vb] = keys[i];
+                const f = Math.min(1, Math.max(0, (t - ta) / (tb - ta)));
+                const v = va + (vb - va) * ease(f);
+                range.value = v;
+                set(v);
+                if (t < keys[keys.length - 1][0]) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+        }, {threshold: 0.6});
+        io.observe(compare);
+    }
+}
