@@ -12,6 +12,8 @@
 #
 # Installs per user into ~/.local/share/gnome-shell/extensions; never needs sudo.
 
+# Everything runs inside this block, so a download cut short can't run half a script.
+{
 set -euo pipefail
 
 UUID="notchex@adityatakuli"
@@ -53,7 +55,8 @@ EOF
 
 while [ $# -gt 0 ]; do
     case "$1" in
-        --version)   VERSION="${2:?--version needs a value, e.g. v2.0.0}"; shift 2 ;;
+        --version)   VERSION="${2:?--version needs a value, e.g. v3.0.0}"; shift 2
+                     [[ "$VERSION" =~ ^v[0-9]+(\.[0-9]+){0,2}$ ]] || die "--version should look like v3.0.0" ;;
         --zip)       LOCAL_ZIP="${2:?--zip needs a file}"; shift 2 ;;
         --no-enable) ENABLE=0; shift ;;
         --uninstall) ACTION="uninstall"; shift ;;
@@ -151,12 +154,33 @@ else
         URL="https://github.com/$REPO/releases/latest/download/$ZIP_NAME"
     fi
     info "Downloading ${VERSION:-latest release}"
-    if command -v curl >/dev/null 2>&1; then
-        curl -fL --progress-bar -o "$TMP/$ZIP_NAME" "$URL" || die "Download failed: $URL"
-    elif command -v wget >/dev/null 2>&1; then
-        wget -q --show-progress -O "$TMP/$ZIP_NAME" "$URL" || die "Download failed: $URL"
+    # https only, including redirects
+    fetch() {   # url file [quiet]
+        if command -v curl >/dev/null 2>&1; then
+            if [ -n "${3:-}" ]; then curl -fsL --proto '=https' --proto-redir '=https' --tlsv1.2 -o "$2" "$1"
+            else curl -fL --proto '=https' --proto-redir '=https' --tlsv1.2 --progress-bar -o "$2" "$1"; fi
+        elif command -v wget >/dev/null 2>&1; then
+            if [ -n "${3:-}" ]; then wget -q --https-only -O "$2" "$1"
+            else wget -q --https-only --show-progress -O "$2" "$1"; fi
+        else
+            die "Need curl or wget to download Notchex."
+        fi
+    }
+    fetch "$URL" "$TMP/$ZIP_NAME" || die "Download failed: $URL"
+
+    # check the zip against the release's published SHA-256 checksums
+    if fetch "${URL%/*}/SHA256SUMS" "$TMP/SHA256SUMS" quiet; then
+        want="$(grep -E "[[:space:]]\*?$ZIP_NAME\$" "$TMP/SHA256SUMS" | awk '{print $1}' | head -n1)"
+        if command -v sha256sum >/dev/null 2>&1; then
+            have="$(sha256sum "$TMP/$ZIP_NAME" | awk '{print $1}')"
+        else
+            have="$(shasum -a 256 "$TMP/$ZIP_NAME" | awk '{print $1}')"
+        fi
+        [ -n "$want" ] || die "The release's SHA256SUMS doesn't list $ZIP_NAME."
+        [ "$want" = "$have" ] || die "Checksum mismatch: the download is damaged or was changed. Nothing was installed."
+        ok "Checksum verified"
     else
-        die "Need curl or wget to download Notchex."
+        warn "This release has no SHA256SUMS file, so the download couldn't be verified."
     fi
 fi
 
@@ -229,3 +253,6 @@ else
 fi
 echo "${DIM}Settings:  gnome-extensions prefs $UUID${RESET}"
 echo "${DIM}Uninstall: curl -fsSL https://raw.githubusercontent.com/$REPO/main/install.sh | bash -s -- --uninstall${RESET}"
+
+exit 0
+}

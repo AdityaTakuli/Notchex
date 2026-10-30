@@ -185,7 +185,10 @@ export default class NotchexPrefs extends ExtensionPreferences {
         modGroup.add(this._boolRow(settings, 'show-notifications', 'Dynamic notification peek'));
         modGroup.add(this._boolRow(settings, 'show-calendar',      'Google Calendar'));
         modGroup.add(this._boolRow(settings, 'show-tasks',         'Google Tasks'));
-        modGroup.add(this._boolRow(settings, 'show-claude-usage',  'Claude Code usage'));
+        modGroup.add(this._boolRow(settings, 'show-weather',       'Weather',
+            'From wttr.in. With no location set, it guesses yours from your IP address.'));
+        modGroup.add(this._boolRow(settings, 'show-claude-usage',  'Claude Code usage',
+            'Reads your Claude Code sign-in and asks Anthropic for your usage every few minutes.'));
         page.add(modGroup);
 
         const perfGroup = new Adw.PreferencesGroup({title: 'Performance'});

@@ -22,6 +22,8 @@ Every part is optional. The **Features** page in preferences lets you keep only 
 
 It's plain GJS on top of St/Clutter. There's no Electron, no npm and no build step. Everything in the idle notch is driven by signals, so it does almost nothing until something actually changes.
 
+> **On Windows?** Notchex 3.0 adds a Windows app with the notch, the pill, music, alerts and the hub. See [windows/README.md](windows/README.md).
+
 <p align="center">
   <img src="docs/shots/hub-now.jpg" width="49%" alt="The hub open on the Now view, in frosted glass: music, a meeting with a Join button, a focus timer and the weather">
   <img src="docs/shots/spotlight.jpg" width="49%" alt="Spotlight in the notch completing cal to Calculator, with results in a frosted-glass panel">
@@ -311,10 +313,10 @@ Notchex runs locally. It only connects to the network for features you use:
 
 | Destination | When | What is sent |
 |---|---|---|
-| `wttr.in` | Weather is on | Your configured location (or your IP, if no location is set) |
+| `wttr.in` | Weather is on (the default; turn it off under Preferences → General → Modules) | Your configured location (or your IP, if no location is set) |
 | `tasks.googleapis.com` | Tasks view is on | Your GOA OAuth token, to read and create tasks |
 | `www.googleapis.com` | Calendar is on and a Google account is set up in GOA | Your GOA OAuth token, to read the next day's events for video-call links (every 5 minutes) |
-| `api.anthropic.com` | Claude usage is on | Your local Claude Code OAuth token, to read usage |
+| `api.anthropic.com` | Claude usage is on (off by default) | Your local Claude Code OAuth token, read from `~/.claude/.credentials.json`, to read usage |
 | `api.macosicons.com` | Only if you set an API key and chose macOS-style icons | App names, one at a time |
 | Album-art hosts | When a player provides remote art (e.g. Spotify) | A download of the art URL the player reports |
 
@@ -327,7 +329,7 @@ Files Notchex writes:
 | `~/.cache/notchex/art` | Album-art cache (capped at 64 files) |
 | `~/.cache/notchex/icons` | Downloaded macOS-style icons and their attribution |
 | `~/.local/share/notchex/` | Pomodoro session log, custom icons |
-| `~/Documents/Notchex Notes/` | Your notes (configurable) |
+| `~/Documents/Notchex Notes/` | Your notes (configurable). Folders and files are readable only by you (700/600) |
 | `~/.config/gtk-{3,4}.0/gtk.css` | Only when traffic-light buttons are on: a clearly marked block that is removed when you turn them off |
 
 ---

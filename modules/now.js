@@ -129,7 +129,7 @@ export function renderNowView(mods, open, {showMedia = true} = {}) {
     }
 
     /* weather */
-    const w = mods.weather?.summary?.();
+    const w = mods.weather?._running ? mods.weather.summary?.() : null;
     if (w) {
         cards.add_child(card({
             icon: w.icon,

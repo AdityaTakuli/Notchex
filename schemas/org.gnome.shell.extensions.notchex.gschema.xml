@@ -11,7 +11,8 @@
     <key name="show-notifications" type="b"><default>true</default><summary>Enable dynamic notification peek</summary></key>
     <key name="show-calendar"      type="b"><default>true</default><summary>Enable Google Calendar peek</summary></key>
     <key name="show-tasks"         type="b"><default>true</default><summary>Enable Google Tasks peek</summary></key>
-    <key name="show-claude-usage"  type="b"><default>true</default><summary>Show Claude Code usage/limit tab</summary></key>
+    <key name="show-claude-usage"  type="b"><default>false</default><summary>Show Claude Code usage/limit tab</summary><description>Off by default: when on, Notchex reads your Claude Code sign-in from ~/.claude and asks Anthropic for your usage every few minutes.</description></key>
+    <key name="show-weather"       type="b"><default>true</default><summary>Weather</summary><description>Fetches the forecast from wttr.in. With no location set, wttr.in guesses it from your IP address.</description></key>
 
     <!-- clock -->
     <key name="hide-datemenu"    type="b"><default>true</default><summary>Hide the built-in GNOME clock / date menu</summary></key>

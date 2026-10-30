@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!-- 19041 = Windows 10 2004: needed for the system media session API -->
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <UseWPF>true</UseWPF>
+    <!-- only for the tray icon and battery status -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <!-- lets the project build on Linux/macOS too (it still only runs on Windows) -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+
+    <AssemblyName>Notchex</AssemblyName>
+    <RootNamespace>Notchex</RootNamespace>
+    <Version>3.0.0</Version>
+    <Product>Notchex</Product>
+    <Description>A working notch for Windows</Description>
+    <Authors>Aditya Takuli</Authors>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\notchex.ico</ApplicationIcon>
+    <!-- WPF reads the DPI mode from app.manifest; this WinForms hint does not apply -->
+    <NoWarn>$(NoWarn);WFAC010</NoWarn>
+  </PropertyGroup>
+
+</Project>

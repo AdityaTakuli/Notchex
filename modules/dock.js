@@ -1021,7 +1021,8 @@ export class Dock {
             const meta = this.icons.metaFor(id) ?? {};
             const credit = menu.addAction(
                 `Icon by ${meta.credit || 'unknown creator'} · macOSicons.com`, () => {
-                    const url = meta.creditUrl || 'https://macosicons.com';
+                    /* the link comes from macosicons.com's API: open web pages only */
+                    const url = /^https:\/\/[^\s]+$/i.test(meta.creditUrl ?? '') ? meta.creditUrl : 'https://macosicons.com';
                     try { Gio.AppInfo.launch_default_for_uri(url, launchContext()); } catch (_) {}
                 });
             credit.label.add_style_class_name('notchex-dock-credit');

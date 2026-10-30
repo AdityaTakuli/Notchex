@@ -6,3 +6,5 @@ schemas/gschemas.compiled
 node_modules/
 .omx/
 .codex/
+windows/**/bin/
+windows/**/obj/

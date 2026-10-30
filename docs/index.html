@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Notchex: a working notch for Linux</title>
     <meta name="description" content="Notchex puts a working notch at the top of your Linux desktop. Music, meetings, timers and live activities, as a MacBook-style notch or a floating pill. Free and open source for GNOME 46–50.">
     <meta name="theme-color" content="#000000">
@@ -10,7 +12,11 @@
     <meta property="og:title" content="Notchex: a working notch for Linux">
     <meta property="og:description" content="Music, timers, meetings and live activities in a notch or a pill at the top of your screen, plus Spotlight search. Free for Linux (GNOME 46–50). Windows next.">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://adityatakuli.github.io/Notchex/og.jpg">
+    <meta property="og:url" content="https://adityatakuli.github.io/Notchex/">
+    <meta property="og:image" content="https://adityatakuli.github.io/Notchex/og.jpg?v=3">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:image" content="https://adityatakuli.github.io/Notchex/og.jpg?v=3">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Cpath d='M6 9h20v3a6 6 0 0 1-6 6h-8a6 6 0 0 1-6-6z' fill='%23fff'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -197,7 +203,7 @@
         <p class="lede" data-reveal>Plain GJS on top of GNOME Shell. The notch reacts to events instead of checking for them, so at rest it does almost nothing.</p>
     </div>
     <div class="facts">
-        <div class="fact" data-reveal><h3>No telemetry</h3><p>Notchex only goes online for features you turn on, like weather or meeting links. Tokens stay in memory and never touch the disk.</p></div>
+        <div class="fact" data-reveal><h3>No telemetry</h3><p>Weather comes from wttr.in and can be turned off. Calendar and Claude usage only go online once you switch them on. Tokens stay in memory and never touch the disk.</p></div>
         <div class="fact" data-reveal><h3>Nearly idle</h3><p>The clock ticks once a minute. System stats are read only while you look at them, and the music bars run in their own process.</p></div>
         <div class="fact" data-reveal><h3>No sudo</h3><p>Installs for your user only. Turn a part off and it stops completely. Uninstall and it's gone.</p></div>
     </div>
@@ -231,8 +237,8 @@
     <small class="footer-credit">Screenshots use the Ubuntu wallpaper “Fuji san” by João Amaral, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</small>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="home.js"></script>
 </body>
 </html>

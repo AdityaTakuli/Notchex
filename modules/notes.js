@@ -249,7 +249,8 @@ export const Notes = GObject.registerClass({
         if (!draft.title.trim() && !draft.body.trim()) return;
         try {
             const dayDir = GLib.build_filenamev([this._notesDir(), _dayDirName(new Date())]);
-            GLib.mkdir_with_parents(dayDir, 0o755);
+            /* notes are private: only you can open the folders and files */
+            GLib.mkdir_with_parents(dayDir, 0o700);
             const base = _slug(draft.title || draft.body);
             let target = GLib.build_filenamev([dayDir, `${base}.md`]);
             /* if this draft already has a file under a different name (title
@@ -265,7 +266,7 @@ export const Notes = GObject.registerClass({
                 }
             }
             const content = draft.title.trim() ? `# ${draft.title.trim()}\n\n${draft.body}` : draft.body;
-            GLib.file_set_contents(target, content);
+            GLib.file_set_contents_full(target, content, GLib.FileSetContentsFlags.CONSISTENT, 0o600);
             draft.filePath = target;
             try {
                 if (draft.statusLabel) draft.statusLabel.text = `Saved → ${target.replace(GLib.get_home_dir(), '~')}`;

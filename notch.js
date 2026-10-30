@@ -521,6 +521,7 @@ class Notch extends St.Widget {
             this._reconcileModulesWithPrefs();
             this._syncOsd();
             if (key === 'show-media') this._updateMedia(this._modules.mpris.info());
+            if (key === 'show-weather') this._updateWeatherChip();
         }
     }
 
@@ -749,6 +750,7 @@ class Notch extends St.Widget {
             calendar: 'show-calendar',
             tasks:    'show-tasks',
             claude:   'show-claude-usage',
+            weather:  'show-weather',
         }[id];
         if (!key) return true;
         return this._settings.get_boolean(key);
@@ -804,6 +806,7 @@ class Notch extends St.Widget {
         case 'system':        return s.get_boolean('show-system') || s.get_boolean('pill-show-system');
         case 'notifications': return s.get_boolean('show-notifications');
         case 'claude':        return s.get_boolean('show-claude-usage');
+        case 'weather':       return s.get_boolean('show-weather');
         case 'bluetooth':     return s.get_boolean('event-bluetooth');
         case 'brightness':    return true;   /* also drives the Quick tab slider */
         case 'volume':        return true;
@@ -1884,7 +1887,7 @@ class Notch extends St.Widget {
 
     _updateWeatherChip() {
         const want = this._settings.get_boolean('pill-show-weather');
-        const sum = want ? this._modules?.weather?.summary?.() : null;
+        const sum = want && this._modules?.weather?._running ? this._modules.weather.summary?.() : null;
         const was = this._weatherChip.visible;
         if (sum) {
             this._weatherIcon.icon_name = sum.icon;
