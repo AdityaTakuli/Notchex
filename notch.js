@@ -436,7 +436,9 @@ class Notch extends St.Widget {
             right.set_width(side);
         }
         const [, rowW] = this._pillRow.get_preferred_width(-1);
-        let w = Math.max(this._px(this._cwMin), rowW);
+        /* art-only music: hug the art, clock and bars instead of the idle width */
+        const artOnly = this._mediaChip.visible && !this._musicTitle.visible;
+        let w = artOnly ? rowW : Math.max(this._px(this._cwMin), rowW);
         let h = this._px(this._ch);
         if (this._hoverState) {
             const [, subW] = this._subtitle.get_preferred_width(-1);
@@ -488,7 +490,7 @@ class Notch extends St.Widget {
             this._updateClocks();
             this._resizeCollapsed();
             return;
-        case 'always-show-clock': case 'always-show-media':
+        case 'always-show-clock': case 'always-show-media': case 'pill-media-title':
             this._updateMedia(this._modules.mpris.info());
             return;
         case 'pill-show-weather':
@@ -1955,6 +1957,7 @@ class Notch extends St.Widget {
                 old?.destroy();
             }
             this._musicTitle.text = info.title;
+            this._musicTitle.visible = this._settings.get_boolean('pill-media-title');
             this._mediaChip.opacity = info.playing ? 255 : 150;
         }
         this._mediaChip.visible = visible;

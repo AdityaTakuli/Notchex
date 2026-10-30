@@ -206,6 +206,9 @@ h2 { font-size: clamp(40px, 6vw, 96px); line-height: 1; letter-spacing: -0.04em;
 /* spotlight: image and text side by side */
 .split { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr); gap: clamp(32px, 5vw, 96px); align-items: center; }
 .split-copy .lede { margin-top: 22px; }
+/* hub: text first, then the whole desktop so the hub shows at its real size */
+.split-flip { grid-template-columns: minmax(0, 0.65fr) minmax(0, 1.35fr); }
+.split-copy .tabs { margin: 32px 0 0; }
 .note { margin-top: 18px; color: var(--faint); font-size: 15px; }
 .note code { color: var(--text); }
 
@@ -263,7 +266,7 @@ html[data-shape="pill"] .shape-card[data-set-shape="pill"] { box-shadow: 0 0 0 2
     .hide-md { display: none; }
     .chapter-head { grid-template-columns: 1fr; }
     .activities-pin { grid-template-columns: 1fr; min-height: 0; }
-    .split { grid-template-columns: 1fr; }
+    .split { grid-template-columns: minmax(0, 1fr); }
     .split .shot { order: 2; }
     .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -279,6 +282,7 @@ html[data-shape="pill"] .shape-card[data-set-shape="pill"] { box-shadow: 0 0 0 2
     .screen-band { aspect-ratio: 16 / 9; }
     .shape-cards, .bento, .facts { grid-template-columns: 1fr; }
     .steps button span { display: block; }
+    .tabs button { padding: 0 14px; font-size: 14px; }
     .code { flex-direction: column; align-items: stretch; padding: 16px; }
 }
 

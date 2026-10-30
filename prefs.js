@@ -280,6 +280,8 @@ export default class NotchexPrefs extends ExtensionPreferences {
             'Keep the clock visible while media is shown in the pill.'));
         behavior.add(this._boolRow(settings, 'always-show-media', 'Always show media',
             'Keep paused media in the pill (otherwise only while playing).'));
+        behavior.add(this._boolRow(settings, 'pill-media-title', 'Song title in the pill',
+            'Off: only the album art shows while music plays. Hover the pill to see the title.'));
         behavior.add(this._boolRow(settings, 'autohide-top-bar', 'Hide the top bar (Mac style)',
             'The top bar reappears when you push the pointer to the top edge. Windows start right below the notch.'));
         behavior.add(this._boolRow(settings, 'fill-top-strip', 'Fill the strip beside the notch',
