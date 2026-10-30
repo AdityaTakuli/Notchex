@@ -96,6 +96,7 @@ if [ "$ACTION" = "uninstall" ]; then
     info "Removing Notchex"
     gnome-extensions disable "$UUID" >/dev/null 2>&1 || true
     gsettings_list_remove enabled-extensions "$UUID" || true
+    rm -f "$HOME/.local/share/applications/notchex-settings.desktop"
     if [ -d "$EXT_DIR" ]; then
         rm -rf "$EXT_DIR"
         ok "Removed $EXT_DIR"
@@ -179,6 +180,12 @@ rm -rf "$EXT_DIR"
 mkdir -p "$(dirname "$EXT_DIR")"
 cp -r "$TMP/x" "$EXT_DIR"
 glib-compile-schemas "$EXT_DIR/schemas"
+
+# a "Notchex Settings" app in the app grid, so settings never need Extension Manager
+if [ -f "$EXT_DIR/data/notchex-settings.desktop" ]; then
+    mkdir -p "$HOME/.local/share/applications"
+    cp "$EXT_DIR/data/notchex-settings.desktop" "$HOME/.local/share/applications/"
+fi
 
 INSTALLED_VERSION="$(grep -oE '"version-name"[^"]*"[^"]+"' "$EXT_DIR/metadata.json" | grep -oE '"[^"]+"$' | tr -d '"')"
 ok "Installed Notchex ${INSTALLED_VERSION} to $EXT_DIR"

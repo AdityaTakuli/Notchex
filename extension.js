@@ -53,7 +53,7 @@ export default class NotchexExtension extends Extension {
             onLaunch: app => this._notch?.showAppLaunch(app),
             screenshot: () => this._notch?.takeScreenshot(),
             host: {
-                openSearch: (view, onDismiss) => this._notch?.openSearch(view, onDismiss) ?? false,
+                openSearch: (view, onDismiss, panel) => this._notch?.openSearch(view, onDismiss, panel) ?? false,
                 closeSearch: immediate => this._notch?.closeSearch(immediate),
                 resizeSearch: () => this._notch?.resizeSearch(),
             },

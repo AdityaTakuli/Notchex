@@ -34,14 +34,16 @@ if (stage) {
     const notch = stage.querySelector('.notch');
     const caption = document.getElementById('stage-caption');
     const stateButtons = [...document.querySelectorAll('[data-show]')];
+    const shapeButtons = [...document.querySelectorAll('[data-shape]')].filter(b => b.tagName === 'BUTTON');
     const pauseBtn = document.getElementById('stage-pause');
 
     const captions = {
         idle: 'Idle: date, time and battery, in place of the top-bar clock',
-        music: 'Now Playing, with bars that follow the audio',
+        music: 'Now Playing, with bars that follow the audio. Scroll for volume, swipe to skip',
+        both: 'Music and a timer at once: the timer moves to its own bubble',
         volume: 'Volume and brightness changes show up in the notch',
-        notify: 'Notifications and meetings grow out of the notch',
-        hub: 'Hover, and the notch opens into the hub',
+        notify: 'A meeting is close: join the call straight from the notch',
+        hub: 'Hover, and it opens on Now: music, next meeting, timer, weather',
     };
     const order = Object.keys(captions);
     let index = 0;
@@ -50,7 +52,9 @@ if (stage) {
 
     const show = state => {
         index = order.indexOf(state);
-        notch.dataset.state = state;
+        // "both" is music in the island plus the timer bubble beside it
+        notch.dataset.state = state === 'both' ? 'music' : state;
+        stage.dataset.state = state;
         caption.textContent = captions[state];
         stateButtons.forEach(b => b.setAttribute('aria-pressed', b.dataset.show === state));
     };
@@ -73,6 +77,12 @@ if (stage) {
         setPaused(true);
     }));
     pauseBtn.addEventListener('click', () => setPaused(!paused));
+
+    // Notch or pill: the same states, a different shape.
+    shapeButtons.forEach(b => b.addEventListener('click', () => {
+        stage.dataset.shape = b.dataset.shape;
+        shapeButtons.forEach(x => x.setAttribute('aria-pressed', x === b));
+    }));
 
     // Hold still while the pointer is on the stage.
     stage.addEventListener('pointerenter', stop);

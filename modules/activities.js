@@ -14,9 +14,107 @@ import {artTile, appIcon} from './media.js';
      build(ev)  — returns the content actor; may set actor._nnUpdate(ev)
                   to update itself in place when an event with the same
                   key arrives
-     onClick    — optional, pointer release on the island */
+     onClick    — optional, pointer release on the island
+     compact    — true: Dynamic Island "compact" look, the island keeps
+                  its idle height and holds a leading and a trailing
+                  element (see _compact) */
 
 const LEVEL_TRACK_PX = 168;
+
+/* status colors, one meaning each */
+const GREEN  = [48, 209, 88];
+const RED    = [255, 69, 58];
+const PURPLE = [191, 90, 242];
+const css = c => `rgb(${c.join(', ')})`;
+
+/* ——— compact building blocks ——— */
+
+/* leading element on the left, trailing on the right, with the island's
+   middle left empty. The notch animates both out from the centre. */
+function _compact(leading, trailing, cls = '') {
+    const row = new St.BoxLayout({style_class: `notchex-act compact ${cls}`, x_expand: true});
+    const lead = new St.BoxLayout({style_class: 'notchex-compact-lead', y_align: Clutter.ActorAlign.CENTER});
+    const trail = new St.BoxLayout({style_class: 'notchex-compact-trail', y_align: Clutter.ActorAlign.CENTER,
+        x_expand: true, x_align: Clutter.ActorAlign.END});
+    for (const a of [].concat(leading)) lead.add_child(a);
+    for (const a of [].concat(trailing)) trail.add_child(a);
+    row.add_child(lead);
+    row.add_child(trail);
+    row._leading = lead;
+    row._trailing = trail;
+    return row;
+}
+
+function _label(text, cls, color = null) {
+    const l = new St.Label({text, style_class: cls, y_align: Clutter.ActorAlign.CENTER});
+    if (color) l.set_style(`color: ${css(color)};`);
+    return l;
+}
+
+/* a ring that fills to `frac` when shown (battery level, progress) */
+function _ring(frac, color, sizeLogical = 22) {
+    const ring = new St.DrawingArea({style_class: 'notchex-ring', y_align: Clutter.ActorAlign.CENTER,
+        width: sizeLogical, height: sizeLogical});
+    ring._t = 0;
+    ring.connect('repaint', area => {
+        const cr = area.get_context();
+        const [w, h] = area.get_surface_size();
+        const lw = Math.max(2, w * 0.13);
+        const r = Math.min(w, h) / 2 - lw / 2;
+        cr.setLineWidth(lw);
+        cr.setSourceRGBA(color[0] / 255, color[1] / 255, color[2] / 255, 0.25);
+        cr.arc(w / 2, h / 2, r, 0, 2 * Math.PI);
+        cr.stroke();
+        const f = Math.max(0, Math.min(1, frac)) * ring._t;
+        if (f > 0) {
+            cr.setSourceRGBA(color[0] / 255, color[1] / 255, color[2] / 255, 1);
+            cr.setLineCap(1); /* ROUND */
+            cr.arc(w / 2, h / 2, r, -Math.PI / 2, -Math.PI / 2 + f * 2 * Math.PI);
+            cr.stroke();
+        }
+        cr.$dispose();
+    });
+    /* the notch calls this once the island has opened */
+    ring._reveal = duration => {
+        if (duration <= 0) { ring._t = 1; ring.queue_repaint(); return; }
+        const tl = new Clutter.Timeline({actor: ring, duration});
+        tl.set_progress_mode(Clutter.AnimationMode.EASE_OUT_CUBIC);
+        tl.connect('new-frame', () => { ring._t = tl.get_progress(); ring.queue_repaint(); });
+        tl.connect('completed', () => { ring._t = 1; ring.queue_repaint(); });
+        tl.start();
+    };
+    return ring;
+}
+
+/* a small battery outline filled to `frac` */
+function _battery(frac, color) {
+    const box = new St.BoxLayout({style_class: 'notchex-batt-glyph', y_align: Clutter.ActorAlign.CENTER});
+    const shell = new St.Widget({style_class: 'notchex-batt-shell', layout_manager: new Clutter.BinLayout()});
+    shell.set_style(`border-color: rgba(${color.join(', ')}, 0.55); background-color: rgba(${color.join(', ')}, 0.22);`);
+    const fill = new St.Widget({style_class: 'notchex-batt-fill', x_align: Clutter.ActorAlign.START,
+        y_expand: true, y_align: Clutter.ActorAlign.FILL});
+    fill.set_style(`background-color: ${css(color)}; width: ${Math.max(2, Math.round(22 * Math.max(0, Math.min(1, frac))))}px;`);
+    shell.add_child(fill);
+    const nub = new St.Widget({style_class: 'notchex-batt-nub', y_align: Clutter.ActorAlign.CENTER});
+    nub.set_style(`background-color: rgba(${color.join(', ')}, 0.55);`);
+    box.add_child(shell);
+    box.add_child(nub);
+    return box;
+}
+
+/* ——— focus (do not disturb) ——— */
+
+export function focusEvent(on) {
+    return {
+        key: 'focus', priority: Priority.VOLUME, duration: 2200, width: 300, compact: true,
+        build() {
+            const moon = _icon('weather-clear-night-symbolic', 'focus', 20);
+            moon.set_style(`color: ${css(on ? PURPLE : [174, 174, 178])};`);
+            return _compact(moon, _label(on ? 'On' : 'Off', 'notchex-compact-value', on ? PURPLE : [174, 174, 178]),
+                'focus');
+        },
+    };
+}
 
 function _row(styleClass = '') {
     return new St.BoxLayout({style_class: `notchex-act ${styleClass}`, x_expand: true});
@@ -111,30 +209,22 @@ export function brightnessEvent(level, scale) {
 /* ——— battery ——— */
 
 export function batteryEvent(ev, duration) {
-    const pct = `${ev.pct}%`;
     const spec = {
-        plugged:   {title: 'Charging',        icon: 'battery-good-charging-symbolic', cls: 'charging', prio: Priority.BLUETOOTH},
-        full:      {title: 'Fully Charged',   icon: 'battery-full-charged-symbolic',  cls: 'charging', prio: Priority.BLUETOOTH},
-        unplugged: {title: 'On Battery',      icon: 'battery-good-symbolic',          cls: '',         prio: Priority.VOLUME},
-        low:       {title: 'Battery Low',     icon: 'battery-low-symbolic',           cls: 'low',      prio: Priority.NOTIFICATION},
-        critical:  {title: 'Battery Critical', icon: 'battery-caution-symbolic',      cls: 'critical', prio: Priority.CRITICAL},
+        plugged:   {title: 'Charging',         color: GREEN,           prio: Priority.BLUETOOTH},
+        full:      {title: 'Fully Charged',    color: GREEN,           prio: Priority.BLUETOOTH},
+        unplugged: {title: 'On Battery',       color: [255, 255, 255], prio: Priority.VOLUME},
+        low:       {title: 'Low Battery',      color: RED,             prio: Priority.NOTIFICATION},
+        critical:  {title: 'Battery Critical', color: RED,             prio: Priority.CRITICAL},
     }[ev.kind];
     if (!spec) return null;
-    let subtitle = null;
-    if (ev.kind === 'plugged' && ev.minutes) subtitle = `${_dur(ev.minutes)} until full`;
-    if ((ev.kind === 'low' || ev.kind === 'critical' || ev.kind === 'unplugged') && ev.minutes)
-        subtitle = `${_dur(ev.minutes)} remaining`;
     return {
-        key: 'battery', priority: spec.prio,
+        key: 'battery', priority: spec.prio, compact: true,
         duration: ev.kind === 'critical' ? Math.max(duration, 6000) : duration,
-        width: 300,
+        width: 340,
         build() {
-            const row = _row(`notchex-act-battery ${spec.cls}`);
-            row.add_child(_icon(spec.icon, 'battery', 20));
-            row.add_child(_textCol(null, spec.title, subtitle));
-            row.add_child(new St.Label({text: pct, style_class: 'notchex-act-value strong',
-                y_align: Clutter.ActorAlign.CENTER}));
-            return row;
+            const trailing = [_label(`${ev.pct}%`, 'notchex-compact-value', spec.color),
+                _battery(ev.pct / 100, spec.color)];
+            return _compact(_label(spec.title, 'notchex-compact-title'), trailing, `battery ${ev.kind}`);
         },
     };
 }
@@ -159,22 +249,76 @@ const BT_ICONS = {
     'computer':         'computer-symbolic',
 };
 
-export function bluetoothEvent(dev, duration) {
+/* a blue action button on the right of a compact pill. onClick(btn) does
+   the work; the button shows `busy` while it runs. */
+function _action(label, accessible, onClick, busy = null) {
+    const b = new St.Button({label, style_class: 'notchex-compact-action', can_focus: true,
+        y_align: Clutter.ActorAlign.CENTER, accessible_name: accessible});
+    b.connect('clicked', () => {
+        if (busy) {
+            b.label = busy;
+            b.reactive = false;
+            b.add_style_pseudo_class('insensitive');
+        }
+        onClick(b);
+    });
+    return b;
+}
+
+/* swaps a trailing part for a green check that pops in */
+function _confirm(trailing, text) {
+    trailing.remove_all_children();
+    const ic = _icon('object-select-symbolic', 'done', 16);
+    ic.set_style(`color: ${css(GREEN)};`);
+    trailing.add_child(ic);
+    trailing.add_child(_label(text, 'notchex-compact-value', GREEN));
+    trailing.set_pivot_point(1, 0.5);
+    trailing.scale_x = trailing.scale_y = 0.7;
+    trailing.ease({scale_x: 1, scale_y: 1, duration: 320, mode: Clutter.AnimationMode.EASE_OUT_BACK});
+}
+
+/* actions (both optional):
+     route()            — moves sound to this device; returns true if it did
+     reconnect(done)    — asks the device to connect again; done(ok) */
+export function bluetoothEvent(dev, duration, actions = {}) {
     const icon = BT_ICONS[dev.icon] ?? 'bluetooth-active-symbolic';
+    const {route = null, reconnect = null} = actions;
+    const hasAction = !!(dev.connected ? route : reconnect);
     return {
-        key: `bt:${dev.path}`, priority: Priority.BLUETOOTH, duration, width: 320,
+        key: `bt:${dev.path}`, priority: Priority.BLUETOOTH, width: hasAction ? 380 : 340, compact: true,
+        /* long enough to reach the button */
+        duration: hasAction ? Math.max(duration, 8000) : duration,
         build() {
-            const row = _row('notchex-act-bt' + (dev.connected ? ' connected' : ''));
-            row.add_child(_icon(icon, 'bt', 20));
-            row.add_child(_textCol(null, dev.name, dev.connected ? 'Connected' : 'Disconnected'));
-            if (dev.connected && Number.isFinite(dev.battery)) {
-                const bat = new St.BoxLayout({style_class: 'notchex-act-bt-battery', y_align: Clutter.ActorAlign.CENTER});
-                bat.add_child(_icon(dev.battery <= 20 ? 'battery-low-symbolic' : 'battery-good-symbolic',
-                    dev.battery <= 20 ? 'low' : '', 14));
-                bat.add_child(new St.Label({text: `${dev.battery}%`, style_class: 'notchex-act-value strong',
-                    y_align: Clutter.ActorAlign.CENTER}));
-                row.add_child(bat);
+            const ic = _icon(icon, 'bt', 20);
+            const name = _label(dev.name, 'notchex-compact-name');
+            name.clutter_text.ellipsize = 3;
+            let trailing;
+            if (!dev.connected) {
+                ic.opacity = 150;
+                trailing = reconnect
+                    ? _action('Reconnect', `Reconnect ${dev.name}`, b => reconnect(ok => {
+                        if (ok || !b.get_stage()) return;
+                        b.label = 'Try Again';
+                        b.reactive = true;
+                        b.remove_style_pseudo_class('insensitive');
+                    }), 'Connecting…')
+                    : _label('Disconnected', 'notchex-compact-value', [174, 174, 178]);
+            } else {
+                const low = Number.isFinite(dev.battery) && dev.battery <= 20;
+                trailing = [];
+                if (Number.isFinite(dev.battery)) {
+                    trailing.push(_label(`${dev.battery}%`, 'notchex-compact-value', low ? RED : GREEN));
+                    if (!route) trailing.push(_ring(dev.battery / 100, low ? RED : GREEN));
+                } else if (!route) {
+                    trailing.push(_label('Connected', 'notchex-compact-value', GREEN));
+                }
+                if (route) {
+                    trailing.push(_action('Play Here', `Play sound on ${dev.name}`, () => {
+                        if (route()) _confirm(row._trailing, 'Playing');
+                    }));
+                }
             }
+            const row = _compact([ic, name], trailing, 'bt');
             return row;
         },
     };

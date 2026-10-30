@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Notchex Settings
+Comment=Customize the notch, the Dock, Spotlight and the macOS look
+Exec=gnome-extensions prefs notchex@adityatakuli
+Icon=preferences-desktop-apps
+Categories=Settings;DesktopSettings;
+Keywords=notch;pill;island;dock;spotlight;notchex;
+StartupNotify=true

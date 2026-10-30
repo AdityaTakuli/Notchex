@@ -23,15 +23,18 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 const SNIPPET_FRAGMENT = Shell.SnippetHook?.FRAGMENT ?? Cogl.SnippetHook.FRAGMENT;
 
+/* nn_bounds: width, height, top corner radius, bottom corner radius (the
+   notch shape has square top corners and round bottom ones) */
 const MASK_DECL = `
-uniform vec3 nn_bounds;
+uniform vec4 nn_bounds;
 float nn_rbox(vec2 p, vec2 b, float r) {
     vec2 q = abs(p) - b + vec2(r);
     return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
 }`;
 const MASK_CODE = `
 vec2 nn_p = cogl_tex_coord_in[0].xy * nn_bounds.xy;
-float nn_d = nn_rbox(nn_p - nn_bounds.xy * 0.5, nn_bounds.xy * 0.5, nn_bounds.z);
+vec2 nn_c = nn_p - nn_bounds.xy * 0.5;
+float nn_d = nn_rbox(nn_c, nn_bounds.xy * 0.5, nn_c.y < 0.0 ? nn_bounds.z : nn_bounds.w);
 cogl_color_out *= clamp(0.5 - nn_d, 0.0, 1.0);`;
 
 const RoundedMask = GObject.registerClass(
@@ -40,10 +43,11 @@ class NotchexRoundedMask extends Shell.GLSLEffect {
         this.add_glsl_snippet(SNIPPET_FRAGMENT, MASK_DECL, MASK_CODE, false);
     }
 
-    setBounds(w, h, r) {
-        if (this._w === w && this._h === h && this._r === r) return;
-        this._w = w; this._h = h; this._r = r;
-        this.set_uniform_float(this.get_uniform_location('nn_bounds'), 3, [w, h, Math.min(r, w / 2, h / 2)]);
+    setBounds(w, h, r, rBottom = r) {
+        if (this._w === w && this._h === h && this._r === r && this._rb === rBottom) return;
+        this._w = w; this._h = h; this._r = r; this._rb = rBottom;
+        const cap = v => Math.min(v, w / 2, h / 2);
+        this.set_uniform_float(this.get_uniform_location('nn_bounds'), 4, [w, h, cap(r), cap(rBottom)]);
         this.queue_repaint();
     }
 });
@@ -276,8 +280,12 @@ export class GlassLayer {
         }
         const [px, py] = this._parent.get_transformed_position();
         const scale = t.width > 0 ? w / t.width : 1;
-        let radius = 0;
-        try { radius = t.get_theme_node().get_border_radius(St.Corner.TOPLEFT) * scale; } catch (_) {}
+        let radius = 0, radiusBottom = 0;
+        try {
+            const node = t.get_theme_node();
+            radius = node.get_border_radius(St.Corner.TOPLEFT) * scale;
+            radiusBottom = node.get_border_radius(St.Corner.BOTTOMLEFT) * scale;
+        } catch (_) {}
 
         const pad = this._pad;
         this._set(this.actor, x - px, y - py, w, h);
@@ -285,7 +293,7 @@ export class GlassLayer {
         if (this._clone.source !== source) this._clone.source = source;
         /* the sources sit at the stage origin */
         this._set(this._clone, -(x - pad), -(y - pad));
-        this._mask.setBounds(w, h, radius);
+        this._mask.setBounds(w, h, radius, radiusBottom);
         this.actor.opacity = opacity;
         this.actor.show();
     }

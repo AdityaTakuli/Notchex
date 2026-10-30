@@ -95,6 +95,8 @@ export class Spotlight {
         this._debounce = 0;
         this._view?.destroy();
         this._view = null;
+        this._panel?.destroy();
+        this._panel = null;
     }
 
     /* Spotlight draws inside the notch, so it needs the notch to be on. */
@@ -126,25 +128,43 @@ export class Spotlight {
 
     /* ——— UI ——— */
 
+    /* Two surfaces, like Spotlight in the macOS Dynamic Island: the
+       island holds just the search line (with inline completion and the
+       top hit's icon), and the results float below it in a separate
+       frosted-glass panel that the notch hosts. */
     _build() {
         if (this._view) return;
-        this._view = boxLayout({vertical: true, style_class: 'notchex-search-view', x_expand: true});
+        this._view = boxLayout({style_class: 'notchex-spot-bar', x_expand: true});
+        this._view.add_child(new St.Icon({icon_name: 'edit-find-symbolic', style_class: 'notchex-spot-search-icon',
+            y_align: Clutter.ActorAlign.CENTER}));
 
         this._entry = new St.Entry({
-            style_class: 'notchex-spotlight-entry',
-            hint_text: 'Search apps, files, settings…',
+            style_class: 'notchex-spot-entry',
+            hint_text: 'Spotlight Search',
             can_focus: true,
-            x_expand: true,
-            primary_icon: new St.Icon({icon_name: 'edit-find-symbolic', style_class: 'notchex-spotlight-search-icon'}),
+            y_align: Clutter.ActorAlign.CENTER,
         });
-        this._view.add_child(this._entry);
+        /* typed text and the greyed rest of the top hit's name, with no gap */
+        const phrase = boxLayout({style_class: 'notchex-spot-phrase', y_align: Clutter.ActorAlign.CENTER});
+        phrase.add_child(this._entry);
+        this._ghost = new St.Label({style_class: 'notchex-spot-ghost', y_align: Clutter.ActorAlign.CENTER});
+        phrase.add_child(this._ghost);
+        this._view.add_child(phrase);
+        this._view.add_child(new St.Widget({x_expand: true}));
+        this._topIcon = new St.Icon({icon_size: 30, style_class: 'notchex-spot-top-icon', visible: false,
+            y_align: Clutter.ActorAlign.CENTER});
+        this._view.add_child(this._topIcon);
+
         const text = this._entry.clutter_text;
-        text.connect('text-changed', () => this._queueSearch());
+        text.connect('text-changed', () => { this._fitEntry(); this._queueSearch(); });
         text.connect('key-press-event', (_a, event) => this._onKey(event));
         text.connect('activate', () => this._activateSelected());
 
+        this._panel = boxLayout({vertical: true, style_class: 'notchex-spot-panel', visible: false});
+        this._chips = boxLayout({style_class: 'notchex-spot-chips'});
+        this._panel.add_child(this._chips);
         this._list = boxLayout({vertical: true, style_class: 'notchex-spotlight-results'});
-        this._view.add_child(this._list);
+        this._panel.add_child(this._list);
     }
 
     open(initialText = '') {
@@ -154,9 +174,12 @@ export class Spotlight {
         }
         this._build();
         this._entry.text = '';
+        this._ghost.text = '';
+        this._topIcon.hide();
         this._list.destroy_all_children();
+        this._chips.destroy_all_children();
         this._results = [];
-        if (!this._host?.openSearch(this._view, () => this.close())) return;
+        if (!this._host?.openSearch(this._view, () => this.close(), this._panel)) return;
         this._isOpen = true;
         if (initialText) {
             this._entry.text = initialText;
@@ -235,27 +258,50 @@ export class Spotlight {
 
     _render(results, isHistory = false, keepSelection = false) {
         const prevId = keepSelection ? this._results[this._selected]?.id : null;
-        this._results = isHistory
+        const query = this._entry.text.trim();
+        let arranged = isHistory
             ? results.map((r, i) => (i === 0 ? {...r, header: 'Recent'} : r))
             : this._arrange(results);
+
+        /* apps (beyond the top hit) become chips across the top of the panel */
+        const top = arranged[0] ?? null;
+        const chipApps = isHistory ? [] : results
+            .filter(r => r.kind === 'app' && r !== top && r.id !== top?.id)
+            .sort((x, y) => y.score - x.score).slice(0, 3);
+        const chipIds = new Set(chipApps.map(r => r.id));
+        if (chipApps.length) {
+            arranged = arranged.filter((r, i) => i === 0 || !(r.kind === 'app' && chipIds.has(r.id)));
+            /* keep a header on the first row of each category */
+            let lastCat = null;
+            arranged = arranged.map((r, i) => {
+                if (i === 0) return r;
+                const {header: _h, ...rest} = r;
+                if (r.category !== lastCat) { lastCat = r.category; return {...rest, header: r.category}; }
+                return rest;
+            });
+        }
+        this._results = arranged;
+        this._renderBar(query, top);
+        this._renderChips(chipApps);
+
         this._list.destroy_all_children();
-        const query = this._entry.text.trim();
+        this._rows = [];
         if (!this._results.length) {
             if (query) {
                 this._list.add_child(new St.Label({text: 'No Results', style_class: 'notchex-spotlight-empty',
                     x_align: Clutter.ActorAlign.CENTER}));
             }
-            this._list.visible = !!query;
+            this._panel.visible = !!query || chipApps.length > 0;
             this._host?.resizeSearch();
             return;
         }
-        this._list.visible = true;
+        this._panel.visible = true;
         this._rows = this._results.map((r, i) => {
             if (r.header) this._list.add_child(new St.Label({text: r.header, style_class: 'notchex-spotlight-header'}));
             const row = new St.Button({style_class: 'notchex-spotlight-row', can_focus: false,
                 reactive: true, track_hover: true, x_expand: true});
             const box = boxLayout({style_class: 'notchex-spotlight-row-box', x_expand: true});
-            box.add_child(new St.Icon({gicon: r.gicon, icon_size: r.kind === 'app' ? 30 : 24,
+            box.add_child(new St.Icon({gicon: r.gicon, icon_size: r.kind === 'app' ? 32 : 26,
                 style_class: 'notchex-spotlight-icon', y_align: Clutter.ActorAlign.CENTER}));
             const col = boxLayout({vertical: true, x_expand: true, y_align: Clutter.ActorAlign.CENTER});
             const title = new St.Label({text: r.title, style_class: 'notchex-spotlight-title'});
@@ -267,6 +313,13 @@ export class Spotlight {
                 col.add_child(sub);
             }
             box.add_child(col);
+            /* what Enter does, shown on the selected row */
+            const hint = boxLayout({style_class: 'notchex-spot-hint', y_align: Clutter.ActorAlign.CENTER});
+            hint.add_child(new St.Label({text: r.kind === 'calculator' ? 'Copy' : 'Open',
+                style_class: 'notchex-spot-hint-text', y_align: Clutter.ActorAlign.CENTER}));
+            hint.add_child(new St.Label({text: '↵', style_class: 'notchex-spot-key', y_align: Clutter.ActorAlign.CENTER}));
+            box.add_child(hint);
+            row._hint = hint;
             row.set_child(box);
             row.connect('clicked', () => {
                 this._selected = i;
@@ -281,12 +334,64 @@ export class Spotlight {
         this._host?.resizeSearch();
     }
 
+    /* the entry hugs what's typed so the completion reads as one phrase
+       ("tide pool" + "s — Open"); empty, it shows the full hint */
+    _fitEntry() {
+        const text = this._entry.clutter_text;
+        if (!this._entry.text) {
+            this._entry.width = -1;
+            return;
+        }
+        const [w] = text.get_layout().get_pixel_size();
+        this._entry.width = w + 4;
+    }
+
+    /* the island's line: inline completion of the top hit, its icon on the right */
+    _renderBar(query, top) {
+        this._completion = null;
+        let ghost = '';
+        if (query && top) {
+            if (top.kind === 'calculator') {
+                ghost = `  ${top.title}`;
+            } else if (top.title.toLowerCase().startsWith(query.toLowerCase())) {
+                this._completion = top.title;
+                ghost = `${top.title.slice(query.length)} — Open`;
+            } else {
+                ghost = `  — ${top.title}`;
+            }
+        }
+        this._ghost.text = ghost;
+        if (top?.gicon && query) {
+            this._topIcon.gicon = top.gicon;
+            this._topIcon.show();
+        } else {
+            this._topIcon.hide();
+        }
+    }
+
+    _renderChips(apps) {
+        this._chips.destroy_all_children();
+        this._chips.visible = apps.length > 0;
+        for (const r of apps) {
+            const chip = new St.Button({style_class: 'notchex-spot-chip', can_focus: false, reactive: true,
+                track_hover: true, accessible_name: r.title});
+            const box = boxLayout({style_class: 'notchex-spot-chip-box'});
+            box.add_child(new St.Icon({gicon: r.gicon, icon_size: 18, y_align: Clutter.ActorAlign.CENTER}));
+            box.add_child(new St.Label({text: r.title, y_align: Clutter.ActorAlign.CENTER}));
+            chip.set_child(box);
+            chip.connect('clicked', () => this._activate(r));
+            this._chips.add_child(chip);
+        }
+    }
+
     _select(i) {
         if (!this._rows?.length) return;
         this._selected = (i + this._rows.length) % this._rows.length;
         this._rows.forEach((row, j) => {
-            if (j === this._selected) row.add_style_pseudo_class('selected');
+            const on = j === this._selected;
+            if (on) row.add_style_pseudo_class('selected');
             else row.remove_style_pseudo_class('selected');
+            row._hint.opacity = on ? 255 : 0;
         });
     }
 
@@ -302,6 +407,16 @@ export class Spotlight {
         }
         if (sym === Clutter.KEY_Up) {
             this._select(this._selected - 1);
+            return Clutter.EVENT_STOP;
+        }
+        /* Tab or → at the end takes the inline completion */
+        const atEnd = this._entry.clutter_text.get_cursor_position() === -1 ||
+            this._entry.clutter_text.get_cursor_position() === this._entry.text.length;
+        if (this._completion && atEnd &&
+            (sym === Clutter.KEY_Tab || sym === Clutter.KEY_Right) &&
+            this._completion.toLowerCase() !== this._entry.text.toLowerCase()) {
+            this._entry.text = this._completion;
+            this._entry.clutter_text.set_cursor_position(-1);
             return Clutter.EVENT_STOP;
         }
         if (sym === Clutter.KEY_Tab || sym === Clutter.KEY_ISO_Left_Tab) {
@@ -323,7 +438,10 @@ export class Spotlight {
     }
 
     _activateSelected() {
-        const r = this._results[this._selected];
+        this._activate(this._results[this._selected]);
+    }
+
+    _activate(r) {
         if (!r) return;
         this._remember(r);
         this.close();

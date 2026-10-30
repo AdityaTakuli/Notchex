@@ -318,6 +318,8 @@ export default class NotchexPrefs extends ExtensionPreferences {
             'Quick Settings, calendar and indicator menus.'));
         glassGroup.add(this._boolRow(settings, 'glass-panel', 'Top bar'));
         glassGroup.add(this._boolRow(settings, 'glass-dock', 'Dock'));
+        glassGroup.add(this._boolRow(settings, 'glass-island', 'Open notch and Spotlight results',
+            'The compact notch stays solid black'));
         glassGroup.add(this._intRow(settings, 'glass-blur', 'Blur strength', 0, 80, 2));
         page.add(glassGroup);
 
@@ -337,6 +339,7 @@ export default class NotchexPrefs extends ExtensionPreferences {
         group.add(this._boolRow(settings, 'event-brightness', 'Screen brightness'));
         group.add(this._boolRow(settings, 'event-battery',    'Battery', 'Charger connected / removed, low and critical battery'));
         group.add(this._boolRow(settings, 'event-bluetooth',  'Bluetooth devices', 'Connect / disconnect with battery level when available'));
+        group.add(this._boolRow(settings, 'event-focus',      'Focus', 'Do Not Disturb turning on or off'));
         group.add(this._boolRow(settings, 'event-calendar',   'Upcoming calendar events'));
         group.add(this._intRow(settings, 'calendar-lead-minutes', 'Announce events this many minutes ahead', 1, 60, 1));
         group.add(this._intRow(settings, 'event-duration', 'Event duration (s)', 1, 15, 1,
@@ -437,7 +440,7 @@ export default class NotchexPrefs extends ExtensionPreferences {
             description: 'Search apps, files, settings and system actions, or type a calculation. ↑/↓ to move, Tab to jump between groups, Enter to open, Esc to close.',
         });
         group.add(this._boolRow(settings, 'search-enabled', 'Enable Spotlight'));
-        const sc = new Adw.EntryRow({title: 'Shortcut (e.g. <Super>space or <Control>space)'});
+        const sc = new Adw.EntryRow({title: 'Shortcut (e.g. <Super>space or <Control>space)', use_markup: false});
         sc.set_text(settings.get_strv('shortcut-search')[0] ?? '');
         sc.connect('changed', () => {
             const t = sc.get_text().trim();
@@ -967,7 +970,20 @@ export default class NotchexPrefs extends ExtensionPreferences {
         });
         group.add(tg);
 
+        const st = new Adw.EntryRow({title: 'Open these settings', use_markup: false});
+        st.set_text((settings.get_strv('shortcut-settings')[0]) ?? '');
+        st.connect('changed', () => {
+            const t = st.get_text().trim();
+            if (!t || Gtk.accelerator_parse(t)[0]) settings.set_strv('shortcut-settings', t ? [t] : []);
+        });
+        group.add(st);
+
+        const tip = new Adw.PreferencesGroup({
+            title: 'Other ways in',
+            description: 'Right-click the notch, search “Notchex Settings” in Spotlight, or open the Notchex Settings app. No Extension Manager needed.',
+        });
         page.add(group);
+        page.add(tip);
         return page;
     }
 

@@ -75,6 +75,16 @@ export const BluetoothWatcher = GObject.registerClass({
 
     destroy() { this.stop(); }
 
+    /* asks BlueZ to reconnect a known device; cb(ok) when it answers */
+    reconnect(path, cb = () => {}) {
+        Gio.DBus.system.call(BLUEZ, path, DEVICE_IFACE, 'Connect',
+            null, null, Gio.DBusCallFlags.NONE, 20000, null, (conn, res) => {
+                let ok = true;
+                try { conn.call_finish(res); } catch (_) { ok = false; }
+                cb(ok);
+            });
+    }
+
     connectedDevices() {
         return [...this._devices.values()].filter(d => d.connected);
     }

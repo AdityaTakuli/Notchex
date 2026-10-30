@@ -2,7 +2,8 @@ UUID    := notchex@adityatakuli
 PREFIX  := $(HOME)/.local/share/gnome-shell/extensions
 DEST    := $(PREFIX)/$(UUID)
 FILES   := metadata.json extension.js notch.js prefs.js stylesheet.css \
-           modules schemas
+           modules schemas data
+APPS    := $(HOME)/.local/share/applications
 
 .PHONY: all compile-schemas install uninstall pack dist reload enable disable logs clean
 
@@ -14,15 +15,20 @@ compile-schemas:
 install: compile-schemas
 	mkdir -p "$(DEST)"
 	cp -r $(FILES) "$(DEST)/"
+	# a "Notchex Settings" app, so settings never need Extension Manager
+	mkdir -p "$(APPS)"
+	cp data/notchex-settings.desktop "$(APPS)/"
 
 uninstall:
 	rm -rf "$(DEST)"
+	rm -f "$(APPS)/notchex-settings.desktop"
 
 pack:
 	rm -f $(UUID).shell-extension.zip schemas/gschemas.compiled
 	gnome-extensions pack \
 	    --extra-source=notch.js \
 	    --extra-source=modules \
+	    --extra-source=data \
 	    --extra-source=README.md \
 	    --extra-source=LICENSE \
 	    --schema=schemas/org.gnome.shell.extensions.notchex.gschema.xml \

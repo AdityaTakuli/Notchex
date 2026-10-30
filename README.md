@@ -23,12 +23,15 @@ Every part is optional. The **Features** page in preferences lets you keep only 
 It's plain GJS on top of St/Clutter. There's no Electron, no npm and no build step. Everything in the idle notch is driven by signals, so it does almost nothing until something actually changes.
 
 <p align="center">
-  <img src="docs/shots/hub-system.png" width="49%" alt="The notch open on the System tab">
-  <img src="docs/shots/hub-media.png" width="49%" alt="The notch open on the Media tab">
+  <img src="docs/shots/hub-now.png" width="49%" alt="The hub open on the Now view, in frosted glass: music, a meeting with a Join button, a focus timer and the weather">
+  <img src="docs/shots/spotlight-crop.jpg" width="49%" alt="Spotlight in the notch completing cal to Calculator, with results in a frosted-glass panel">
 </p>
 <p align="center">
-  <img src="docs/shots/spotlight.jpg" width="49%" alt="Spotlight search in the notch, with the Dock">
-  <img src="docs/shots/control.jpg" width="49%" alt="Control Center look, with music in the notch">
+  <img src="docs/shots/shape-notch.png" width="49%" alt="The notch shape: attached to the top edge, showing a meeting with a Join button">
+  <img src="docs/shots/shape-pill.png" width="49%" alt="The pill shape: floating below the edge, with music and the timer in a bubble beside it">
+</p>
+<p align="center">
+  <img src="docs/shots/compact.png" width="40%" alt="Compact alerts: AirPods connected with a battery ring, Focus on, low battery, charging">
 </p>
 
 ---
@@ -70,7 +73,11 @@ One rounded surface sits at the top center of your primary monitor and changes s
 | **Expanded** | The hub. It opens on **Now**, and resizes to fit each view. Press `Super + N` to fold it, or click the clock header. |
 | **Event** | Briefly grows for a live activity, then goes back to what it was showing. |
 
-There are two shapes: **notch**, which attaches to the top screen edge with rounded bottom corners like a MacBook, and **floating**, a fully rounded pill with a configurable gap from the edge.
+There are two shapes: **notch**, which attaches to the top screen edge with rounded bottom corners like a MacBook, and **pill**, a fully rounded capsule that floats a few pixels below the edge (the gap is adjustable). Switch between them from the notch's right-click menu or in preferences.
+
+Small events such as headphones connecting, Focus turning on or off, and low battery or charging use a **compact** look: the notch keeps its height and stretches sideways with a little spring, with an icon on the left and a colored status on the right (a ring that fills to the headphones' battery level, a purple "On", a red battery). Some of them carry a blue button: headphones that connect while sound is still going to your speakers show **Play Here**, and headphones that drop off show **Reconnect**. The open hub is **frosted glass**; the compact notch stays solid black.
+
+**Settings without Extension Manager:** right-click the notch, press `Super + ,`, search "Notchex Settings" in Spotlight, or open the **Notchex Settings** app.
 
 ### Live activities
 
@@ -224,13 +231,18 @@ gnome-extensions disable Vitals@CoreCoding.com           # covered by the System
 |---|---|
 | `Super + N` | Expand or collapse the notch |
 | `Super + Space` | Open Spotlight search |
+| `Super + ,` | Open Notchex settings |
+| Right-click the notch | Settings, notch or pill, hide the notch |
+| Scroll over the notch | Change the volume |
+| Swipe sideways over the notch | Next or previous track |
+| `Tab` or `→` in Spotlight | Accept the suggested completion |
 | `↑` `↓` / `Tab` / `Enter` / `Esc` | Navigate, switch category, open and close in Spotlight |
 | `Alt + Super + 8` | Toggle screen zoom (GNOME default) |
 | `Alt + Super + =` / `-` | Zoom in or out (GNOME default) |
 | Three-finger pinch | Zoom the screen in or out |
 | Three-finger double-tap | Toggle zoom |
 
-You can remap both Notchex shortcuts on the **Shortcuts** page in preferences.
+You can remap the Notchex shortcuts on the **Shortcuts** page in preferences.
 
 > **Note:** `Super + Space` is also GNOME's keyboard-layout switcher. If you have more than one input layout, preferences warns you so you can pick a different Spotlight shortcut.
 
@@ -458,6 +470,7 @@ notchex@adityatakuli/
     ├── brightness.js         # gnome-settings-daemon screen brightness
     ├── battery.js            # UPower state and transitions
     ├── bluetooth.js          # BlueZ devices and battery
+    ├── audio-route.js        # Bluetooth output lookup, "Play Here"
     ├── notifications.js      # message tray hook
     │
     ├── system.js             # CPU/mem/net/disk from /proc, hwmon thermals, GPU

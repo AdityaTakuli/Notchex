@@ -32,7 +32,7 @@
       <summary>Island shape</summary>
       <description>notch: attached to the top screen edge with rounded bottom corners (MacBook style). floating: fully rounded island below the edge.</description>
     </key>
-    <key name="top-margin"       type="i"><default>2</default>  <range min="0"   max="24"/> <summary>Gap between the top screen edge and the island (floating style)</summary></key>
+    <key name="top-margin"       type="i"><default>6</default>  <range min="0"   max="24"/> <summary>Gap between the top screen edge and the island (floating style)</summary></key>
 
     <!-- colors (CSS rgba strings so users can use any transparency) -->
     <key name="bg-color"         type="s"><default>"rgba(0, 0, 0, 1.0)"</default><summary>Island background color</summary></key>
@@ -86,6 +86,7 @@
     <key name="event-brightness" type="b"><default>true</default><summary>Show screen brightness changes in the island</summary></key>
     <key name="event-battery"    type="b"><default>true</default><summary>Show charging / low battery events</summary></key>
     <key name="event-bluetooth"  type="b"><default>true</default><summary>Show Bluetooth device connect / disconnect events</summary></key>
+    <key name="event-focus"      type="b"><default>true</default><summary>Show Focus (Do Not Disturb) turning on or off</summary></key>
     <key name="event-calendar"   type="b"><default>true</default><summary>Show upcoming calendar events</summary></key>
     <key name="calendar-lead-minutes" type="i"><default>10</default><range min="1" max="60"/><summary>Minutes before an event to announce it</summary></key>
     <key name="replace-system-osd" type="b"><default>true</default><summary>Hide GNOME's volume/brightness popup when the island shows it</summary></key>
@@ -137,6 +138,7 @@
     <key name="glass-menus" type="b"><default>true</default><summary>Glass top-bar menus (Quick Settings, calendar, indicators)</summary></key>
     <key name="glass-panel" type="b"><default>true</default><summary>Glass top bar</summary></key>
     <key name="glass-dock" type="b"><default>true</default><summary>Glass Dock</summary></key>
+    <key name="glass-island" type="b"><default>true</default><summary>Glass hub</summary><description>The open notch becomes dark frosted glass; the compact notch stays solid black.</description></key>
     <key name="glass-blur" type="i"><default>36</default><range min="0" max="80"/><summary>Glass blur strength</summary></key>
     <key name="control-center-style" type="b"><default>true</default><summary>macOS Control Center look for Quick Settings</summary></key>
 
@@ -165,6 +167,10 @@
     <key name="shortcut-toggle" type="as">
       <default>["&lt;Super&gt;n"]</default>
       <summary>Toggle the notch (expand/collapse)</summary>
+    </key>
+    <key name="shortcut-settings" type="as">
+      <default>["&lt;Super&gt;comma"]</default>
+      <summary>Open Notchex settings</summary>
     </key>
 
     <!-- notes -->
