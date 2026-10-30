@@ -21,7 +21,7 @@
 
     /* logical size of each state (screenshots are 2x) */
     const SIZE = {
-        idle: [118, 38], meeting: [420, 48], bt: [340, 38], play: [380, 38],
+        idle: [224, 38], meeting: [420, 48], bt: [340, 38], play: [380, 38],
         focus: [300, 38], low: [340, 38], charge: [340, 38], hub: [640, 398.5],
     };
     const PILL_TOP = 6;
@@ -52,14 +52,12 @@
         /* px per logical px; phones zoom in so the island stays readable */
         get logical() {
             const wide = +this.screen.dataset.logical || 1280;
-            return this.screen.clientWidth < 700 ? Math.min(wide, 520) : wide;
+            return this.screen.clientWidth < 700 ? Math.min(wide, 700) : wide;
         }
 
         render() {
+            const s = this.screen.clientWidth / this.logical;
             const {w, h, p} = this.g;
-            const base = this.screen.clientWidth / this.logical;
-            /* on phones the open hub would overflow: shrink just enough to fit */
-            const s = Math.min(base, (this.screen.clientWidth * 0.96) / w);
             const r = (h <= 60 ? h / 2 : 24) * s;       // capsule when compact, 24 when open
             const top = r * p;                            // the notch's top corners are square
             Object.assign(this.el.style, {
@@ -73,8 +71,6 @@
             this.ears.style.setProperty('--half', `${(w * s) / 2}px`);
             this.ears.style.setProperty('--ear', `${10 * s}px`);
             this.ears.style.opacity = String(1 - p);
-            /* the wallpaper zooms with the island, as on a 1280-wide desktop */
-            this.screen.style.backgroundSize = `${Math.max(1280 * base, this.screen.clientWidth)}px auto`;
         }
 
         to(state) {

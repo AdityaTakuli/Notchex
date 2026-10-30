@@ -436,9 +436,7 @@ class Notch extends St.Widget {
             right.set_width(side);
         }
         const [, rowW] = this._pillRow.get_preferred_width(-1);
-        /* art-only music: hug the art, clock and bars instead of the idle width */
-        const artOnly = this._mediaChip.visible && !this._musicTitle.visible;
-        let w = artOnly ? rowW : Math.max(this._px(this._cwMin), rowW);
+        let w = Math.max(this._px(this._cwMin), rowW);
         let h = this._px(this._ch);
         if (this._hoverState) {
             const [, subW] = this._subtitle.get_preferred_width(-1);
