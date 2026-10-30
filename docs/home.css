@@ -48,9 +48,9 @@ code { font-family: var(--mono); }
 .skip { position: absolute; left: -999px; top: 8px; z-index: 100; padding: 8px 14px; background: var(--text); color: #000; border-radius: 8px; }
 .skip:focus { left: 8px; }
 
-/* the gradient from the wallpaper, used only on a few display words (7.2:1+ on black) */
+/* the dusk on the wallpaper (Fuji san at sunset), used only on a few display words (9:1+ on black) */
 .grad {
-    background: linear-gradient(90deg, #a78bfa, #f472b6 55%, #60a5fa);
+    background: linear-gradient(90deg, #ffd3b3, #ff9a76 55%, #e3a6c6);
     -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 
@@ -124,8 +124,8 @@ h1 { font-size: clamp(46px, 6.6vw, 112px); line-height: 0.98; letter-spacing: -0
     position: relative; overflow: hidden; isolation: isolate;
     aspect-ratio: 16 / 9;
     border-radius: clamp(14px, 1.6vw, 26px);
-    background: #14162e url("img/wallpaper.jpg") center top / cover no-repeat;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 50px 120px -40px rgba(91, 51, 201, 0.45);
+    background: #6e5a50 url("img/wallpaper.jpg") center top / cover no-repeat;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 50px 120px -40px rgba(194, 117, 90, 0.38);
 }
 .screen-band { aspect-ratio: 16 / 6; }
 
@@ -189,7 +189,7 @@ h2 { font-size: clamp(40px, 6vw, 96px); line-height: 1; letter-spacing: -0.04em;
 
 /* hub */
 .shot { margin: 0; border-radius: clamp(14px, 1.6vw, 26px); overflow: hidden; background: var(--card);
-        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 50px 120px -50px rgba(91, 51, 201, 0.4); }
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 50px 120px -50px rgba(194, 117, 90, 0.34); }
 .shot img { width: 100%; height: auto; }
 .tabs {
     display: flex; width: max-content; max-width: 100%; margin: 28px auto 0; padding: 4px; gap: 2px;
@@ -260,6 +260,7 @@ html[data-shape="pill"] .shape-card[data-set-shape="pill"] { box-shadow: 0 0 0 2
 }
 .footer a { color: var(--dim); }
 .footer-links { display: flex; gap: 22px; }
+.footer-credit { flex-basis: 100%; color: var(--faint); font-size: 13px; }
 
 /* ———————— smaller screens ———————— */
 @media (max-width: 1100px) {
