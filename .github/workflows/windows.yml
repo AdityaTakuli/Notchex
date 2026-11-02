@@ -2,12 +2,13 @@ name: Windows build
 
 # Builds Notchex for Windows on every change to windows/, so there is
 # always a fresh Notchex.exe to try under the run's "Artifacts".
+# Also tests install.ps1 against the published release whenever it changes.
 on:
   push:
     branches: [main]
-    paths: ['windows/**', '.github/workflows/windows.yml']
+    paths: ['windows/**', 'install.ps1', '.github/workflows/windows.yml']
   pull_request:
-    paths: ['windows/**']
+    paths: ['windows/**', 'install.ps1']
   workflow_dispatch:
 
 permissions:
@@ -33,3 +34,32 @@ jobs:
         with:
           name: Notchex-${{ matrix.rid }}
           path: out/Notchex.exe
+
+  installer:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shell: [powershell, pwsh]   # Windows PowerShell 5.1 and PowerShell 7
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the way users do (piped into iex)
+        run: |
+          Get-Content -Raw ./install.ps1 | Invoke-Expression
+          $exe = Join-Path $env:LOCALAPPDATA 'Programs\Notchex\Notchex.exe'
+          if (-not (Test-Path $exe)) { throw "Notchex.exe wasn't installed" }
+      - name: Uninstall
+        run: |
+          & ([scriptblock]::Create((Get-Content -Raw ./install.ps1))) -Uninstall
+          if (Test-Path (Join-Path $env:LOCALAPPDATA 'Programs\Notchex')) { throw 'Notchex is still installed' }
+          if (Get-Process -Name 'Notchex*' -ErrorAction SilentlyContinue) { throw 'Notchex is still running' }
+      - name: Install a specific version without starting it
+        run: |
+          & ([scriptblock]::Create((Get-Content -Raw ./install.ps1))) -Version v3.0.0 -NoStart
+          $exe = Join-Path $env:LOCALAPPDATA 'Programs\Notchex\Notchex.exe'
+          if (-not (Test-Path $exe)) { throw "Notchex.exe wasn't installed" }
+          if (Get-Process -Name 'Notchex*' -ErrorAction SilentlyContinue) { throw '-NoStart still started Notchex' }
+          & ([scriptblock]::Create((Get-Content -Raw ./install.ps1))) -Uninstall

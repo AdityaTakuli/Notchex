@@ -13,10 +13,25 @@ The same notch, now on Windows 10 (2004 or later) and Windows 11. It sits at the
 
 ## Install
 
-1. Download `Notchex-…-win-x64.exe` from the [latest release](https://github.com/AdityaTakuli/Notchex/releases/latest). Use `win-arm64` on Arm PCs such as Snapdragon laptops.
-2. Put it somewhere it can stay, such as `Documents\Notchex`, and run it.
+Open PowerShell (it doesn't need to be the admin one) and run:
+
+```powershell
+irm https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.ps1 | iex
+```
+
+It picks the right build for your PC (x64 or Arm64), checks it against the release's `SHA256SUMS`, installs it to `%LOCALAPPDATA%\Programs\Notchex` and starts it. Run the same command again to update. Options:
+
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.ps1))) -Version v3.0.0   # a specific version
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.ps1))) -NoStart          # install without starting
+```
 
 It installs nothing system-wide and needs no admin rights. Notchex adds "Notchex" and "Notchex Settings" to the Start menu, and you can have it start when you sign in.
+
+### Or download it
+
+1. Download `Notchex-…-win-x64.exe` from the [latest release](https://github.com/AdityaTakuli/Notchex/releases/latest). Use `win-arm64` on Arm PCs such as Snapdragon laptops.
+2. Put it somewhere it can stay, such as `Documents\Notchex`, and run it.
 
 Windows may show "Windows protected your PC" because the app isn't signed yet. Click **More info**, then **Run anyway**.
 
@@ -41,7 +56,13 @@ Open them from the Start menu ("Notchex Settings"), the tray icon, the gear in t
 
 ## Uninstall
 
-Quit Notchex from its tray icon. Then turn off "Start Notchex when you sign in" first, or delete the `Notchex` value under `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`. Delete the exe, the `Notchex` folder in the Start menu and `%APPDATA%\Notchex`.
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.ps1))) -Uninstall
+```
+
+This closes Notchex and removes the app, the Start menu shortcuts, the sign-in entry, `%APPDATA%\Notchex` and `%LOCALAPPDATA%\Notchex`.
+
+By hand: quit Notchex from its tray icon. Then turn off "Start Notchex when you sign in" first, or delete the `Notchex` value under `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`. Delete the exe, the `Notchex` folder in the Start menu and `%APPDATA%\Notchex`.
 
 ## Build it yourself
 

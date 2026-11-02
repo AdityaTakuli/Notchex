@@ -23,7 +23,7 @@ Every part is optional. The **Features** page in preferences lets you keep only 
 
 It's plain GJS on top of St/Clutter. There's no Electron, no npm and no build step. Everything in the idle notch is driven by signals, so it does almost nothing until something actually changes.
 
-> **On Windows?** Notchex 3.0 adds a Windows 10 and 11 app with the notch, the pill, music, alerts and the hub. See [Windows](#windows) below.
+> **On Windows?** Notchex 3.0 adds a Windows 10 and 11 app with the notch, the pill, music, alerts and the hub. Install it from PowerShell with one line: see [Windows](#windows).
 
 <p align="center">
   <img src="docs/shots/hub-now.jpg" width="49%" alt="The hub open on the Now view, in frosted glass: music, a meeting with a Join button, a focus timer and the weather">
@@ -158,7 +158,23 @@ All of these can be turned off individually.
 
 ## Installation
 
-### Requirements
+One command, no sudo or admin rights. Run the same command again to update.
+
+**Linux** (in a terminal), then log out and back in:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.sh | bash
+```
+
+**Windows** (in PowerShell), starts right away:
+
+```powershell
+irm https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.ps1 | iex
+```
+
+The rest of this section covers Linux in detail; Windows is [below](#windows).
+
+### Requirements (Linux)
 
 - GNOME Shell **46, 47, 48, 49 or 50**
 - Wayland or X11
@@ -167,7 +183,7 @@ See [Optional dependencies](#optional-dependencies) for features that rely on ex
 
 A step-by-step version of this section, with troubleshooting, is on the website: **[adityatakuli.github.io/Notchex/install.html](https://adityatakuli.github.io/Notchex/install.html)**.
 
-### One-line install (recommended)
+### One-line install on Linux (recommended)
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.sh | bash
@@ -229,23 +245,26 @@ gnome-extensions disable Vitals@CoreCoding.com           # covered by the System
 
 ### Windows
 
-Notchex for Windows runs on **Windows 10 (2004 or later) and Windows 11**, on x64 and Arm64. It's one file: no installer, no admin rights, and it never goes online.
+Notchex for Windows runs on **Windows 10 (2004 or later) and Windows 11**, on x64 and Arm64. Open PowerShell (it doesn't need to be the admin one) and run:
 
-1. Download `Notchex-…-win-x64.exe` from the [latest release](https://github.com/AdityaTakuli/Notchex/releases/latest). On an Arm PC such as a Snapdragon laptop, get `Notchex-…-win-arm64.exe`.
-2. Move it to a folder where it can stay, such as `Documents\Notchex`, and run it.
-3. If Windows says *"Windows protected your PC"*, click **More info**, then **Run anyway**. The app isn't signed yet.
+```powershell
+irm https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.ps1 | iex
+```
+
+The script picks the right build for your PC, checks it against the release's `SHA256SUMS`, installs it for your user only to `%LOCALAPPDATA%\Programs\Notchex` (no admin rights) and starts it. Run the same command again to update. Prefer to read it first? [`install.ps1`](install.ps1) is short.
+
+```powershell
+# a specific version, or install without starting it
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.ps1))) -Version v3.0.0
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.ps1))) -NoStart
+
+# uninstall: removes the app, its shortcuts, the sign-in entry, settings and log
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.ps1))) -Uninstall
+```
 
 Notchex adds **Notchex** and **Notchex Settings** to the Start menu. Hover over the notch or press `Ctrl + Alt + N` to open the hub, and press `Ctrl + Alt + ,` for settings. To start it when you sign in, turn on **Start Notchex when you sign in**.
 
-To check the download, compare `Get-FileHash .\Notchex-3.0.0-win-x64.exe` in PowerShell with its line in the release's `SHA256SUMS`.
-
-**Update:** quit Notchex from the tray icon, download the new version into the same folder and run it, then delete the old file. **Uninstall:** turn off *Start Notchex when you sign in*, quit from the tray icon, then delete the app and these folders:
-
-```
-%APPDATA%\Microsoft\Windows\Start Menu\Programs\Notchex
-%APPDATA%\Notchex
-%LOCALAPPDATA%\Notchex
-```
+You can also download `Notchex-…-win-x64.exe` (or `-win-arm64.exe`) from [Releases](https://github.com/AdityaTakuli/Notchex/releases/latest), put it in a folder where it can stay and run it. Windows may say *"Windows protected your PC"* because the app isn't signed yet: click **More info**, then **Run anyway**.
 
 More detail, including how to build it yourself, is in [windows/README.md](windows/README.md) and the [Windows install guide](https://adityatakuli.github.io/Notchex/install.html#windows).
 

@@ -239,32 +239,59 @@ gnome-extensions disable Vitals@CoreCoding.com           <span class="comment">#
         <!-- ============ Windows ============ -->
         <p class="os-label os-label-break">Windows</p>
         <h2 id="windows">Install on Windows</h2>
-        <p>Notchex for Windows puts the same notch or pill at the top of your screen, with music, alerts and the hub. It's one file: no installer, no admin rights, and it never goes online.</p>
+        <p>Notchex for Windows puts the same notch or pill at the top of your screen, with music, alerts and the hub. It installs for your user only, needs no admin rights, and the app never goes online.</p>
         <ul>
             <li><b>Windows 10 version 2004 or later</b>, or Windows 11</li>
             <li>An x64 PC, or an Arm PC such as a Snapdragon laptop</li>
         </ul>
 
-        <ol class="steps">
-            <li>
-                <b>Download the app</b>
-                From the <a href="https://github.com/AdityaTakuli/Notchex/releases/latest">latest release</a>, get <code>Notchex-…-win-x64.exe</code>. On an Arm PC, get <code>Notchex-…-win-arm64.exe</code>.
-                <span class="muted">Not sure which you have? Open <b>Settings → System → About</b> and look at <i>System type</i>.</span>
-            </li>
-            <li>
-                <b>Give it a permanent folder</b>
-                Move the file somewhere it can stay, such as <code>Documents\Notchex</code>. The Start menu shortcuts and the sign-in entry point to it.
-            </li>
-            <li>
-                <b>Run it</b>
-                <span>The app isn't signed yet, so Windows may say <i>"Windows protected your PC"</i>. Click <b>More info</b>, then <b>Run anyway</b>.</span>
-            </li>
-        </ol>
-        <details>
-            <summary>Check the download</summary>
-            <p>Each release has a <code>SHA256SUMS</code> file. In PowerShell, in the folder with the app, run this and compare the result with the matching line in <code>SHA256SUMS</code>:</p>
-            <div class="code"><pre><code>Get-FileHash .\Notchex-3.0.0-win-x64.exe</code></pre></div>
-        </details>
+        <div class="method-tabs" role="tablist" aria-label="Windows install method">
+            <button role="tab" aria-selected="true" aria-controls="m-win-oneline" id="t-win-oneline">One-line installer</button>
+            <button role="tab" aria-selected="false" aria-controls="m-win-exe" id="t-win-exe">Download the app</button>
+        </div>
+
+        <div class="method-panel" id="m-win-oneline" role="tabpanel" aria-labelledby="t-win-oneline">
+            <ol class="steps">
+                <li>
+                    <b>Open PowerShell</b>
+                    <span>Press <kbd>Win</kbd> + <kbd>X</kbd> and choose <b>Terminal</b> (or <b>Windows PowerShell</b> on Windows 10). It doesn't need to be the admin one.</span>
+                </li>
+                <li>
+                    <b>Run the installer</b>
+                    It picks the right build for your PC (x64 or Arm64), checks it against the release's checksums, installs it to <code>%LOCALAPPDATA%\Programs\Notchex</code> and starts it.
+                    <div class="code"><pre><code>irm https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.ps1 | iex</code></pre></div>
+                    <span class="muted">Want to read it first? <a href="https://github.com/AdityaTakuli/Notchex/blob/main/install.ps1">install.ps1</a> is short.</span>
+                </li>
+            </ol>
+            <details>
+                <summary>Install a specific version, or install without starting</summary>
+                <div class="code"><pre><code>&amp; ([scriptblock]::Create((irm https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.ps1))) -Version v3.0.0</code></pre></div>
+                <p class="muted"><code>-NoStart</code> installs without starting Notchex.</p>
+            </details>
+        </div>
+
+        <div class="method-panel" id="m-win-exe" role="tabpanel" aria-labelledby="t-win-exe" hidden>
+            <ol class="steps">
+                <li>
+                    <b>Download the app</b>
+                    From the <a href="https://github.com/AdityaTakuli/Notchex/releases/latest">latest release</a>, get <code>Notchex-…-win-x64.exe</code>. On an Arm PC, get <code>Notchex-…-win-arm64.exe</code>.
+                    <span class="muted">Not sure which you have? Open <b>Settings → System → About</b> and look at <i>System type</i>.</span>
+                </li>
+                <li>
+                    <b>Give it a permanent folder</b>
+                    Move the file somewhere it can stay, such as <code>Documents\Notchex</code>. The Start menu shortcuts and the sign-in entry point to it.
+                </li>
+                <li>
+                    <b>Run it</b>
+                    <span>The app isn't signed yet, so Windows may say <i>"Windows protected your PC"</i>. Click <b>More info</b>, then <b>Run anyway</b>.</span>
+                </li>
+            </ol>
+            <details>
+                <summary>Check the download</summary>
+                <p>Each release has a <code>SHA256SUMS</code> file. In PowerShell, in the folder with the app, run this and compare the result with the matching line in <code>SHA256SUMS</code>:</p>
+                <div class="code"><pre><code>Get-FileHash .\Notchex-3.0.0-win-x64.exe</code></pre></div>
+            </details>
+        </div>
 
         <h3 id="win-after">After installing</h3>
         <p>Notchex adds <b>Notchex</b> and <b>Notchex Settings</b> to the Start menu and an icon to the tray. Try:</p>
@@ -277,29 +304,38 @@ gnome-extensions disable Vitals@CoreCoding.com           <span class="comment">#
         <p>To start Notchex every time you sign in, turn on <b>Start Notchex when you sign in</b> in settings. Settings are saved in <code>%APPDATA%\Notchex\settings.json</code>.</p>
 
         <h3 id="win-update">Update</h3>
-        <ol>
-            <li>Quit Notchex from its tray icon (<b>Quit Notchex</b>).</li>
-            <li>Download the new version into the same folder and run it.</li>
-            <li>Delete the old file. The new one updates the Start menu shortcuts and the sign-in entry by itself.</li>
-        </ol>
+        <p>Run the same one-line command again. It closes Notchex, puts the new version in place and starts it:</p>
+        <div class="code"><pre><code>irm https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.ps1 | iex</code></pre></div>
+        <p class="muted">Installed by downloading the app? Quit Notchex from its tray icon, download the new version into the same folder, run it and delete the old file.</p>
 
         <h3 id="win-uninstall">Uninstall</h3>
-        <ol>
-            <li>In settings, turn off <b>Start Notchex when you sign in</b>.</li>
-            <li>Quit Notchex from its tray icon.</li>
-            <li>Delete the app file, the Start menu folder and Notchex's data. You can paste these paths into File Explorer's address bar:
-                <div class="code"><pre><code>%APPDATA%\Microsoft\Windows\Start Menu\Programs\Notchex
+        <p>This closes Notchex and removes the app, its Start menu shortcuts, the sign-in entry, your settings and the log:</p>
+        <div class="code"><pre><code>&amp; ([scriptblock]::Create((irm https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.ps1))) -Uninstall</code></pre></div>
+        <details>
+            <summary>Uninstall by hand</summary>
+            <ol>
+                <li>In settings, turn off <b>Start Notchex when you sign in</b>.</li>
+                <li>Quit Notchex from its tray icon.</li>
+                <li>Delete the app file and these folders. You can paste each path into File Explorer's address bar:
+                    <div class="code"><pre><code>%LOCALAPPDATA%\Programs\Notchex
+%APPDATA%\Microsoft\Windows\Start Menu\Programs\Notchex
 %APPDATA%\Notchex
 %LOCALAPPDATA%\Notchex</code></pre></div>
-            </li>
-        </ol>
-        <p class="muted">Already deleted the app? Remove the <code>Notchex</code> value under <code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</code> in Registry Editor.</p>
+                </li>
+            </ol>
+            <p class="muted">Already deleted the app? Remove the <code>Notchex</code> value under <code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</code> in Registry Editor.</p>
+        </details>
 
         <h3 id="win-troubleshooting">Troubleshooting</h3>
 
         <details>
             <summary>"Windows protected your PC" won't let me run it</summary>
             <p>Click <b>More info</b>, then <b>Run anyway</b>. If there's no <b>Run anyway</b> button, your organization may block unsigned apps.</p>
+        </details>
+
+        <details>
+            <summary>The installer says it can't reach the release</summary>
+            <p>Check your internet connection. On a work PC, a proxy or firewall may block GitHub; in that case use <b>Download the app</b> above instead.</p>
         </details>
 
         <details>

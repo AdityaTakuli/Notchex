@@ -200,38 +200,43 @@
 <section class="chapter privacy" id="privacy">
     <div class="chapter-head">
         <h2 data-reveal>Light, local<br>and private.</h2>
-        <p class="lede" data-reveal>Plain GJS on top of GNOME Shell. The notch reacts to events instead of checking for them, so at rest it does almost nothing.</p>
+        <p class="lede" data-reveal>Plain GJS on GNOME Shell and plain C# on Windows. The notch reacts to events instead of checking for them, so at rest it does almost nothing.</p>
     </div>
     <div class="facts">
-        <div class="fact" data-reveal><h3>No telemetry</h3><p>Weather comes from wttr.in and can be turned off. Calendar and Claude usage only go online once you switch them on. Tokens stay in memory and never touch the disk.</p></div>
+        <div class="fact" data-reveal><h3>No telemetry</h3><p>Weather comes from wttr.in and can be turned off. Calendar and Claude usage only go online once you switch them on, and tokens never touch the disk. The Windows app never goes online at all.</p></div>
         <div class="fact" data-reveal><h3>Nearly idle</h3><p>The clock ticks once a minute. System stats are read only while you look at them, and the music bars run in their own process.</p></div>
-        <div class="fact" data-reveal><h3>No sudo</h3><p>Installs for your user only. Turn a part off and it stops completely. Uninstall and it's gone.</p></div>
+        <div class="fact" data-reveal><h3>No sudo, no admin</h3><p>Installs for your user only, on Linux and Windows. Turn a part off and it stops completely. Uninstall and it's gone.</p></div>
     </div>
 </section>
 
 <!-- ============ Install ============ -->
 <section class="install" id="install">
     <h2 data-reveal>Install in one line.</h2>
-    <p class="lede" data-reveal>On Linux, run this in a terminal, then log out and back in.</p>
-    <div class="code" data-reveal>
-        <code id="install-cmd">curl -fsSL https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.sh | bash</code>
-        <button type="button" class="copy" data-copy="install-cmd">Copy</button>
+    <p class="lede" data-reveal>Open a terminal, paste one command, done. Nothing to click through, and no sudo or admin rights.</p>
+
+    <div class="os-install" data-reveal>
+        <p class="os-head"><b>Linux</b><span>in a terminal</span></p>
+        <div class="code">
+            <code id="install-linux">curl -fsSL https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.sh | bash</code>
+            <button type="button" class="copy" data-copy="install-linux">Copy</button>
+        </div>
+        <p class="os-note">Then log out and back in. GNOME Shell 46–50, Wayland and X11.</p>
     </div>
+
+    <div class="os-install" id="windows" data-reveal>
+        <p class="os-head"><b>Windows</b><span>in PowerShell</span></p>
+        <div class="code">
+            <code id="install-windows">irm https://raw.githubusercontent.com/AdityaTakuli/Notchex/main/install.ps1 | iex</code>
+            <button type="button" class="copy" data-copy="install-windows">Copy</button>
+        </div>
+        <p class="os-note">Notchex starts right away. Windows 10 (2004 or later) and 11, x64 and Arm64.</p>
+    </div>
+
     <div class="cta center" data-reveal>
         <a class="btn" href="install.html">Full install guide</a>
         <a class="btn btn-ghost" href="https://github.com/AdityaTakuli/Notchex/releases/latest">Download release</a>
     </div>
-    <p class="meta" data-reveal>GNOME Shell 46–50 <span aria-hidden="true">·</span> Wayland and X11 <span aria-hidden="true">·</span> GPL-3.0</p>
-
-    <div class="install-windows" id="windows">
-        <h3 data-reveal>On Windows?</h3>
-        <p data-reveal>Download Notchex for Windows and run it. One file, no installer and no admin rights. You get the notch, the pill, music, alerts and the hub.</p>
-        <div class="cta center" data-reveal>
-            <a class="btn" href="https://github.com/AdityaTakuli/Notchex/releases/latest">Download for Windows</a>
-            <a class="btn btn-ghost" href="install.html#windows">Windows guide</a>
-        </div>
-        <p class="meta" data-reveal>Windows 10 (2004 or later) and 11 <span aria-hidden="true">·</span> x64 and Arm64 <span aria-hidden="true">·</span> Never goes online</p>
-    </div>
+    <p class="meta" data-reveal>Run the same command again to update <span aria-hidden="true">·</span> GPL-3.0</p>
 </section>
 
 </main>
