@@ -917,6 +917,13 @@ code { font-family: var(--mono); font-size: 0.88em; }
 .doc p, .doc li { color: var(--text); }
 .doc .muted { color: var(--text-dim); }
 
+/* Linux / Windows split */
+.page-hero p.os-jump { font-size: 17px; margin-top: 10px; }
+.toc b.toc-group { margin: 22px 0 10px; }
+.os-label { margin: 0 0 6px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dim) !important; }
+.os-label + h2 { margin-top: 0; }
+.os-label-break { margin-top: 88px; padding-top: 40px; border-top: 1px solid var(--border); }
+
 .steps { counter-reset: step; list-style: none; padding: 0; margin: 16px 0; }
 .steps > li {
     counter-increment: step;

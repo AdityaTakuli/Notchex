@@ -22,7 +22,7 @@ Every part is optional. The **Features** page in preferences lets you keep only 
 
 It's plain GJS on top of St/Clutter. There's no Electron, no npm and no build step. Everything in the idle notch is driven by signals, so it does almost nothing until something actually changes.
 
-> **On Windows?** Notchex 3.0 adds a Windows app with the notch, the pill, music, alerts and the hub. See [windows/README.md](windows/README.md).
+> **On Windows?** Notchex 3.0 adds a Windows 10 and 11 app with the notch, the pill, music, alerts and the hub. See [Windows](#windows) below.
 
 <p align="center">
   <img src="docs/shots/hub-now.jpg" width="49%" alt="The hub open on the Now view, in frosted glass: music, a meeting with a Join button, a focus timer and the weather">
@@ -48,6 +48,7 @@ It's plain GJS on top of St/Clutter. There's no Electron, no npm and no build st
   - [Spotlight search](#spotlight-search)
   - [Desktop polish](#desktop-polish)
 - [Installation](#installation)
+  - [Windows](#windows)
 - [Keyboard shortcuts and gestures](#keyboard-shortcuts-and-gestures)
 - [Configuration](#configuration)
 - [Setting up integrations](#setting-up-integrations)
@@ -225,6 +226,28 @@ gnome-extensions disable dash-to-dock@micxgx.gmail.com
 gnome-extensions disable Vitals@CoreCoding.com           # covered by the System tab
 ```
 
+### Windows
+
+Notchex for Windows runs on **Windows 10 (2004 or later) and Windows 11**, on x64 and Arm64. It's one file: no installer, no admin rights, and it never goes online.
+
+1. Download `Notchex-…-win-x64.exe` from the [latest release](https://github.com/AdityaTakuli/Notchex/releases/latest). On an Arm PC such as a Snapdragon laptop, get `Notchex-…-win-arm64.exe`.
+2. Move it to a folder where it can stay, such as `Documents\Notchex`, and run it.
+3. If Windows says *"Windows protected your PC"*, click **More info**, then **Run anyway**. The app isn't signed yet.
+
+Notchex adds **Notchex** and **Notchex Settings** to the Start menu. Hover over the notch or press `Ctrl + Alt + N` to open the hub, and press `Ctrl + Alt + ,` for settings. To start it when you sign in, turn on **Start Notchex when you sign in**.
+
+To check the download, compare `Get-FileHash .\Notchex-3.0.0-win-x64.exe` in PowerShell with its line in the release's `SHA256SUMS`.
+
+**Update:** quit Notchex from the tray icon, download the new version into the same folder and run it, then delete the old file. **Uninstall:** turn off *Start Notchex when you sign in*, quit from the tray icon, then delete the app and these folders:
+
+```
+%APPDATA%\Microsoft\Windows\Start Menu\Programs\Notchex
+%APPDATA%\Notchex
+%LOCALAPPDATA%\Notchex
+```
+
+More detail, including how to build it yourself, is in [windows/README.md](windows/README.md) and the [Windows install guide](https://adityatakuli.github.io/Notchex/install.html#windows).
+
 ---
 
 ## Keyboard shortcuts and gestures
@@ -356,6 +379,7 @@ Files Notchex writes:
 | Multi-monitor | The notch and Dock live on the primary monitor |
 | HiDPI / fractional scaling | Supported |
 | Ubuntu, Fedora, Arch, Debian, openSUSE | Any distro with a supported GNOME version |
+| Windows 10 (2004+) and 11, x64 and Arm64 | Separate app with the notch, pill, music, alerts and hub. See [Windows](#windows) |
 
 ### Optional dependencies
 

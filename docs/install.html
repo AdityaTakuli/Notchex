@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Install Notchex</title>
-    <meta name="description" content="How to install, update and uninstall Notchex, the working notch for GNOME Shell 46–50.">
+    <meta name="description" content="How to install, update and uninstall Notchex, the working notch for GNOME Shell 46–50 and Windows 10 and 11.">
     <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0b0b0d" media="(prefers-color-scheme: dark)">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M3 10h26v4a8 8 0 0 1-8 8H11a8 8 0 0 1-8-8z' fill='%23000'/%3E%3C/svg%3E">
@@ -33,7 +33,8 @@
 
 <div class="page-hero">
     <h1>Install Notchex</h1>
-    <p>About a minute. Notchex installs for your user only and never asks for <code>sudo</code>.</p>
+    <p>About a minute. Notchex installs for your user only and never asks for <code>sudo</code> or admin rights.</p>
+    <p class="os-jump">On Windows? <a href="#windows">Go to the Windows guide</a>.</p>
 </div>
 
 <div class="docs">
@@ -48,10 +49,17 @@
         <a href="#update">Update</a>
         <a href="#uninstall">Uninstall</a>
         <a href="#troubleshooting">Troubleshooting</a>
+        <b class="toc-group">Windows</b>
+        <a href="#windows">Install on Windows</a>
+        <a href="#win-after">After installing</a>
+        <a href="#win-update">Update</a>
+        <a href="#win-uninstall">Uninstall</a>
+        <a href="#win-troubleshooting">Troubleshooting</a>
     </nav>
 
     <article class="doc">
 
+        <p class="os-label">Linux (GNOME)</p>
         <h2 id="requirements">Requirements</h2>
         <ul>
             <li><b>GNOME Shell 46, 47, 48, 49 or 50</b>. Run <code>gnome-shell --version</code> to check.</li>
@@ -226,6 +234,87 @@ gnome-extensions disable Vitals@CoreCoding.com           <span class="comment">#
             <summary>Something else is wrong</summary>
             <p>Watch the logs while you reproduce the problem, then <a href="https://github.com/AdityaTakuli/Notchex/issues">open an issue</a> and paste the output:</p>
             <div class="code"><pre><code>journalctl -f -o cat /usr/bin/gnome-shell</code></pre></div>
+        </details>
+
+        <!-- ============ Windows ============ -->
+        <p class="os-label os-label-break">Windows</p>
+        <h2 id="windows">Install on Windows</h2>
+        <p>Notchex for Windows puts the same notch or pill at the top of your screen, with music, alerts and the hub. It's one file: no installer, no admin rights, and it never goes online.</p>
+        <ul>
+            <li><b>Windows 10 version 2004 or later</b>, or Windows 11</li>
+            <li>An x64 PC, or an Arm PC such as a Snapdragon laptop</li>
+        </ul>
+
+        <ol class="steps">
+            <li>
+                <b>Download the app</b>
+                From the <a href="https://github.com/AdityaTakuli/Notchex/releases/latest">latest release</a>, get <code>Notchex-…-win-x64.exe</code>. On an Arm PC, get <code>Notchex-…-win-arm64.exe</code>.
+                <span class="muted">Not sure which you have? Open <b>Settings → System → About</b> and look at <i>System type</i>.</span>
+            </li>
+            <li>
+                <b>Give it a permanent folder</b>
+                Move the file somewhere it can stay, such as <code>Documents\Notchex</code>. The Start menu shortcuts and the sign-in entry point to it.
+            </li>
+            <li>
+                <b>Run it</b>
+                <span>The app isn't signed yet, so Windows may say <i>"Windows protected your PC"</i>. Click <b>More info</b>, then <b>Run anyway</b>.</span>
+            </li>
+        </ol>
+        <details>
+            <summary>Check the download</summary>
+            <p>Each release has a <code>SHA256SUMS</code> file. In PowerShell, in the folder with the app, run this and compare the result with the matching line in <code>SHA256SUMS</code>:</p>
+            <div class="code"><pre><code>Get-FileHash .\Notchex-3.0.0-win-x64.exe</code></pre></div>
+        </details>
+
+        <h3 id="win-after">After installing</h3>
+        <p>Notchex adds <b>Notchex</b> and <b>Notchex Settings</b> to the Start menu and an icon to the tray. Try:</p>
+        <ul>
+            <li>Hover over the notch, or press <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>N</kbd>, to open the hub</li>
+            <li>Scroll on the notch to change the volume</li>
+            <li>Right-click it to switch between notch and pill, open settings, hide it or quit</li>
+            <li>Press <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>,</kbd> to open settings</li>
+        </ul>
+        <p>To start Notchex every time you sign in, turn on <b>Start Notchex when you sign in</b> in settings. Settings are saved in <code>%APPDATA%\Notchex\settings.json</code>.</p>
+
+        <h3 id="win-update">Update</h3>
+        <ol>
+            <li>Quit Notchex from its tray icon (<b>Quit Notchex</b>).</li>
+            <li>Download the new version into the same folder and run it.</li>
+            <li>Delete the old file. The new one updates the Start menu shortcuts and the sign-in entry by itself.</li>
+        </ol>
+
+        <h3 id="win-uninstall">Uninstall</h3>
+        <ol>
+            <li>In settings, turn off <b>Start Notchex when you sign in</b>.</li>
+            <li>Quit Notchex from its tray icon.</li>
+            <li>Delete the app file, the Start menu folder and Notchex's data. You can paste these paths into File Explorer's address bar:
+                <div class="code"><pre><code>%APPDATA%\Microsoft\Windows\Start Menu\Programs\Notchex
+%APPDATA%\Notchex
+%LOCALAPPDATA%\Notchex</code></pre></div>
+            </li>
+        </ol>
+        <p class="muted">Already deleted the app? Remove the <code>Notchex</code> value under <code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</code> in Registry Editor.</p>
+
+        <h3 id="win-troubleshooting">Troubleshooting</h3>
+
+        <details>
+            <summary>"Windows protected your PC" won't let me run it</summary>
+            <p>Click <b>More info</b>, then <b>Run anyway</b>. If there's no <b>Run anyway</b> button, your organization may block unsigned apps.</p>
+        </details>
+
+        <details>
+            <summary>The notch disappears</summary>
+            <p>It hides itself while a game, video or presentation is full screen, and comes back afterwards. If you hid it from the menu, choose <b>Show Notch</b> on the tray icon.</p>
+        </details>
+
+        <details>
+            <summary>My music doesn't show up</summary>
+            <p>Notchex shows whatever appears in Windows' own media controls (the box that pops up when you press a media key). Spotify, browsers, Media Player and VLC all work. If your player isn't there, Notchex can't see it either.</p>
+        </details>
+
+        <details>
+            <summary>Something else is wrong</summary>
+            <p><a href="https://github.com/AdityaTakuli/Notchex/issues">Open an issue</a> and attach <code>%LOCALAPPDATA%\Notchex\notchex.log</code>. It holds error details only, never song titles.</p>
         </details>
 
     </article>

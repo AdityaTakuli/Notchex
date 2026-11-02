@@ -251,7 +251,9 @@ html[data-shape="pill"] .shape-card[data-set-shape="pill"] { box-shadow: 0 0 0 2
 .copy:hover { background: rgba(255, 255, 255, 0.16); }
 .cta.center { margin-top: 32px; }
 .meta { margin-top: 28px; color: var(--faint); font-size: 15px; }
-.next { margin-top: 10px; color: var(--dim); font-size: 15px; }
+.install-windows { max-width: 860px; margin: clamp(64px, 8vw, 104px) auto 0; padding-top: clamp(48px, 6vw, 80px); border-top: 1px solid var(--line); }
+.install-windows h3 { font-size: clamp(26px, 3vw, 36px); letter-spacing: -0.02em; }
+.install-windows h3 + p { margin: 14px auto 0; max-width: 560px; color: var(--dim); }
 
 .footer {
     display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
