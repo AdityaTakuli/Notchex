@@ -79,6 +79,8 @@ One rounded surface sits at the top center of your primary monitor and changes s
 
 There are two shapes: **notch**, which attaches to the top screen edge with rounded bottom corners like a MacBook, and **pill**, a fully rounded capsule that floats a few pixels below the edge (the gap is adjustable). Switch between them from the notch's right-click menu or in preferences.
 
+**Hide it until you need it.** Turn on *Hide the notch until you point at it* (Appearance → Behavior) and the notch slides up out of view when you aren't using it. Push the pointer to the top edge above it to bring it back; alerts, search and `Super + N` bring it back too. With the top bar hidden as well, windows use the full height of the screen. Prefer it always visible with windows kept below it? Hide the top bar and keep *Fill the strip beside the notch* on (see [Desktop polish](#desktop-polish)).
+
 Small events such as headphones connecting, Focus turning on or off, and low battery or charging use a **compact** look: the notch keeps its height and stretches sideways with a little spring, with an icon on the left and a colored status on the right (a ring that fills to the headphones' battery level, a purple "On", a red battery). Some of them carry a blue button: headphones that connect while sound is still going to your speakers show **Play Here**, and headphones that drop off show **Reconnect**. The open hub is **frosted glass**; the compact notch stays solid black.
 
 **Settings without Extension Manager:** right-click the notch, press `Super + ,`, search "Notchex Settings" in Spotlight, or open the **Notchex Settings** app.

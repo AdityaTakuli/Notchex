@@ -17,6 +17,12 @@ namespace Notchex
         public double TopMargin { get; set; } = 6;        // space above the pill
         public double HubWidth { get; set; } = 560;
 
+        /* the top of the screen:
+             "bar"      a black bar the notch sits on; maximized windows start below it
+             "autohide" the notch slides away until the pointer touches the top edge
+             "overlay"  the notch floats over windows */
+        public string TopMode { get; set; } = "bar";
+
         public bool ExpandOnHover { get; set; } = true;
         public bool HideInFullScreen { get; set; } = true;
         public bool ShowDate { get; set; } = true;
@@ -30,6 +36,8 @@ namespace Notchex
         public bool Hidden { get; set; }
 
         [JsonIgnore] public bool IsPill => Shape == "pill";
+        [JsonIgnore] public bool KeepsBar => TopMode == "bar";
+        [JsonIgnore] public bool AutoHides => TopMode == "autohide";
 
         public event Action? Changed;
 
@@ -68,6 +76,7 @@ namespace Notchex
             static double Clamp(double v, double lo, double hi, double fallback) =>
                 double.IsFinite(v) ? Math.Clamp(v, lo, hi) : fallback;
             Shape = Shape == "pill" ? "pill" : "notch";
+            TopMode = TopMode is "bar" or "autohide" or "overlay" ? TopMode : "bar";
             Width = Clamp(Width, 160, 380, 220);
             Height = Clamp(Height, 28, 46, 36);
             TopMargin = Clamp(TopMargin, 0, 24, 6);

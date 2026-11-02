@@ -43,6 +43,10 @@ const ELLIPSIZE_END = 3; /* Pango.EllipsizeMode.END */
 
 /* Concave fillet joining the notch to the top screen edge (logical px). */
 const EAR_SIZE = 8;
+/* hide until pointed at (notch-autohide) */
+const CONCEAL_DELAY_MS = 700;
+const REVEAL_DELAY_MS = 70;
+const HOT_EDGE_PX = 2;
 
 function parseColor(str) {
     const m = str.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+)\s*)?\)/);
@@ -112,6 +116,10 @@ class Notch extends St.Widget {
         this._hoverTimeout    = 0;
         this._collapseTimeout = 0;
         this._clockTimer      = 0;
+        this._concealed       = false;
+        this._concealTimeout  = 0;
+        this._revealTimeout   = 0;
+        this._hotEdge         = null;
         this._phaseTimers = new Set();
         this._activeTab = 'now';
         this._lastView = {};
@@ -345,7 +353,8 @@ class Notch extends St.Widget {
         if (t && t.w === w && t.h === h && t.x === x && t.y === y) return;
         this._target = {w, h, x, y};
         this._setRadiusFor(h);
-        this.remove_all_transitions();
+        /* only the geometry: a running slide (translation-y) keeps going */
+        for (const prop of ['x', 'y', 'width', 'height']) this.remove_transition(prop);
         const dur = this._dur(ms);
         if (dur <= 0) {
             this.set_position(x, y);
@@ -390,6 +399,7 @@ class Notch extends St.Widget {
     relayout() {
         if (this._stopped) return;
         this._topbar?.relayout();
+        this._placeHotEdge();
         this._target = null;
         this._pillRow.height = this._px(this._ch);
         if (this._searching) {
@@ -506,6 +516,10 @@ class Notch extends St.Widget {
             this._syncTopBar();
             return;
         case 'fill-top-strip':
+            this._topbar?.relayout();
+            return;
+        case 'notch-autohide':
+            this._syncConceal();
             this._topbar?.relayout();
             return;
         case 'replace-system-osd':
@@ -760,13 +774,19 @@ class Notch extends St.Widget {
 
     start() {
         this._topbar = new TopBarAutoHide({
-            reservedHeight: () => this._px(this._ch) + (this._notchStyle ? 0 : this._px(this._topMargin)),
+            /* a notch that hides itself needs no room: windows get the full height */
+            reservedHeight: () => this._autoHides() ? 0
+                : this._px(this._ch) + (this._notchStyle ? 0 : this._px(this._topMargin)),
             isOverNotch: (x, y) => {
-                const [ax, ay] = this.get_transformed_position();
-                const [aw, ah] = this.get_transformed_size();
-                return x >= ax && x <= ax + aw && y >= ay && y <= ay + ah;
+                const over = actor => {
+                    if (!actor?.visible) return false;
+                    const [ax, ay] = actor.get_transformed_position();
+                    const [aw, ah] = actor.get_transformed_size();
+                    return x >= ax && x <= ax + aw && y >= ay && y <= ay + ah;
+                };
+                return over(this) || over(this._hotEdge);
             },
-            fillColor: () => this._stripColor(),
+            fillColor: () => this._autoHides() ? null : this._stripColor(),
         });
         this._syncTopBar();
         this._startEnabledModules();
@@ -776,6 +796,7 @@ class Notch extends St.Widget {
         this._updateBatteryIcon();
         this._updateWeatherChip();
         this.relayout();
+        this._syncConceal();
     }
 
     _startEnabledModules() {
@@ -849,6 +870,10 @@ class Notch extends St.Widget {
         if (this._gestureEnd) { GLib.source_remove(this._gestureEnd); this._gestureEnd = 0; }
         this._clearHoverTimeout();
         this._clearCollapseTimeout();
+        this._clearConcealTimers();
+        this._destroyHotEdge();
+        this.translation_y = 0;
+        this._concealed = false;
         this._clearPhaseTimers();
         this._stopClock();
         this._osd.disable();
@@ -887,6 +912,8 @@ class Notch extends St.Widget {
         this._destroyBubble();
         this._clearHoverTimeout();
         this._clearCollapseTimeout();
+        this._clearConcealTimers();
+        this._destroyHotEdge();
         this._clearPhaseTimers();
         this._stopClock();
         for (const m of Object.values(this._modules ?? {})) m.destroy?.();
@@ -968,6 +995,106 @@ class Notch extends St.Widget {
         return d.toLocaleDateString([], {month: 'short', day: 'numeric'});
     }
 
+    /* ——— hide until pointed at (notch-autohide) ———
+       The notch slides up out of view a moment after it goes idle. A thin
+       strip on the top edge above it brings it back, and so do alerts, the
+       hub, search and the shortcut. Driven by events: nothing runs while it
+       sits hidden. */
+
+    _autoHides() { return this._settings.get_boolean('notch-autohide'); }
+
+    _syncConceal() {
+        if (this._stopped) return;
+        if (this._autoHides()) {
+            if (!this._hotEdge) {
+                this._hotEdge = new St.Widget({name: 'notchex-notch-edge', reactive: true,
+                    track_hover: true, visible: false});
+                this._hotEdge.connect('notify::hover', () => this._onHotEdgeHover());
+                Main.layoutManager.addTopChrome(this._hotEdge, {affectsInputRegion: true, trackFullscreen: true});
+            }
+            this._placeHotEdge();
+            this._scheduleConceal();
+        } else {
+            this._clearConcealTimers();
+            this._destroyHotEdge();
+            this._reveal();
+        }
+    }
+
+    /* as wide as the idle notch (plus its ears), centred on the top edge */
+    _placeHotEdge() {
+        const edge = this._hotEdge;
+        const mon = Main.layoutManager.primaryMonitor;
+        if (!edge || !mon) return;
+        const ear = this._notchStyle ? this._px(EAR_SIZE) : 0;
+        const w = Math.min(mon.width, this._idleSize()[0] + 2 * ear);
+        edge.set_position(mon.x + Math.floor((mon.width - w) / 2), mon.y);
+        edge.set_size(w, this._px(HOT_EDGE_PX));
+    }
+
+    _destroyHotEdge() {
+        if (!this._hotEdge) return;
+        try { Main.layoutManager.removeChrome(this._hotEdge); } catch (_) {}
+        this._hotEdge.destroy();
+        this._hotEdge = null;
+    }
+
+    _onHotEdgeHover() {
+        this._clearRevealTimeout();
+        if (!this._hotEdge?.hover || !this._concealed) return;
+        this._revealTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, REVEAL_DELAY_MS, () => {
+            this._revealTimeout = 0;
+            if (this._hotEdge?.hover) this._reveal();
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+
+    _scheduleConceal() {
+        if (this._stopped || this._concealed || !this._autoHides()) return;
+        this._clearConcealTimeout();
+        this._concealTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, CONCEAL_DELAY_MS, () => {
+            /* the hub, an alert or search call this again when they end */
+            if (this._stopped || this._expanded || this._eventActive || this._searching) {
+                this._concealTimeout = 0;
+                return GLib.SOURCE_REMOVE;
+            }
+            /* under the pointer, or its menu is open: look again shortly */
+            if (this._menu || this.hover || this._pointerInside()) return GLib.SOURCE_CONTINUE;
+            this._concealTimeout = 0;
+            this._conceal();
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+
+    _conceal() {
+        if (this._concealed) return;
+        this._concealed = true;
+        this._clearHoverTimeout();
+        const h = this._target?.h ?? this.height;
+        /* past the top edge, with room for the shadow */
+        const offset = h + (this._notchStyle ? 0 : this._px(this._topMargin)) + this._px(32);
+        this.ease({translation_y: -offset, duration: this._dur(200),
+            mode: Clutter.AnimationMode.EASE_IN_QUAD});
+        this._placeHotEdge();
+        if (this._hotEdge) this._hotEdge.visible = true;
+        this._syncBubble();
+    }
+
+    _reveal() {
+        this._clearRevealTimeout();
+        if (!this._concealed) return;
+        this._concealed = false;
+        if (this._hotEdge) this._hotEdge.visible = false;
+        this.ease({translation_y: 0, duration: this._dur(220),
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD});
+        this._syncBubble();
+        this._scheduleConceal();
+    }
+
+    _clearConcealTimeout() { if (this._concealTimeout) { GLib.source_remove(this._concealTimeout); this._concealTimeout = 0; } }
+    _clearRevealTimeout()  { if (this._revealTimeout)  { GLib.source_remove(this._revealTimeout);  this._revealTimeout = 0; } }
+    _clearConcealTimers()  { this._clearConcealTimeout(); this._clearRevealTimeout(); }
+
     /* ——— hover / click / expand / collapse ——— */
 
     _expandOnHover() { return this._settings.get_boolean('expand-on-hover'); }
@@ -980,6 +1107,7 @@ class Notch extends St.Widget {
         if (this._stopped || this._searching) return;
         if (this.hover) {
             this._clearCollapseTimeout();
+            this._clearConcealTimeout();
             if (this._expanded) return;
             if (this._eventActive) {
                 const ev = this._events.current;
@@ -998,6 +1126,7 @@ class Notch extends St.Widget {
             }
             if (this._eventActive) this._events.release();
             this._setHoverState(false);
+            this._scheduleConceal();
         }
     }
 
@@ -1196,6 +1325,7 @@ class Notch extends St.Widget {
 
     _expand(tab = null) {
         if (this._stopped || this._searching) return;
+        this._reveal();
         this._clearHoverTimeout();
         this._clearCollapseTimeout();
         this._clearPhaseTimers();
@@ -1286,6 +1416,7 @@ class Notch extends St.Widget {
         this._phaseTimer(this._dur(400), () => {
             if (!this._expanded) this._events.resume();
         });
+        this._scheduleConceal();
     }
 
     _switchTab(id) {
@@ -1423,6 +1554,7 @@ class Notch extends St.Widget {
         if (!grab) return false;
         this._searchGrab = grab;
         this._searching = true;
+        this._reveal();
         this._onSearchDismiss = onDismiss;
         this._clearHoverTimeout();
         this._clearCollapseTimeout();
@@ -1542,6 +1674,7 @@ class Notch extends St.Widget {
     closeSearch(immediate = false) {
         if (!this._searching) return;
         this._searching = false;
+        this._scheduleConceal();
         this._onSearchDismiss = null;
         if (this._searchGrab) {
             Main.popModal(this._searchGrab);
@@ -1610,6 +1743,7 @@ class Notch extends St.Widget {
             this._events.dismiss();
             return;
         }
+        this._reveal();
         this._eventActive = true;
         this._clearHoverTimeout();
         if (this._hoverState) {
@@ -1676,6 +1810,7 @@ class Notch extends St.Widget {
 
     hideEvent(immediate) {
         this._eventActive = false;
+        this._scheduleConceal();
         const child = this._activity.get_child();
         const drop = () => {
             if (this._activity.get_child() === child) {
@@ -1982,7 +2117,7 @@ class Notch extends St.Widget {
         const p = this._modules?.pomodoro;
         const timerLive = !!p && (p.isActive() || p.getState() === 'paused');
         const want = timerLive && this._mediaChip?.visible && !this._expanded &&
-            !this._eventActive && !this._searching;
+            !this._eventActive && !this._searching && !this._concealed;
         if (!want) {
             if (this._bubble?.visible) this._bubble.hide();
             return;

@@ -45,8 +45,15 @@ function Install-Notchex {
     function Stop-Notchex {
         $running = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -like 'Notchex*' })
         if ($running.Count -gt 0) {
-            $running | Stop-Process -Force -ErrorAction SilentlyContinue
-            $running | Wait-Process -Timeout 10 -ErrorAction SilentlyContinue
+            # Ask it to close first, so "Keep a bar" gives its screen space back;
+            # force it only if it doesn't.
+            foreach ($p in $running) { try { [void]$p.CloseMainWindow() } catch { } }
+            $running | Wait-Process -Timeout 5 -ErrorAction SilentlyContinue
+            $left = @($running | Where-Object { -not $_.HasExited })
+            if ($left.Count -gt 0) {
+                $left | Stop-Process -Force -ErrorAction SilentlyContinue
+                $left | Wait-Process -Timeout 10 -ErrorAction SilentlyContinue
+            }
             Ok 'Closed the running Notchex'
         }
     }

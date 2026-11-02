@@ -16,7 +16,7 @@
 
     <AssemblyName>Notchex</AssemblyName>
     <RootNamespace>Notchex</RootNamespace>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
     <Product>Notchex</Product>
     <Description>A working notch for Windows</Description>
     <Authors>Aditya Takuli</Authors>

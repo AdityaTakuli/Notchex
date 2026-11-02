@@ -127,6 +127,8 @@ export default class NotchexPrefs extends ExtensionPreferences {
             'Super+Space turns the notch into a search bar')));
         notch.add(needsNotch(this._boolRow(settings, 'autohide-top-bar', 'Auto-hide the top bar',
             'The top bar slides away and comes back at the top edge')));
+        notch.add(needsNotch(this._boolRow(settings, 'notch-autohide', 'Auto-hide the notch',
+            'The notch slides away and comes back when you point at the top edge above it')));
         page.add(notch);
 
         /* the Dock */
@@ -289,6 +291,8 @@ export default class NotchexPrefs extends ExtensionPreferences {
             'The top bar reappears when you push the pointer to the top edge. Windows start right below the notch.'));
         behavior.add(this._boolRow(settings, 'fill-top-strip', 'Fill the strip beside the notch',
             'With the top bar hidden, cover the space beside the notch with its color while a window is maximized or full screen. The pill gets a light rim so it stays visible. Otherwise the wallpaper shows.'));
+        behavior.add(this._boolRow(settings, 'notch-autohide', 'Hide the notch until you point at it',
+            'The notch slides up out of the way when you are not using it. Push the pointer to the top edge above it to bring it back. Alerts and the shortcut still show it. With the top bar hidden, windows then use the full height of the screen.'));
         behavior.add(this._boolRow(settings, 'eq-follow-audio', 'Music bars follow the audio',
             'Reads what your speakers play (never the microphone). GNOME may show its recording indicator while it runs.'));
         behavior.add(this._boolRow(settings, 'pill-show-weather', 'Temperature in the pill'));

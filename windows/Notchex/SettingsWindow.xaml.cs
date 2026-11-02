@@ -22,6 +22,9 @@ namespace Notchex
 
             ShapeNotch.Checked += (_, _) => Set(s => s.Shape = "notch");
             ShapePill.Checked += (_, _) => Set(s => s.Shape = "pill");
+            TopModeBar.Checked += (_, _) => Set(s => s.TopMode = "bar");
+            TopModeAutoHide.Checked += (_, _) => Set(s => s.TopMode = "autohide");
+            TopModeOverlay.Checked += (_, _) => Set(s => s.TopMode = "overlay");
 
             Slide(WidthSlider, WidthText, (s, v) => s.Width = v);
             Slide(HeightSlider, HeightText, (s, v) => s.Height = v);
@@ -65,6 +68,15 @@ namespace Notchex
             _loading = true;
             ShapeNotch.IsChecked = !S.IsPill;
             ShapePill.IsChecked = S.IsPill;
+            TopModeBar.IsChecked = S.KeepsBar;
+            TopModeAutoHide.IsChecked = S.AutoHides;
+            TopModeOverlay.IsChecked = S.TopMode == "overlay";
+            TopModeHint.Text = S.TopMode switch
+            {
+                "autohide" => "The notch slides up out of the way. Push the pointer to the top edge above it to bring it back. Alerts still show.",
+                "overlay" => "The notch floats over whatever is at the top of the screen.",
+                _ => "A black bar runs across the top and the notch sits on it. Maximized windows start below it, so nothing hides under the notch.",
+            };
             WidthSlider.Value = S.Width;
             HeightSlider.Value = S.Height;
             HubWidthSlider.Value = S.HubWidth;

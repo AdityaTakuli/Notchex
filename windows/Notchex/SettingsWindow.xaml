@@ -57,6 +57,21 @@
                 </StackPanel>
             </Border>
 
+            <!-- top of the screen -->
+            <TextBlock Style="{StaticResource GroupTitle}" Text="Top of the screen"/>
+            <Border Style="{StaticResource Group}" Padding="16,14">
+                <StackPanel>
+                    <Border Background="#1FFFFFFF" CornerRadius="8" Padding="3" HorizontalAlignment="Left">
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton x:Name="TopModeBar" Style="{StaticResource Segment}" Content="Keep a bar" GroupName="top"/>
+                            <RadioButton x:Name="TopModeAutoHide" Style="{StaticResource Segment}" Content="Auto-hide" GroupName="top"/>
+                            <RadioButton x:Name="TopModeOverlay" Style="{StaticResource Segment}" Content="Float" GroupName="top"/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock x:Name="TopModeHint" Style="{StaticResource Hint}" Margin="2,10,0,0"/>
+                </StackPanel>
+            </Border>
+
             <!-- size -->
             <TextBlock Style="{StaticResource GroupTitle}" Text="Size"/>
             <Border Style="{StaticResource Group}" Padding="16,8">

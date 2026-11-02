@@ -9,6 +9,7 @@ The same notch, now on Windows 10 (2004 or later) and Windows 11. It sits at the
 - **Small alerts:** volume changes, charger plugged in or out, low battery and new songs show briefly in the notch.
 - **Scroll on the notch** to change the volume.
 - **Right-click it** to switch between notch and pill, open settings, hide it or quit.
+- **Top of the screen, your way:** keep a black bar that the notch sits on (maximized windows start below it, so nothing hides under the notch), auto-hide it until you push the pointer to the top edge, or let it float over windows. Pick one under *Top of the screen* in settings or from the right-click menu.
 - **Out of the way:** it hides itself during full-screen games, videos and presentations.
 
 ## Install

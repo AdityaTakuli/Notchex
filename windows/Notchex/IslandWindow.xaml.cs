@@ -18,7 +18,9 @@ namespace Notchex
        between them:
          idle  – album art (or the date) | clock | music bars (or battery)
          alert – a short message: volume, battery, a new track
-         hub   – opens on hover: music with controls, volume, battery */
+         hub   – opens on hover: music with controls, volume, battery
+       The top of the screen has three modes (Settings.TopMode): a black bar
+       the notch sits on, auto-hide, or floating over windows. */
     public partial class IslandWindow : Window
     {
         enum Mode { Idle, Alert, Hub }
@@ -36,6 +38,10 @@ namespace Notchex
         double _alertWidth = 300;
 
         readonly DispatcherTimer _clock, _hoverIn, _hoverOut, _alertTimer, _bars, _watch, _progress;
+        readonly DispatcherTimer _revealTimer, _concealTimer;
+        readonly TranslateTransform _slide = new();
+        bool _concealed;                // auto-hide: slid up out of view
+        TopBarWindow? _bar;             // "Keep a bar" mode
         readonly Rectangle[] _barRects = new Rectangle[4];
         readonly Random _rng = new();
         Hotkeys? _hotkeys;
@@ -75,6 +81,12 @@ namespace Notchex
             _bars = Timer(150, AnimateBars);
             _watch = Timer(1500, Watch);
             _progress = Timer(500, UpdateProgress);
+            _revealTimer = Timer(70, () => { _revealTimer!.Stop(); if (HotEdge.IsMouseOver) Reveal(); });
+            _concealTimer = Timer(700, ConcealTick);
+
+            IslandRow.RenderTransform = _slide;
+            HotEdge.MouseEnter += (_, _) => _revealTimer.Start();
+            HotEdge.MouseLeave += (_, _) => _revealTimer.Stop();
 
             Island.MouseEnter += (_, _) => OnPointerEnter();
             Island.MouseLeave += (_, _) => OnPointerLeave();
@@ -135,6 +147,9 @@ namespace Notchex
         protected override void OnClosed(EventArgs e)
         {
             _hotkeys?.Dispose();
+            /* gives the bar's space back to other windows */
+            _bar?.Remove();
+            _bar = null;
             base.OnClosed(e);
         }
 
@@ -145,7 +160,96 @@ namespace Notchex
             Width = Math.Max(S.HubWidth, 420) + Ear * 2 + 48;
             Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
             Top = 0;
+            UpdateBar();
         }
+
+        /* ——— top of the screen ——— */
+
+        /* "Keep a bar": as tall as the notch (the pill gets a margin above and below) */
+        void UpdateBar()
+        {
+            if (S.KeepsBar && !S.Hidden)
+            {
+                _bar ??= new TopBarWindow();
+                _bar.Apply(S.IsPill ? S.Height + 2 * S.TopMargin : S.Height);
+                /* the notch stays above the bar */
+                var hwnd = new WindowInteropHelper(this).Handle;
+                if (hwnd != IntPtr.Zero) Native.KeepOnTop(hwnd);
+            }
+            else
+            {
+                _bar?.Apply(0);
+            }
+        }
+
+        void ApplyTopMode()
+        {
+            if (S.AutoHides) ScheduleConceal();
+            else { _concealTimer.Stop(); Reveal(); }
+        }
+
+        /* auto-hide: slide away a moment after the notch goes idle */
+        void ScheduleConceal()
+        {
+            if (!S.AutoHides || _concealed) return;
+            _concealTimer.Stop();
+            _concealTimer.Start();
+        }
+
+        void ConcealTick()
+        {
+            /* the hub or an alert calls ScheduleConceal again when it ends */
+            if (!S.AutoHides || _concealed || _mode != Mode.Idle) { _concealTimer.Stop(); return; }
+            /* still under the pointer, or its menu is open: the timer looks again */
+            if (PointerNearIsland() || (Island.ContextMenu?.IsOpen ?? false)) return;
+            _concealTimer.Stop();
+            Conceal();
+        }
+
+        void Conceal()
+        {
+            _concealed = true;
+            _hoverIn.Stop();
+            double offset = IslandH + (S.IsPill ? S.TopMargin : 0) + 24;   // 24: room for the shadow
+            _slide.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(-offset, Ms(200))
+            {
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn },
+            });
+            HotEdge.Visibility = Visibility.Visible;
+        }
+
+        /* back on screen: the pointer touched the top edge, an alert, the hub or the shortcut */
+        void Reveal()
+        {
+            _revealTimer.Stop();
+            if (!_concealed) return;
+            _concealed = false;
+            HotEdge.Visibility = Visibility.Collapsed;
+            _slide.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(0, Ms(220))
+            {
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
+            });
+            ScheduleConceal();
+        }
+
+        /* the island may have slid under a pointer that hasn't moved, so ask
+           Windows where the pointer is instead of trusting IsMouseOver */
+        bool PointerNearIsland()
+        {
+            if (Island.IsMouseOver) return true;
+            if (!Native.GetCursorPos(out var p)) return false;
+            try
+            {
+                var local = Island.PointFromScreen(new Point(p.X, p.Y));
+                const double margin = 8;
+                return local.X >= -margin && local.Y >= -margin &&
+                       local.X <= Island.ActualWidth + margin && local.Y <= Island.ActualHeight + margin;
+            }
+            catch (InvalidOperationException) { return false; }
+        }
+
+        static Duration Ms(int ms) =>
+            new(TimeSpan.FromMilliseconds(SystemParameters.ClientAreaAnimation ? ms : 0));
 
         void ApplySettings()
         {
@@ -158,6 +262,7 @@ namespace Notchex
             Island.Effect = pill ? new DropShadowEffect { BlurRadius = 16, ShadowDepth = 3, Direction = 270, Opacity = 0.35 } : null;
             UpdateIdle();
             Watch();
+            ApplyTopMode();
             switch (_mode)
             {
                 case Mode.Idle: AnimateTo(S.Width, S.Height, 260, spring: false); break;
@@ -212,11 +317,13 @@ namespace Notchex
             UpdateIdle();
             Show(IdleView);
             AnimateTo(S.Width, S.Height, 320, spring: false);
+            ScheduleConceal();
         }
 
         void Expand(bool sticky)
         {
             if (_mode == Mode.Hub) return;
+            Reveal();
             _alertTimer.Stop();
             _mode = Mode.Hub;
             _stickyHub = sticky;
@@ -253,6 +360,7 @@ namespace Notchex
 
         void OnPointerEnter()
         {
+            _concealTimer.Stop();
             _hoverOut.Stop();
             _hoverOut.Interval = TimeSpan.FromMilliseconds(380);
             if (S.ExpandOnHover && _mode != Mode.Hub) _hoverIn.Start();
@@ -262,6 +370,7 @@ namespace Notchex
         {
             _hoverIn.Stop();
             if (_mode == Mode.Hub) _hoverOut.Start();
+            else ScheduleConceal();
         }
 
         /* ——— alerts ——— */
@@ -270,6 +379,7 @@ namespace Notchex
                        double? meter = null, ImageSource? art = null, double width = 300)
         {
             if (_mode == Mode.Hub) return;
+            Reveal();
             AlertIcon.Text = icon;
             AlertIcon.Visibility = art == null ? Visibility.Visible : Visibility.Collapsed;
             AlertArt.Visibility = art == null ? Visibility.Collapsed : Visibility.Visible;
@@ -464,11 +574,18 @@ namespace Notchex
             var notch = Item("Notch", () => _app.SetShape("notch"));
             var pill = Item("Pill", () => _app.SetShape("pill"));
             var hide = Item("Hide Notch", () => _app.SetHidden(true));
+            var bar = Item("Keep a Bar", () => S.Update(s => s.TopMode = "bar"));
+            var autoHide = Item("Auto-Hide", () => S.Update(s => s.TopMode = "autohide"));
+            var overlay = Item("Float Over Windows", () => S.Update(s => s.TopMode = "overlay"));
             menu.Items.Add(Item("Open Notchex", () => Expand(sticky: true)));
             menu.Items.Add(Item("Notchex Settings…", () => _app.OpenSettings()));
             menu.Items.Add(Sep());
             menu.Items.Add(notch);
             menu.Items.Add(pill);
+            menu.Items.Add(Sep());
+            menu.Items.Add(bar);
+            menu.Items.Add(autoHide);
+            menu.Items.Add(overlay);
             menu.Items.Add(Sep());
             menu.Items.Add(hide);
             menu.Items.Add(Item("Quit Notchex", () => _app.Quit()));
@@ -477,6 +594,9 @@ namespace Notchex
                 _hoverIn.Stop();
                 notch.IsChecked = !S.IsPill;
                 pill.IsChecked = S.IsPill;
+                bar.IsChecked = S.KeepsBar;
+                autoHide.IsChecked = S.AutoHides;
+                overlay.IsChecked = S.TopMode == "overlay";
             };
             return menu;
         }

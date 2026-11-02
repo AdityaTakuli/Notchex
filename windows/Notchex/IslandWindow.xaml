@@ -12,7 +12,8 @@
          Fully transparent pixels let clicks through, so only the island
          itself catches the mouse. -->
     <Grid x:Name="Root" VerticalAlignment="Top" HorizontalAlignment="Center">
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center">
+        <!-- slides up out of view in auto-hide mode -->
+        <StackPanel x:Name="IslandRow" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center">
 
             <!-- inverse corners that join the notch to the top edge -->
             <Path x:Name="EarLeft" Fill="{StaticResource IslandBrush}" VerticalAlignment="Top"/>
@@ -166,5 +167,10 @@
                 </Path.RenderTransform>
             </Path>
         </StackPanel>
+
+        <!-- auto-hide: a nearly invisible strip on the top edge that brings the
+             notch back. Not fully transparent, so it still catches the mouse. -->
+        <Border x:Name="HotEdge" Height="2" VerticalAlignment="Top" Background="#01000000"
+                Visibility="Collapsed"/>
     </Grid>
 </Window>
