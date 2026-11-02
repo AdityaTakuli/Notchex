@@ -2,9 +2,10 @@
 
 # Notchex
 
-**A working notch and a macOS-style desktop for GNOME.**
+**A working notch for Linux and Windows, plus a macOS-style desktop for GNOME.**
 
 [![GNOME Shell 46–50](https://img.shields.io/badge/GNOME%20Shell-46%20%E2%80%93%2050-4A86CF?logo=gnome&logoColor=white)](https://www.gnome.org/)
+[![Windows 10 and 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4)](#windows)
 [![License: GPL-3.0+](https://img.shields.io/badge/License-GPL--3.0%2B-blue.svg)](LICENSE)
 [![Wayland](https://img.shields.io/badge/Wayland-ready-success)](#compatibility)
 [![X11](https://img.shields.io/badge/X11-compatible-success)](#compatibility)
