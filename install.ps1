@@ -41,21 +41,41 @@ function Install-Notchex {
     function Warn([string]$m) { Write-Host "  ! $m" -ForegroundColor Yellow }
     function Fail([string]$m) { Write-Host "  x $m" -ForegroundColor Red }
 
-    # Closes any running copy, including one started from a downloaded Notchex-x.y.z-win-x64.exe.
-    function Stop-Notchex {
-        $running = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -like 'Notchex*' })
-        if ($running.Count -gt 0) {
-            # Ask it to close first, so "Keep a bar" gives its screen space back;
-            # force it only if it doesn't.
-            foreach ($p in $running) { try { [void]$p.CloseMainWindow() } catch { } }
-            $running | Wait-Process -Timeout 5 -ErrorAction SilentlyContinue
-            $left = @($running | Where-Object { -not $_.HasExited })
-            if ($left.Count -gt 0) {
-                $left | Stop-Process -Force -ErrorAction SilentlyContinue
-                $left | Wait-Process -Timeout 10 -ErrorAction SilentlyContinue
+    function Get-Notchex {
+        @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -like 'Notchex*' })
+    }
+
+    # Closes every running copy, including one started from a downloaded
+    # Notchex-x.y.z-win-x64.exe, and waits until they're gone. It asks first,
+    # so "Keep a bar" gives its screen space back, and forces it only if needed.
+    function Stop-Notchex([switch]$Quiet) {
+        $found = $false
+        for ($round = 0; $round -lt 3; $round++) {
+            $running = Get-Notchex
+            if ($running.Count -eq 0) { break }
+            $found = $true
+            if ($round -eq 0) {
+                foreach ($p in $running) { try { [void]$p.CloseMainWindow() } catch { } }
+                $running | Wait-Process -Timeout 5 -ErrorAction SilentlyContinue
             }
-            Ok 'Closed the running Notchex'
+            $running | Where-Object { -not $_.HasExited } | Stop-Process -Force -ErrorAction SilentlyContinue
+            $running | Wait-Process -Timeout 10 -ErrorAction SilentlyContinue
         }
+        if ($found -and -not $Quiet) { Ok 'Closed the running Notchex' }
+    }
+
+    # Windows can keep the app's file locked for a moment after it closes
+    # (or while a launch is still starting it), so retry for a few seconds.
+    function Invoke-WithRetry([scriptblock]$action) {
+        for ($try = 1; $try -le 20; $try++) {
+            try { & $action; return $true }
+            catch {
+                if ($try -eq 20) { return $false }
+                Stop-Notchex -Quiet
+                Start-Sleep -Milliseconds 500
+            }
+        }
+        return $false
     }
 
     if ($env:OS -ne 'Windows_NT') {
@@ -68,6 +88,7 @@ function Install-Notchex {
 
     if ($Uninstall) {
         Say 'Removing Notchex'
+        $failed = $false
         Stop-Notchex
         if (Test-Path $RunKey) {
             $run = (Get-ItemProperty -Path $RunKey -ErrorAction SilentlyContinue).Notchex
@@ -81,13 +102,16 @@ function Install-Notchex {
             }
         }
         foreach ($dir in @($StartMenu, $InstallDir, $SettingsDir, $LogDir)) {
-            if (Test-Path $dir) {
-                Remove-Item -Path $dir -Recurse -Force
+            if (-not (Test-Path $dir)) { continue }
+            if (Invoke-WithRetry { Remove-Item -Path $dir -Recurse -Force -ErrorAction Stop }) {
                 Ok "Removed $dir"
+            } else {
+                Fail "Couldn't remove $dir. Quit Notchex from its tray icon and run this again."
+                $failed = $true
             }
         }
         Write-Host ''
-        Write-Host 'Notchex is uninstalled.'
+        if ($failed) { Write-Host 'Notchex is only partly uninstalled.' } else { Write-Host 'Notchex is uninstalled.' }
         return
     }
 
@@ -176,7 +200,10 @@ function Install-Notchex {
         $upgrade = Test-Path $Exe
         Stop-Notchex
         New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
-        Move-Item -Force -Path $download -Destination $Exe
+        if (-not (Invoke-WithRetry { Move-Item -Force -Path $download -Destination $Exe -ErrorAction Stop })) {
+            Fail "Couldn't replace $Exe. Quit Notchex from its tray icon and run this again."
+            return
+        }
         Ok "Installed Notchex $ver to $InstallDir"
 
         # ---- start ----

@@ -63,3 +63,8 @@ jobs:
           if (-not (Test-Path $exe)) { throw "Notchex.exe wasn't installed" }
           if (Get-Process -Name 'Notchex*' -ErrorAction SilentlyContinue) { throw '-NoStart still started Notchex' }
           & ([scriptblock]::Create((Get-Content -Raw ./install.ps1))) -Uninstall
+      - name: Show what was still running (only when a step failed)
+        if: failure()
+        run: |
+          Get-Process -Name 'Notchex*' -ErrorAction SilentlyContinue | Format-List Id, ProcessName, Path, SessionId, StartTime
+          Get-ChildItem (Join-Path $env:LOCALAPPDATA 'Programs\Notchex') -ErrorAction SilentlyContinue
