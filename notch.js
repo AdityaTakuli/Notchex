@@ -1223,6 +1223,19 @@ class Notch extends St.Widget {
             if (x < ax || x > ax + aw || y < ay || y > ay + ah) this._onSearchDismiss?.();
             return Clutter.EVENT_STOP;
         }
+        if (this._notesFocused && this._expanded) {
+            /* typing in Notes holds a grab, so clicks outside land here:
+               let go of the keyboard and close the hub, like a menu */
+            const [x, y] = event.get_coords();
+            const [ax, ay] = this.get_transformed_position();
+            const [aw, ah] = this.get_transformed_size();
+            if (x < ax || x > ax + aw || y < ay || y > ay + ah) {
+                this._modules?.notes?._releaseGrab?.();
+                global.stage.set_key_focus(null);
+                if (this._settings.get_boolean('auto-collapse')) this._scheduleCollapse();
+                return Clutter.EVENT_STOP;
+            }
+        }
         if (event.get_button() !== 1 || this._expanded) return Clutter.EVENT_PROPAGATE;
         if (this._eventActive) {
             const ev = this._events.current;

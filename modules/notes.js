@@ -131,11 +131,15 @@ export const Notes = GObject.registerClass({
        actors outside the normal window/panel actor tree. We have to grab
        a modal (like Main.runDialog does) and explicitly request key focus
        on click, or clicking into the entry does nothing. */
-    _wireFocus(clutterText) {
+    _wireFocus(entry) {
+        const clutterText = entry.get_clutter_text();
         const request = () => {
             this._pushGrab();
             try { global.stage.set_key_focus(clutterText); clutterText.grab_key_focus(); } catch (_) {}
         };
+        /* Clicks land on the St.Entry box, not the one-line text actor
+           inside it, so listen on both or most clicks are lost. */
+        entry.connect('button-press-event', () => { request(); return Clutter.EVENT_PROPAGATE; });
         clutterText.connect('button-press-event', () => { request(); return Clutter.EVENT_PROPAGATE; });
         clutterText.connect('key-focus-in', () => this._onEntryFocusIn());
         clutterText.connect('key-focus-out', () => this._onEntryFocusOut());
@@ -163,7 +167,7 @@ export const Notes = GObject.registerClass({
             draft.title = titleText.get_text();
             this._debouncedSave(draft);
         });
-        this._wireFocus(titleText);
+        this._wireFocus(titleEntry);
         titleText.connect('key-press-event', (_a, event) => {
             if (this._isPlainEnter(event)) {
                 try { global.stage.set_key_focus(bodyText); bodyText.grab_key_focus(); } catch (_) {}
@@ -198,7 +202,7 @@ export const Notes = GObject.registerClass({
             draft.body = bodyText.get_text();
             this._debouncedSave(draft);
         });
-        this._wireFocus(bodyText);
+        this._wireFocus(bodyEntry);
         bodyText.connect('key-press-event', (_a, event) => {
             if (this._isPlainEnter(event)) {
                 if (draft.saveTimer) { GLib.source_remove(draft.saveTimer); draft.saveTimer = 0; }
