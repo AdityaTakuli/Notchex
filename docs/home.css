@@ -125,7 +125,9 @@ h1 { font-size: clamp(46px, 6.6vw, 112px); line-height: 0.98; letter-spacing: -0
     aspect-ratio: 16 / 9;
     border-radius: clamp(14px, 1.6vw, 26px);
     background: #6e5a50 url("img/wallpaper.jpg") center top / cover no-repeat;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 50px 120px -40px rgba(194, 117, 90, 0.38);
+    /* no ring: a hairline along the top edge would split the notch from the
+       bezel it hangs from */
+    box-shadow: 0 50px 120px -40px rgba(194, 117, 90, 0.38);
 }
 .screen-band { aspect-ratio: 16 / 6; }
 
